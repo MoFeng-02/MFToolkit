@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <!-- 添加配色方案 - 深色 -->
+    <!-- TIPS：深色方案在系统是深色也就是类似暗黑色调情况下，这里配色方案应该注意色调、强度、纯度和明度的搭配，防止颜色过于接近或刺眼，造成看不清和眼花的问题。 -->
+    <!-- 常用色配色方案 BEGIN -->
+    <Color x:Key="MFDarkColorBrush">#fff</Color>
+    <Color x:Key="MFDarkColorDefault">#f5f5f5</Color>
+    <Color x:Key="MFDarkColorPrimary">#396afc</Color>
+    <Color x:Key="MFDarkColorInfo">#2f80ed</Color>
+    <Color x:Key="MFDarkColorSuccess">#07c160</Color>
+    <Color x:Key="MFDarkColorWarning">#FF976A</Color>
+    <Color x:Key="MFDarkColorDanger">#FF0000</Color>
+    <Color x:Key="MFDarkColorGray">#3a3a3c</Color>
+
+    <Color x:Key="MFDarkColorDefaultGradient">#FFFFFF</Color>
+    <Color x:Key="MFDarkColorPrimaryGradient">#2948FF</Color>
+    <Color x:Key="MFDarkColorInfoGradient">#0080FF</Color>
+    <Color x:Key="MFDarkColorSuccessGradient">#06ad56</Color>
+    <Color x:Key="MFDarkColorWarningGradient">#FF621F</Color>
+    <Color x:Key="MFDarkColorDangerGradient">#E60000</Color>
+    <!-- 常用配色方案 END -->
+    <Color x:Key="MFDarkBackground">#262626</Color>
+    <Color x:Key="MFDarkCardBackground">#333333</Color>
+    <Color x:Key="MFDarkLightBackground">#595959</Color>
+    <Color x:Key="MFDarkLightColoredBackground">#595959</Color>
+    <Color x:Key="MFDarkStrongBackground">#353535</Color>
+    <Color x:Key="MFDarkBorderBrush">#353535</Color>
+    <Color x:Key="MFDarkLightBorderBrush">#454545</Color>
+    <Color x:Key="MFDarkMediumBorderBrush">#555555</Color>
+
+    <Color x:Key="MFDarkColorCell">#1c1c1e</Color>
+    <Color x:Key="MFDarkColorCellItem">#3a3a3c</Color>
+</ResourceDictionary>

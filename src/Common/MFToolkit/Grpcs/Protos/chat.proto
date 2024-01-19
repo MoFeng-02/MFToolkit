@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option csharp_namespace = "Common";
+package chat;
+
+// Chat集群中心
+service ChatHub {
+  // 连接到聊天中心
+  rpc Connect (ClientInfo) returns (stream ChatSendMessage);
+  // 断开连接到聊天中心
+  rpc Disconnect (ClientInfo) returns (stream ChatSendMessageResult);
+  // 信息通信
+  rpc InformationCommunication(ChatSendMessage) returns (ChatSendMessageResult);
+}
+enum ChatSendMessageType {
+  // 陌生人
+  Stranger = 0;
+  // 好友
+  Friend = 1;
+  // 群聊
+  Group = 2;
+}
+// 连接请求
+message ClientInfo {
+  // 本机ID标识
+  string client_id = 1;
+}
+// 包含问候语的响应消息
+message ChatSendMessage {
+  // 发送者标识
+  string from = 1;
+  // 发送的信息
+  string message = 2;
+  // 接收者标识（非接收人，因为可能是陌生人也可能是好友也可能是群聊）
+  string to = 3;
+  // 发送消息类型，是发送的个人还是群聊还是陌生人，在Net中是枚举类型
+  ChatSendMessageType chat_send_message_type = 4;
+}
+message ChatSendMessageResult {
+  // 是否发送成功
+  bool successed = 1;
+  // 其他信息
+  string message = 2;
+}

@@ -1,0 +1,2 @@
+﻿在情况允许的情况下，请尽量使用 SqlSugarExtensions - AotUtils - PreferenceUtils - Preferences 下的方法
+When circumstances permit, use SqlSugarExtensions - AotUtils-PreferenceUtils - Preferences

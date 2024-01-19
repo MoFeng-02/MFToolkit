@@ -1,0 +1,2 @@
+﻿不适配AOT！
+Not suitable for AOT!
