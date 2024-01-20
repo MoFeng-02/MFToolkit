@@ -24,6 +24,6 @@ dotnet add package MFToolkit
 
 ## 导航
 
-[通用类库](/Common/MFToolkit/Index.md)  
-[MAUI](/MAUI/Index.md)  
-[AvaloniaUI](/AvaloniaUI/Index.md)
+[通用类库](../docs/Common/MFToolkit/Index.md)  
+[MAUI](..//MAUI/Index.md)  
+[AvaloniaUI](../AvaloniaUI/Index.md)
