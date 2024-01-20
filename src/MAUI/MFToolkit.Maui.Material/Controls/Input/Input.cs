@@ -14,12 +14,13 @@ public partial class Input : Grid
         get => (string)GetValue(TextProperty);
         set => SetValue(TextProperty, value);
     }
-    private IView content;
-    public virtual IView Content
+    private View content;
+    public virtual View Content
     {
         get => content; set
         {
             content = value;
         }
     }
+
 }

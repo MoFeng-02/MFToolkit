@@ -1,6 +1,6 @@
-﻿using SqlSugar;
+[返回](../Index.md)
 
-namespace MFToolkit.CommonTypes.PageModels;
+```csharp
 public class PageModel<Condition> where Condition : class
 {
     /// <summary>
@@ -17,3 +17,5 @@ public class PageModel<Condition> where Condition : class
     public RefAsync<int> TotalCount { get; set; } = new();
     public Condition SearchCondition { get; set; }
 }
+
+```

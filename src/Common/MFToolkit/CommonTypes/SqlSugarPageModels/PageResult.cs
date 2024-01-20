@@ -1,7 +1,7 @@
 ﻿using Mapster;
 using SqlSugar;
 
-namespace MFToolkit.CommonTypes.PageModels;
+namespace MFToolkit.CommonTypes.SqlSugarPageModels;
 public class PageResult<T>
 {
     /// <summary>

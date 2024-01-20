@@ -1,2 +1,4 @@
 obj/
 bin/
+## 忽略文件
+*.vsidx
