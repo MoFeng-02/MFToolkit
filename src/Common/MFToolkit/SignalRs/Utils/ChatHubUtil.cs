@@ -12,7 +12,7 @@ public class ChatHubUtil
     /// <summary>
     /// 连接token，如果取消则代表不继续连接，除非连接
     /// </summary>
-    private static CancellationTokenSource _connectionTokenSource;
+    private static CancellationTokenSource _connectionTokenSource = null!;
     /// <summary>
     /// 是否已经启动了连接
     /// </summary>
@@ -22,7 +22,7 @@ public class ChatHubUtil
     /// <para>Exception：异常</para>
     /// <para>string：出现异常的操作</para>
     /// </summary>
-    public static Action<Exception, string?> ExceptionAction = null;
+    public static Action<Exception, string?> ExceptionAction = null!;
     /// <summary>
     /// 是否启动重连
     /// </summary>
@@ -79,7 +79,7 @@ public class ChatHubUtil
     /// <param name="url">连接URI</param>
     /// <param name="token">Token</param>
     /// <returns></returns>
-    public static HubConnection ConnectionBuild(string url, Func<string?> token = null)
+    public static HubConnection ConnectionBuild(string url, Func<string?>? token = null)
     {
         if (Connection != null) return Connection;
         _connectionTokenSource?.Dispose();
@@ -87,7 +87,7 @@ public class ChatHubUtil
             .WithUrl(url, options =>
             {
                 if (token == null) return;
-                options.AccessTokenProvider = () => Task.FromResult(token.Invoke());
+                options.AccessTokenProvider = () => Task.FromResult(token?.Invoke());
 #if DEBUG
                 // DEBUG 模式下忽略SSL
                 options.HttpMessageHandlerFactory = (message) =>
@@ -115,7 +115,7 @@ public class ChatHubUtil
     /// <para>HubConnectionState?: 连接状态</para>
     /// </param>
     /// <returns></returns>
-    public static async Task ConnectionBuildAsync(string url, bool isAutoConnection = false, string token = null, Action<int, HubConnectionState?>? connectionAction = null)
+    public static async Task ConnectionBuildAsync(string url, bool isAutoConnection = false, string? token = null, Action<int, HubConnectionState?>? connectionAction = null)
     {
         if (Connection != null) return;
         _connectionTokenSource?.Dispose();
@@ -151,8 +151,9 @@ public class ChatHubUtil
     {
         if (Connection == null) return;
         ReceiveMessage ??= action;
-        Connection.Remove("ReceiveMessage");
-        Connection.On("ReceiveMessage", ReceiveMessage);
+        Connection.Remove(nameof(ReceiveMessage));
+
+        Connection.On(nameof(ReceiveMessage), ReceiveMessage);
         try
         {
             await Connection.StartAsync();
@@ -160,8 +161,12 @@ public class ChatHubUtil
         catch (Exception ex)
         {
         }
-        isStart = true;
+        isStart = GetConnectState() == HubConnectionState.Connected;
     }
+    /// <summary>
+    /// 最大重试次数
+    /// </summary>
+    const int maxRetryAttempts = 5;
     /// <summary>
     /// 重新连接
     /// </summary>
@@ -174,7 +179,6 @@ public class ChatHubUtil
     {
         isStart = false;
         // 如果已经启动
-        const int maxRetryAttempts = 5;
         int retryCount = 0;
         if (Connection == null) return;
         while (Connection?.State == HubConnectionState.Disconnected && !_connectionTokenSource.IsCancellationRequested && !_connectionTokenSource.Token.IsCancellationRequested)
@@ -193,10 +197,10 @@ public class ChatHubUtil
             {
 
             }
-            // 延时一段时间再进行重连，可以根据需求调整延时时间
-            await Task.Delay(TimeSpan.FromSeconds(5));
             retryCount++;
             connectionAction?.Invoke(retryCount, GetConnectState());
+            // 延时一段时间再进行重连，可以根据需求调整延时时间
+            await Task.Delay(TimeSpan.FromSeconds(5));
             if (GetConnectState() == HubConnectionState.Connected) await Console.Out.WriteLineAsync("重新连接成功");
         }
     }
@@ -210,21 +214,22 @@ public class ChatHubUtil
     /// 发送信息方法
     /// </summary>
     /// <param name="message">信息</param>
-    /// <param name="action">异常委托</param>
+    /// <param name="sendMethodName">发送方法名称</param>
+    /// <param name="exceptionmAtion">异常委托</param>
     /// <exception cref="Exception">InvokeAsync 方法会返回一个在服务器方法返回时完成的 Task。 返回值（如果有）作为 Task 的结果提供。 服务器上的方法所引发的任何异常都会产生出错的 Task。 使用 await 语法等待服务器方法完成，并使用 try...catch 语法处理错误。</exception>
     /// <returns>发送成功为true，否则false</returns>
-    public static async Task<bool> SendMessageAsync(ChatMessageModel message, Action<Exception>? action = null)
+    public static async Task<bool> SendMessageAsync(ChatMessageModel message, string sendMethodName = nameof(SendMessageAsync), Action<Exception>? exceptionmAtion = null)
     {
         if (Connection == null || GetConnectState() == (HubConnectionState.Disconnected | HubConnectionState.Connecting) || !isStart) return false;
         try
         {
             // 发送单个
-            await Connection.InvokeAsync("SendMessageAsync", message);
+            await Connection.InvokeAsync(sendMethodName, message);
             return true;
         }
         catch (Exception ex)
         {
-            action?.Invoke(ex);
+            exceptionmAtion?.Invoke(ex);
             return false;
         }
     }
@@ -234,21 +239,22 @@ public class ChatHubUtil
     /// 发送组信息方法
     /// </summary>
     /// <param name="message">信息</param>
-    /// <param name="action">异常委托</param>
+    /// <param name="sendMethodName">发送方法名称</param>
+    /// <param name="exceptionmAtion">异常委托</param>
     /// <exception cref="Exception">InvokeAsync 方法会返回一个在服务器方法返回时完成的 Task。 返回值（如果有）作为 Task 的结果提供。 服务器上的方法所引发的任何异常都会产生出错的 Task。 使用 await 语法等待服务器方法完成，并使用 try...catch 语法处理错误。</exception>
     /// <returns>发送成功为true，否则false</returns>
-    public static async Task<bool> SendGroupMessageAsync(ChatMessageModel message, Action<Exception>? action = null)
+    public static async Task<bool> SendGroupMessageAsync(ChatMessageModel message, string sendMethodName = nameof(SendGroupMessageAsync), Action<Exception>? exceptionmAtion = null)
     {
         if (Connection == null || GetConnectState() == (HubConnectionState.Disconnected | HubConnectionState.Connecting)) return false;
         try
         {
             // 发送群聊
-            await Connection.InvokeAsync("SendGroupMessageAsync", message);
+            await Connection.InvokeAsync(sendMethodName, message);
             return true;
         }
         catch (Exception ex)
         {
-            action?.Invoke(ex);
+            exceptionmAtion?.Invoke(ex);
             return false;
         }
     }
