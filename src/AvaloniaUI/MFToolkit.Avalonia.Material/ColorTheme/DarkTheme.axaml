@@ -1,0 +1,43 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 添加配色方案 - 深色 -->
+    <!-- TIPS：深色方案在系统是深色也就是类似暗黑色调情况下，这里配色方案应该注意色调、强度、纯度和明度的搭配，防止颜色过于接近或刺眼，造成看不清和眼花的问题。 -->
+    <!-- 常用色配色方案 BEGIN -->
+    <Color x:Key="MFColorBrush">#fff</Color>
+    <Color x:Key="MFColorDefault">#f5f5f5</Color>
+    <Color x:Key="MFColorPrimary">#396afc</Color>
+    <Color x:Key="MFColorInfo">#2f80ed</Color>
+    <Color x:Key="MFColorSuccess">#07c160</Color>
+    <Color x:Key="MFColorWarning">#FF976A</Color>
+    <Color x:Key="MFColorDanger">#FF0000</Color>
+    <Color x:Key="MFColorGray">#3a3a3c</Color>
+
+    <Color x:Key="MFColorDefaultGradient">#FFFFFF</Color>
+    <Color x:Key="MFColorPrimaryGradient">#2948FF</Color>
+    <Color x:Key="MFColorInfoGradient">#0080FF</Color>
+    <Color x:Key="MFColorSuccessGradient">#06ad56</Color>
+    <Color x:Key="MFColorWarningGradient">#FF621F</Color>
+    <Color x:Key="MFColorDangerGradient">#E60000</Color>
+    <!-- 常用配色方案 END -->
+    <Color x:Key="MFBackground">#262626</Color>
+    <Color x:Key="MFCardBackground">#333333</Color>
+    <Color x:Key="MFLightBackground">#595959</Color>
+    <Color x:Key="MFLightColoredBackground">#595959</Color>
+    <Color x:Key="MFStrongBackground">#353535</Color>
+    <Color x:Key="MFBorderBrush">#353535</Color>
+    <Color x:Key="MFLightBorderBrush">#454545</Color>
+    <Color x:Key="MFMediumBorderBrush">#555555</Color>
+
+    <Color x:Key="MFColorCell">#1c1c1e</Color>
+    <Color x:Key="MFColorCellItem">#3a3a3c</Color>
+
+    <!-- PopupColor -->
+    <Color x:Key="MFDialogBackground">#252729</Color>
+    <Color x:Key="MFComponentBackground">#44ffffff</Color>
+    <!-- PopupColor -->
+    <BoxShadows x:Key="MFLowShadow">0 0 3 0 #353535</BoxShadows>
+    <BoxShadows x:Key="MFSwitchShadow">0 1 5 0 #555555</BoxShadows>
+    <BoxShadows x:Key="MFPopupShadow">1 1 5 0 #404040</BoxShadows>
+    <BoxShadows x:Key="MFBigPopupShadow">1 1 15 0 #606060</BoxShadows>
+    <BoxShadows x:Key="MFCommonShadow">0 1 10 0 #636363</BoxShadows>
+</ResourceDictionary>

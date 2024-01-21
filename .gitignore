@@ -1,4 +1,6 @@
 obj/
 bin/
+.vs/
+.idea/
 ## 忽略文件
 *.vsidx

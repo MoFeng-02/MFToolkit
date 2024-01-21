@@ -1,0 +1,34 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:control="https://github.com/MoFeng-02/MFToolkit/tree/main/src/AvaloniaUI/MFToolkit.Avaloniaui">
+	<Design.PreviewWith>
+		<Border Padding="20" Width="300">
+			<!-- Add Controls for Previewer Here -->
+			<control:MFCell IsShowInnerLine="True" CellClasses="Common" CellItemClasses="Pointerover">
+				<control:MFCellItem LeftContent="1" RightContent="2" CellItemClasses="Pointerover" />
+				<control:MFCellItem LeftContent="1" RightContent="2" CellItemClasses="Pointerover" />
+				<control:MFCellItem>
+					<control:MFCellItem.LeftContent>
+						12
+					</control:MFCellItem.LeftContent>
+					<control:MFCellItem.RightContent>
+						34
+					</control:MFCellItem.RightContent>
+				</control:MFCellItem>
+			</control:MFCell>
+		</Border>
+	</Design.PreviewWith>
+
+	<!-- Add Styles Here -->
+	<Style Selector="control|MFCell.Common">
+		<Setter Property="Background" Value="{DynamicResource MFColorCell}" />
+		<Setter Property="BoxShadow" Value="{DynamicResource MFCommonShadow}" />
+		<Setter Property="ShowInnerLineBrush" Value="{DynamicResource MFBorderBrush}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="CornerRadius" Value="10" />
+		<Setter Property="ShowLineMargin" Value="10" />
+		<Setter Property="IsShowInnerLine" Value="True"></Setter>
+		<Setter Property="TheContentPadding" Value="20 10" />
+	</Style>
+
+</Styles>

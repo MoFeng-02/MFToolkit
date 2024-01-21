@@ -1,0 +1,237 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:control="https://github.com/MoFeng-02/MFToolkit/tree/main/src/AvaloniaUI/MFToolkit.Avaloniaui">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+            <control:MFButton>
+                12
+            </control:MFButton>
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+    <!--
+        TIPS: 本样式类的Button一共有6种样式（配色），每种样式有4种统一形态
+        Styles: Default Primary Info Success Warning Danger
+        Forms: Default(默认按钮形状) Simplicity（朴素按钮形状） Square（方形按钮形状）Circle（圆形按钮形状）
+    -->
+    <!-- Default BEGIN -->
+    <Style Selector="control|MFButton">
+        <Setter Property="BorderThickness" Value="1.2" />
+        <Setter Property="Padding" Value="18,9" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MFMediumBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource MFBackground}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource SmallCornerRadius}" />
+        <Setter Property="Foreground" Value="{DynamicResource MFColorDefault}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{DynamicResource MFBorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BoxShadow="{DynamicResource MFLowShadow}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Margin="{TemplateBinding Margin}"
+                        Padding="{TemplateBinding Padding}"
+                        TextElement.Foreground="{TemplateBinding Foreground}">
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                          RecognizesAccessKey="True"
+                                          FontSize="{TemplateBinding FontSize}" />
+                        <control:MFLoading IsVisible="{TemplateBinding Loading}" CircleArea="{TemplateBinding 
+                        LoadingArea}" StrokeThickness="{TemplateBinding LoadingStrokeThickness}" 
+                        RingColor="{TemplateBinding LoadingRingColor}" LoadingClasses="{TemplateBinding LoadingClasses}" />
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Duration="0:0:0.35" Property="Background" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="control|MFButton:pointerover">
+        <Setter Property="Foreground" Value="{DynamicResource MFColorDefault}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MFColorDefaultGradient}" />
+    </Style>
+    <Style Selector="control|MFButton:pressed">
+        <Setter Property="Foreground" Value="{DynamicResource MFColorDefault}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MFColorDefaultGradient}" />
+    </Style>
+    <Style Selector="control|MFButton /template/ Border">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Duration="0:0:0.3" Property="BorderBrush" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="control|MFButton:pointerover /template/ Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource MFColorDefaultGradient}" />
+    </Style>
+    <Style Selector="control|MFButton:pressed /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource MFBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MFColorDefault}" />
+    </Style>
+    <!-- Default END -->
+    <!-- Primary BEGINB -->
+    <Style Selector="control|MFButton.Primary">
+        <Setter Property="Padding" Value="18,9" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="50%,100%" StartPoint="48%,0%">
+
+                    <GradientStop Color="{DynamicResource MFColorPrimary}" Offset="0.5" />
+                    <GradientStop Color="{DynamicResource MFColorPrimaryGradient}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Duration="0:0:0.2" Property="Background" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="control|MFButton.Primary:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MFColorPrimary}" />
+    </Style>
+
+
+    <Style Selector="control|MFButton.Primary:pressed /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource MFColorPrimaryGradient}" />
+    </Style>
+
+    <Style Selector="control|MFButton.Primary /template/ Border">
+
+        <Setter Property="BoxShadow" Value="{DynamicResource MFLowShadow}" />
+    </Style>
+    <!-- Primary END -->
+    <!-- Info BEGIN -->
+    <Style Selector="control|MFButton.Info">
+        <Setter Property="Padding" Value="18,9" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="50%,100%" StartPoint="48%,0%">
+
+                    <GradientStop Color="{DynamicResource MFColorInfo}" Offset="0.5" />
+                    <GradientStop Color="{DynamicResource MFColorInfoGradient}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Duration="0:0:0.2" Property="Background" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="control|MFButton.Info:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MFColorInfo}" />
+    </Style>
+    <Style Selector="control|MFButton.Info:pressed /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource MFColorInfoGradient}" />
+    </Style>
+    <Style Selector="control|MFButton.Info /template/ Border">
+
+        <Setter Property="BoxShadow" Value="{DynamicResource MFLowShadow}" />
+    </Style>
+    <!-- Info END -->
+    <!-- Success BEGIN -->
+    <Style Selector="control|MFButton.Success">
+        <Setter Property="Padding" Value="18,9" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="50%,100%" StartPoint="48%,0%">
+
+                    <GradientStop Color="{DynamicResource MFColorSuccess}" Offset="0.5" />
+                    <GradientStop Color="{DynamicResource MFColorSuccessGradient}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Duration="0:0:0.2" Property="Background" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="control|MFButton.Success:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MFColorSuccess}" />
+    </Style>
+    <Style Selector="control|MFButton.Success:pressed /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource MFColorSuccessGradient}" />
+    </Style>
+    <Style Selector="control|MFButton.Success /template/ Border">
+
+        <Setter Property="BoxShadow" Value="{DynamicResource MFLowShadow}" />
+    </Style>
+    <!-- Success END -->
+    <!-- Warning BEGIN -->
+    <Style Selector="control|MFButton.Warning">
+        <Setter Property="Padding" Value="18,9" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="50%,100%" StartPoint="48%,0%">
+
+                    <GradientStop Color="{DynamicResource MFColorWarning}" Offset="0.5" />
+                    <GradientStop Color="{DynamicResource MFColorWarningGradient}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Duration="0:0:0.2" Property="Background" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="control|MFButton.Warning:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MFColorWarning}" />
+    </Style>
+    <Style Selector="control|MFButton.Warning:pressed /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource MFColorWarningGradient}" />
+    </Style>
+    <Style Selector="control|MFButton.Warning /template/ Border">
+
+        <Setter Property="BoxShadow" Value="{DynamicResource MFLowShadow}" />
+    </Style>
+    <!-- Warning END -->
+    <!-- Danger BEGIN -->
+    <Style Selector="control|MFButton.Danger">
+        <Setter Property="Padding" Value="18,9" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="50%,100%" StartPoint="48%,0%">
+
+                    <GradientStop Color="{DynamicResource MFColorDanger}" Offset="0.5" />
+                    <GradientStop Color="{DynamicResource MFColorDangerGradient}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Duration="0:0:0.2" Property="Background" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="control|MFButton.Danger:pointerover">
+        <Setter Property="Background" Value="{DynamicResource MFColorDanger}" />
+    </Style>
+    <Style Selector="control|MFButton.Danger:pressed /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource MFColorDangerGradient}" />
+    </Style>
+    <Style Selector="control|MFButton.Danger /template/ Border">
+
+        <Setter Property="BoxShadow" Value="{DynamicResource MFLowShadow}" />
+    </Style>
+    <!-- Danger END -->
+</Styles>
