@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.7" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Controls\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\MFToolkit.Avaloniaui\MFToolkit.Avaloniaui.csproj" />
+	</ItemGroup>
+</Project>

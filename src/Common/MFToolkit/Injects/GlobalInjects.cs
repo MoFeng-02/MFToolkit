@@ -110,12 +110,13 @@ public static class GlobalInjects
             options.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", httpRequestConfiguration?.RequestTokenFunc());
         })
-#if DEBUG
+            // 暂时先注释
+// #if DEBUG
             .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
             {
                 ServerCertificateCustomValidationCallback = delegate { return true; }
             })
-#endif
+// #endif
             ;
         services.AddSingleton<HttpClientFactoryService>();
 

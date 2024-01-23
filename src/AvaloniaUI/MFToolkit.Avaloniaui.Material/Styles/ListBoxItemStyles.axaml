@@ -1,0 +1,44 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource MFColorInfo}" />
+        <Setter Property="Foreground" Value="{DynamicResource MFColorBrush}" />
+    </Style>
+    <Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource MFColorInfo}" />
+        <Setter Property="Foreground" Value="{DynamicResource MFColorBrush}" />
+    </Style>
+
+    <Style Selector="ListBoxItem:selected">
+
+        <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource MFColorInfo}" />
+            <Setter Property="Foreground" Value="{DynamicResource MFColorBrush}" />
+        </Style>
+
+        <!--  Selected Unfocused State  -->
+        <Style Selector="^:not(:focus) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource MFColorInfo}" />
+            <Setter Property="Foreground" Value="{DynamicResource MFColorBrush}" />
+        </Style>
+
+        <!--  Selected PointerOver State  -->
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource MFColorInfo}" />
+            <Setter Property="Foreground" Value="{DynamicResource MFColorBrush}" />
+        </Style>
+
+        <!--  Selected Pressed State  -->
+        <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource MFColorInfo}" />
+            <Setter Property="Foreground" Value="{DynamicResource MFColorBrush}" />
+        </Style>
+    </Style>
+</Styles>

@@ -1,9 +1,0 @@
-﻿:pointerover：鼠标指针悬停在控件上。
-:pressed：控件正在被按下。
-:disabled：控件被禁用。
-:focus：控件具有输入焦点。
-:watermark：对于TextBox控件，当显示水印时。
-:checked：对于可选控件，如CheckBox或MenuItem，当被选中时。
-:indeterminate：对于像CheckBox这样的控件，当处于不确定状态时。
-:valid：对于输入控件，当输入有效时。
-:invalid：对于输入控件，当输入无效时。

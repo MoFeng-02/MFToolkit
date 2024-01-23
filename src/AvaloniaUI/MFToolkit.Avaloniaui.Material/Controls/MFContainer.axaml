@@ -1,0 +1,128 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:control="https://github.com/MoFeng-02/MFToolkit/tree/main/src/AvaloniaUI/MFToolkit.Avaloniaui"
+             xmlns:convert="clr-namespace:MFToolkit.Avaloniaui.Converters;assembly=MFToolkit.Avaloniaui"
+             mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+             x:Class="MFToolkit.Avaloniaui.Material.Controls.MFContainer">
+    <UserControl.Resources>
+        <convert:BoolToInverseConverter x:Key="BoolToInverseConverter" />
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="control|MFContainer">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid Name="Container"
+                          Background="Transparent">
+                        <Border Name="Main">
+                            <Border.Transitions>
+                                <Transitions>
+                                    <DoubleTransition Duration="0:0:0.25" Property="Opacity" />
+                                </Transitions>
+                            </Border.Transitions>
+                            <ContentControl
+                                IsEnabled="{TemplateBinding IsOpen,Converter={StaticResource BoolToInverseConverter}}"
+                                Content="{TemplateBinding Content}" />
+                        </Border>
+                        <Border Name="Toast"
+                                Background="{DynamicResource MFDialogBackground}"
+                                BorderBrush="{DynamicResource MFComponentBackground}"
+                                BoxShadow="0 4 12 0 #55555555"
+                                CornerRadius="30"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                IsHitTestVisible="False"
+                                Margin="0 100 0 0">
+                            <Border.Transitions>
+                                <Transitions>
+                                    <DoubleTransition Duration="0:0:0.3" Property="Opacity">
+                                        <DoubleTransition.Easing>
+                                            <ExponentialEaseOut />
+                                        </DoubleTransition.Easing>
+                                    </DoubleTransition>
+                                    <ThicknessTransition Duration="0:0:0.3" Property="Margin">
+                                        <ThicknessTransition.Easing>
+                                            <ExponentialEaseOut />
+                                        </ThicknessTransition.Easing>
+                                    </ThicknessTransition>
+                                </Transitions>
+                            </Border.Transitions>
+                            <ContentControl Content="{TemplateBinding ToastContent}" Margin="15,7" />
+                        </Border>
+                        <Border Name="Dialog"
+                                Background="{DynamicResource MFDialogBackground}"
+                                CornerRadius="20"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                IsHitTestVisible="False"
+                                Opacity="0">
+                            <Border.Transitions>
+                                <Transitions>
+
+
+                                    <ThicknessTransition Duration="0:0:0.25" Property="Margin">
+                                        <ThicknessTransition.Easing>
+                                            <CircularEaseOut />
+                                        </ThicknessTransition.Easing>
+                                    </ThicknessTransition>
+                                    <DoubleTransition Duration="0:0:0.15" Property="Opacity" />
+                                    <TransformOperationsTransition Duration="0:0:0.25" Property="RenderTransform">
+                                        <TransformOperationsTransition.Easing>
+                                            <CircularEaseOut />
+                                        </TransformOperationsTransition.Easing>
+                                    </TransformOperationsTransition>
+                                </Transitions>
+                            </Border.Transitions>
+
+                            <ContentControl Content="{TemplateBinding DialogContent}" />
+
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="control|MFContainer[IsOpen=True] Grid#Container">
+            <Setter Property="Background" Value="#4a4a4b"></Setter>
+        </Style>
+        <Style Selector="control|MFContainer[IsToastOpen=True] Border#Toast">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="Margin" Value="0,100,0,0" />
+        </Style>
+
+        <Style Selector="control|MFContainer[IsToastOpen=False] Border#Toast">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="Margin" Value="0,125,0,0" />
+        </Style>
+
+        <Style Selector="control|MFContainer[IsOpen=True] Border#Main">
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="Effect" Value="blur(5)" />
+        </Style>
+
+        <Style Selector="control|MFContainer[IsOpen=True] Border#Dialog">
+            <Setter Property="Margin" Value="0,25,0,0" />
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="IsHitTestVisible" Value="True" />
+            <Setter Property="RenderTransform" Value="scale(1)" />
+        </Style>
+
+        <Style Selector="control|MFContainer[IsOpen=False] Border#Dialog">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="RenderTransform" Value="scale(0.7)" />
+            <Setter Property="Margin" Value="0,125,0,0" />
+        </Style>
+
+        <Style Selector="control|MFContainer[ShowAtBottom=True] Border#Dialog">
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Margin" Value="0,0,0,20" />
+
+        </Style>
+
+        <Style Selector="control|MFContainer[ShowAtBottom=False] Border#Dialog">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+    </UserControl.Styles>
+</UserControl>

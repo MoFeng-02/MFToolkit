@@ -10,13 +10,13 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// 注册所有实现了IPrivateDependency的服务
     /// <para>
     /// 如何使用，示例：
-    /// <code>builder.Services.AddServices(Assembly.Load("Zero.Api.Services"));</code>
+    /// <code>builder.Services.AddDependencyInjection(Assembly.Load("Zero.Api.Services"));</code>
     /// </para>
     /// </summary>
     /// <param name="services">服务容器</param>
     /// <param name="assembly">程序集</param>
     /// <exception cref="InvalidOperationException"></exception>
-    public static IServiceCollection AddServices(this IServiceCollection services, Assembly assembly)
+    public static IServiceCollection AddDependencyInjection(this IServiceCollection services, Assembly assembly)
     {
         var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => typeof(IPrivateDependency).IsAssignableFrom(i)));
         foreach (var type in types)

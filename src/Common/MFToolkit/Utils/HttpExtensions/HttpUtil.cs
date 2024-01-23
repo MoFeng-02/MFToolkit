@@ -1,18 +1,19 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
+using System.Text.Json.Serialization;
 using MFToolkit.JsonExtensions;
 using MFToolkit.Utils.AppExtensions;
 using MFToolkit.Utils.HttpExtensions.HttpClientFactorys;
-using MFToolkit.Utils.HttpExtensions.HttpResultModels;
 using MFToolkit.Utils.HttpExtensions.Results;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace MFToolkit.Utils.HttpExtensions;
 
+/// <summary>
+/// Http 工具集
+/// </summary>
 public sealed class HttpUtil
 {
-    internal static Uri? baseUri;
+    private static Uri? _baseUri;
 
     /// <summary>
     /// 初始化快捷请求信息HttpRequest
@@ -20,7 +21,7 @@ public sealed class HttpUtil
     /// <param name="baseuri">请求基路由</param>
     public static void InitRequest(Uri? uri)
     {
-        baseUri = uri;
+        _baseUri = uri;
         //HttpRequestExtension.HttpRequestInit(baseUri);
     }
 
@@ -30,7 +31,8 @@ public sealed class HttpUtil
     /// <returns></returns>
     public static HttpClientService GetHttpClientService()
     {
-        return AppUtil.GetService<HttpClientService>() ?? throw new("未注册HttpClientService，参考链接：https://learn.microsoft.com/zh-cn/dotnet/core/extensions/httpclient-factory#typed-clients");
+        return AppUtil.GetService<HttpClientService>() ?? throw new(
+            "未注册HttpClientService，参考链接：https://learn.microsoft.com/zh-cn/dotnet/core/extensions/httpclient-factory#typed-clients");
     }
 
     /// <summary>
@@ -42,7 +44,7 @@ public sealed class HttpUtil
     public static HttpClient CreateHttpClient(string name = "", bool isAddBaseUri = true)
     {
         var httpClient = HttpClientExtension.Instance.CreateHttpClient(name);
-        if (isAddBaseUri) httpClient.BaseAddress = baseUri ?? default;
+        if (isAddBaseUri) httpClient.BaseAddress = _baseUri ?? default;
         return httpClient;
     }
 
@@ -68,10 +70,12 @@ public sealed class HttpUtil
     /// 设置JSON Body
     /// </summary>
     /// <param name="body"></param>
+    /// <param name="context">如果是AOT的情况下手动提供Json序列化上下文</param>
     /// <returns></returns>
-    public static HttpContent SetBodyAsJson<T>(T body) where T : notnull
+    public static HttpContent SetBodyAsJson<T>(T body, JsonSerializerContext? context = null) where T : notnull
     {
-        var httpContent = new StringContent(body.ValueToJson()!, new MediaTypeHeaderValue("application/json"));
+        var httpContent = new StringContent(body.ValueToJson(context: context)!,
+            new MediaTypeHeaderValue("application/json"));
         return httpContent;
     }
 
@@ -157,12 +161,15 @@ public static partial class HttpClientExtensionTwo
     /// </summary>
     /// <typeparam name="T">返回规范值Data的类型</typeparam>
     /// <param name="response">请求响应体</param>
+    /// <param name="context">如果是AOT的情况下手动提供Json序列化上下文</param>
     /// <returns></returns>
-    public static async Task<ApiResult<T>?> ReadAsFormattingAsync<T>(this HttpResponseMessage response) where T : class
+    public static async Task<ApiResult<T>?> ReadAsFormattingAsync<T>(this HttpResponseMessage response,
+        JsonSerializerContext? context = null) where T :
+        class
     {
         if (!response.IsSuccessStatusCode) return null;
         var str = await response.Content.ReadAsStringAsync();
-        var result = str.JsonToDeserialize<ApiResult<T>>();
+        var result = str.JsonToDeserialize<ApiResult<T>>(context: context);
         return result;
     }
 

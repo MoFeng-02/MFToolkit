@@ -12,7 +12,7 @@ public class Preferences : IPreferences
 {
     private static string _encryptionKey = "7R9pXcE2qFbY5vA1sT3uZ8wI4oP6lK0j";
 
-    private static readonly Type[] SupportedTypes = new Type[7]
+    private static readonly Type[] SupportedTypes =
     {
         typeof(string),
         typeof(int),
