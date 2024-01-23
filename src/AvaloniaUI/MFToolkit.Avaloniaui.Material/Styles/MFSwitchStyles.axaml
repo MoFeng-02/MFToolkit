@@ -1,6 +1,6 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:control="https://github.com/MoFeng-02/MFToolkit/tree/main/src/AvaloniaUI/MFToolkit.Avaloniaui">
+        xmlns:control="https://github.com/MoFeng-02/MFToolkit/tree/main/src/AvaloniaUI">
     <Design.PreviewWith>
         <Border Padding="20" Width="200">
             <!-- Add Controls for Previewer Here -->
