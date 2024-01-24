@@ -62,11 +62,15 @@ public sealed class Routing
     /// 路由信息
     /// </summary>
 #if NET8_0_OR_GREATER
-    public static List<RoutingModel> RoutingInfos { get; } = [];
+    private static List<RoutingModel> RoutingInfos { get; } = [];
 #else
-    public static List<RoutingModel> RoutingInfos { get; } = new();
+    private static List<RoutingModel> RoutingInfos { get; } = new();
 #endif
-
+    /// <summary>
+    /// 获取路由详情信息
+    /// </summary>
+    /// <returns></returns>
+    public static List<RoutingModel> GetRoutingInfos() => RoutingInfos;
 
     /// <summary>
     /// 注册路由
@@ -92,8 +96,9 @@ public sealed class Routing
     /// <param name="title">标题</param>
     /// <param name="isTopNavigation">是否顶级菜单页</param>
     /// <param name="isKeepAlive">是否保活页</param>
+    /// <param name="imagePath">页面的图标</param>
     public static void RegisterRoute(Type type, string? route = null, string? title = null, bool isTopNavigation =
-        false, bool isKeepAlive = false)
+        false, bool isKeepAlive = false, string? imagePath = null)
     {
         // 如果路由为空，则设置随机路由
         route ??= Guid.NewGuid().ToString();
@@ -104,7 +109,8 @@ public sealed class Routing
             PageType = type,
             Title = title,
             IsTopNavigation = isTopNavigation,
-            IsKeepAlive = isKeepAlive
+            IsKeepAlive = isKeepAlive,
+            ImagePath = imagePath
         });
     }
 
