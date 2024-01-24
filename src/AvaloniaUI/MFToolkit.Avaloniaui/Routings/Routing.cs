@@ -444,7 +444,7 @@ public sealed class Routing
         }
 
         // 否则返回菜单页面
-        var findTopNavigation = TopNavigations?.FirstOrDefault(q => q.Value.RoutingId == ThisTopNavigationId).Value;
+        var findTopNavigation = TopNavigations.FirstOrDefault(q => q.Value.RoutingId == ThisTopNavigationId).Value;
         if (findTopNavigation == null) return null;
         return Task.FromResult(findTopNavigation);
     }
@@ -454,10 +454,10 @@ public sealed class Routing
     /// </summary>
     public static void ClearRouting()
     {
-        RoutingInfos?.Clear();
-        NavigationRoutings?.Clear();
-        KeepAlives?.Clear();
-        TopNavigations?.Clear();
+        RoutingInfos.Clear();
+        NavigationRoutings.Clear();
+        KeepAlives.Clear();
+        TopNavigations.Clear();
         CurrentInfo = null;
         ThisRoute = null;
         ThisNavigationId = Guid.Empty;
@@ -485,7 +485,7 @@ public class RoutingModel
     public bool IsKeepAlive { get; set; }
 
     /// <summary>
-    /// 是否为顶级菜单，顶级菜单代表不能在子菜单里面，顶级菜单页默认就是保活页
+    /// 是否为顶级页面，顶级页面代表不能在子页面里面，顶级页面页默认就是保活页
     /// </summary>
     public bool IsTopNavigation { get; set; }
 
