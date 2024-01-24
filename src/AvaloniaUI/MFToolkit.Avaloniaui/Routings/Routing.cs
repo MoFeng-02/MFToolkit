@@ -28,24 +28,27 @@ public sealed class Routing
     /// 路由集合的顶级ID
     /// </summary>
 #if NET8_0_OR_GREATER
-    public static readonly ConcurrentDictionary<string, RouteCurrentInfo> TopNavigations = [];
+    private static readonly ConcurrentDictionary<string, RouteCurrentInfo> TopNavigations = [];
 #else
-    public static readonly ConcurrentDictionary<string, RouteCurrentInfo> TopNavigations = new();
+    private static readonly ConcurrentDictionary<string, RouteCurrentInfo> TopNavigations = new();
 #endif
     /// <summary>
     /// 保活页面
     /// </summary>
-    public static readonly ConcurrentDictionary<string, RouteCurrentInfo> KeepAlives;
-
+#if NET8_0_OR_GREATER
+    private static readonly ConcurrentDictionary<string, RouteCurrentInfo> KeepAlives = [];
+#else
+    private static readonly ConcurrentDictionary<string, RouteCurrentInfo> KeepAlives = new();
+#endif
     /// <summary>
     /// 路由集合
     /// Guid: RoutingId
     /// List: RouteInfos
     /// </summary>
 #if NET8_0_OR_GREATER
-    public static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutings = [];
+    private static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutings = [];
 #else
-    public static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutings = new();
+    private static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutings = new();
 #endif
     /// <summary>
     /// 分割处理符号
@@ -84,10 +87,13 @@ public sealed class Routing
     /// <summary>
     /// 注册路由
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="route"></param>
-    /// <param name="title"></param>
-    public static void RegisterRoute(Type type, string? route = null, string? title = null)
+    /// <param name="type">页面</param>
+    /// <param name="route">路由</param>
+    /// <param name="title">标题</param>
+    /// <param name="isTopNavigation">是否顶级菜单页</param>
+    /// <param name="isKeepAlive">是否保活页</param>
+    public static void RegisterRoute(Type type, string? route = null, string? title = null, bool isTopNavigation =
+        false, bool isKeepAlive = false)
     {
         // 如果路由为空，则设置随机路由
         route ??= Guid.NewGuid().ToString();
@@ -96,7 +102,9 @@ public sealed class Routing
         {
             Route = route,
             PageType = type,
-            Title = title
+            Title = title,
+            IsTopNavigation = isTopNavigation,
+            IsKeepAlive = isKeepAlive
         });
     }
 
@@ -105,7 +113,7 @@ public sealed class Routing
     /// </summary>
     /// <param name="queryString">路由参数</param>
     /// <returns></returns>
-    public static Dictionary<string, object?>? QueryParameter(string? queryString)
+    private static Dictionary<string, object?>? QueryParameter(string? queryString)
     {
         // 检查查询字符串是否为空或仅包含空白字符
         if (string.IsNullOrWhiteSpace(queryString)) return null;
@@ -174,7 +182,7 @@ public sealed class Routing
     /// 获取是否还有上一页
     /// </summary>
     /// <returns></returns>
-    public static bool GetPrevRouting()
+    internal static bool GetPrevRouting()
     {
         if (!NavigationRoutings.TryGetValue(ThisTopNavigationId, out var navigations)) return false;
         return navigations.Count != 0;
@@ -237,7 +245,7 @@ public sealed class Routing
     /// <param name="route"></param>
     /// <param name="isThisAction">是否是本类操作</param>
     /// <returns></returns>
-    public static async Task<RouteCurrentInfo?> GoToAsync(string route, bool isThisAction = false)
+    internal static async Task<RouteCurrentInfo?> GoToAsync(string route, bool isThisAction = false)
     {
         if (string.IsNullOrWhiteSpace(route)) return CurrentInfo;
         if (!RoutingInfos.Any()) throw new Exception("未注册路由");
@@ -251,17 +259,17 @@ public sealed class Routing
 
         var findIndex = route.IndexOf('?');
         if (findIndex == 0) throw new Exception("符号“?”放置位置错误，错误示例：?a=1，正确示例：hemo?a=1");
-#if NETSTANDARD2_0
-        // 格式化后的路由
-        var formatRoute = findIndex == -1 ? route : route.Substring(0, findIndex);
-        // 格式化后的参数值
-        var formatData = QueryParameter(findIndex == -1 ? null : route.Substring(++findIndex));
-#elif NET7_0 || NET8_0
+        //#if NETSTANDARD2_0
+        //        // 格式化后的路由
+        //        var formatRoute = findIndex == -1 ? route : route.Substring(0, findIndex);
+        //        // 格式化后的参数值
+        //        var formatData = QueryParameter(findIndex == -1 ? null : route.Substring(++findIndex));
+        //#elif NET7_0 || NET8_0
         // 格式化后的路由
         var formatRoute = findIndex == -1 ? route : route[..findIndex];
         // 格式化后的参数值
         var formatData = QueryParameter(findIndex == -1 ? null : route[++findIndex..]);
-#endif
+        //#endif
         // 查找路由注册信息
         var findInfo = RoutingInfos.FirstOrDefault(q => q.Route == formatRoute)!;
 
@@ -318,6 +326,8 @@ public sealed class Routing
         // 如果不是顶级菜单，且为保活页
         if (!isTopNavigation && isKeepAlive)
         {
+            // 如果不存在顶级导航页面
+            if (ThisTopNavigationId == Guid.Empty) ThisTopNavigationId = Guid.NewGuid();
             // 如果现在不存在，则注册
             if (!KeepAlives.TryGetValue(formatRoute, out var keepAlive))
             {
@@ -395,7 +405,7 @@ public sealed class Routing
     /// </summary>
     /// <param name="_route">导航路由</param>
     /// <returns></returns>
-    public static Task<RouteCurrentInfo?> PrevRouting(string? _route = null)
+    private static Task<RouteCurrentInfo?> PrevRouting(string? _route = null)
     {
         // 首先获取本页是不是属于菜单页
         var findInfo = RoutingInfos.FirstOrDefault(q => q.Route == (_route ?? ThisRoute)) ??
