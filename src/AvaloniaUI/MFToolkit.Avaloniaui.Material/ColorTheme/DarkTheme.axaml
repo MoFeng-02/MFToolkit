@@ -29,7 +29,7 @@
     <Color x:Key="MFMediumBorderBrush">#555555</Color>
 
     <Color x:Key="MFColorCell">#1c1c1e</Color>
-    <Color x:Key="MFColorCellItem">#3a3a3c</Color>
+    <Color x:Key="MFColorComboBoxItem">#3a3a3c</Color>
 
     <!-- PopupColor -->
     <Color x:Key="MFDialogBackground">#252729</Color>

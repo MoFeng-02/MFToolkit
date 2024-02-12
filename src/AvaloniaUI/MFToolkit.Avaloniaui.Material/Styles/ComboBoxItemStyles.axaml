@@ -27,7 +27,7 @@
     </Style>
      <!--  PointerOver state  -->
     <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="{DynamicResource MFColorBrush}" />
+      <Setter Property="Background" Value="{DynamicResource MFColorComboBoxItem}" />
       <Setter Property="BorderBrush" Value="{DynamicResource MFColorBrush}" />
       <Setter Property="Foreground" Value="{DynamicResource ComboBoxItemForegroundPointerOver}" />
     </Style>
@@ -36,7 +36,7 @@
 
     <!--  Pressed state  -->
     <Style Selector="ComboBoxItem:pressed /template/ ContentPresenter">
-      <Setter Property="Background" Value="{DynamicResource MFColorBrush}" />
+      <Setter Property="Background" Value="{DynamicResource MFColorComboBoxItem}" />
       <Setter Property="BorderBrush" Value="{DynamicResource MFColorBrush}" />
       <Setter Property="Foreground" Value="{DynamicResource ComboBoxItemForegroundPressed}" />
     </Style>

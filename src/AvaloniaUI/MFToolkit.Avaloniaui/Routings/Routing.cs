@@ -23,7 +23,7 @@ public sealed class Routing
     private static string? ThisRoute;
 
     private static RouteCurrentInfo? CurrentInfo;
-
+    public static RouteCurrentInfo? GetCurrentInfo() => CurrentInfo;
     /// <summary>
     /// 路由集合的顶级ID
     /// </summary>
@@ -101,17 +101,29 @@ public sealed class Routing
         false, bool isKeepAlive = false, string? imagePath = null)
     {
         // 如果路由为空，则设置随机路由
-        route ??= Guid.NewGuid().ToString();
+        route ??= type.Name.ToLower();
         if (RoutingInfos.Any(q => q.Route == route)) throw new Exception($"Route registration duplication: {route}");
         RoutingInfos.Add(new RoutingModel
         {
             Route = route,
             PageType = type,
-            Title = title,
+            Title = title ?? string.Empty,
             IsTopNavigation = isTopNavigation,
             IsKeepAlive = isKeepAlive,
             ImagePath = imagePath
         });
+    }
+
+    /// <summary>
+    /// 根据路由注册的页面类型来获取路由
+    /// <para>通常用于未设置路由而随机生成路由的类</para>
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static string? PageTypeToRoute(Type type)
+    {
+        var query = RoutingInfos.FirstOrDefault(q => q.PageType == type);
+        return query?.Route;
     }
 
     /// <summary>
@@ -503,17 +515,17 @@ public class RouteCurrentInfo
     /// <summary>
     /// 页面ID
     /// </summary>
-    public Guid RoutingId { get; set; } = Guid.NewGuid();
+    public Guid RoutingId { get; internal set; } = Guid.NewGuid();
 
-    public string? Route { get; set; }
-    public object? CurrentPage { get; set; }
-    public bool IsKeepAlive { get; set; }
-    public bool IsTopNavigation { get; set; }
+    public string? Route { get; internal set; }
+    public object? CurrentPage { get; internal set; }
+    public bool IsKeepAlive { get; internal set; }
+    public bool IsTopNavigation { get; internal set; }
 
     /// <summary>
     /// 参数集合
     /// </summary>
-    public Dictionary<string, object?>? Parameters { get; set; }
+    public Dictionary<string, object?>? Parameters { get; internal set; }
 }
 
 public class RoutePathParameter

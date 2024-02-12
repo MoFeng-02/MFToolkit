@@ -30,6 +30,7 @@
 
     <Color x:Key="MFColorCell">#ffffff</Color>
     <Color x:Key="MFColorCellItem">#f2f3f5</Color>
+    <Color x:Key="MFColorComboBoxItem">#fff</Color>
 
     <!-- PopupColor -->
     <Color x:Key="MFDialogBackground">#FFFFFF</Color>

@@ -6,7 +6,6 @@ namespace MFToolkit.JsonExtensions;
 /// <summary>
 /// AOT JSON 序列化配置器
 /// </summary>
-
 [JsonSerializable(typeof(string))]
 [JsonSerializable(typeof(int))]
 [JsonSerializable(typeof(bool))]
