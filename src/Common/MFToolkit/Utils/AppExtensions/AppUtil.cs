@@ -30,12 +30,21 @@ public static class AppUtil
         #endregion
         return services;
     }
+    /// <summary>
+    /// 重新加载ServiceProvider
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ReloadAppUtilService(this IServiceCollection services)
+    {
+        ServiceProvider = services.BuildServiceProvider();
+        return services;
+    }
 
     /// <summary>
     /// 获取注入的服务
     /// </summary>
-    /// <param name="serviceProvider"></param>
-    /// <param name="serviceType"></param>
+    /// <param name="serviceType">查找的服务类型</param>
     /// <returns>如果不存在这个服务，就返回null</returns>
     public static object? GetService(Type serviceType)
     {
@@ -45,7 +54,7 @@ public static class AppUtil
         }
         try
         {
-            var typeService = ServiceProvider?.GetRequiredService(serviceType);
+            var typeService = ServiceProvider.GetRequiredService(serviceType);
             return typeService;
         }
         catch
@@ -56,7 +65,6 @@ public static class AppUtil
     /// <summary>
     /// 获取注入的服务
     /// </summary>
-    /// <param name="serviceProvider"></param>
     /// <typeparam name="T">要解析的类型</typeparam>
     /// <returns>如果不存在这个服务，就返回null</returns>
     public static T? GetService<T>() where T : notnull

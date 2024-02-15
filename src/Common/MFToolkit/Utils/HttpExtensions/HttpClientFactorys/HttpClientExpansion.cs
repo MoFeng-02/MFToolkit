@@ -1,5 +1,4 @@
 ﻿using MFToolkit.Utils.AppExtensions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.Utils.HttpExtensions.HttpClientFactorys;
 internal partial class HttpClientExtension
@@ -11,7 +10,7 @@ internal partial class HttpClientExtension
     {
         try
         {
-            clientFactoryService = AppUtil.ServiceProvider.GetRequiredService<HttpClientFactoryService>();
+            clientFactoryService = AppUtil.GetService<HttpClientFactoryService>();
         }
         catch (Exception ex)
         {

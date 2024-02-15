@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace MFToolkit.Utils.HttpExtensions.Results;
+﻿namespace MFToolkit.Utils.HttpExtensions.Results;
 /// <summary>
 /// API通用返回参数
 /// </summary>
