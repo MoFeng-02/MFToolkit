@@ -68,10 +68,10 @@ public sealed class Navigation
     /// <param name="page">页面信息</param>
     /// <param name="route">查找到的路由</param>
     /// <param name="parameters">传递参数</param>
-    private static RouteCurrentInfo? SetParameters(RouteCurrentInfo? page, string route, Dictionary<string, object?>?
+    private static bool SetParameters(RouteCurrentInfo? page, string route, Dictionary<string, object?>?
         parameters)
     {
-        if (page == null) return null;
+        if (page == null) return false;
         if (!CacheStringRouteParameter.TryGetValue(route, out var query))
         {
             CacheStringRouteParameter.AddOrUpdate(route, parameters, (_, _) => parameters);
@@ -98,7 +98,7 @@ public sealed class Navigation
             queryAttributable.ApplyQueryAttributes(parameters ?? new());
         }
 
-        return page;
+        return true;
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public sealed class Navigation
     {
         var page = await Routing.GoToAsync(route);
 
-        if (SetParameters(page, route, parameters) == null) return null;
+        if (!SetParameters(page, route, parameters)) return null;
 
         NavigationTo?.Invoke(page!.CurrentPage, page);
         return page?.CurrentPage;
@@ -130,7 +130,7 @@ public sealed class Navigation
         if (string.IsNullOrWhiteSpace(route)) throw new("您的页面未找到");
         var page = await Routing.GoToAsync(route);
 
-        if (SetParameters(page, route, parameters) == null) return null;
+        if (!SetParameters(page, route, parameters)) return null;
 
         NavigationTo?.Invoke(page!.CurrentPage, page);
         return page?.CurrentPage;
