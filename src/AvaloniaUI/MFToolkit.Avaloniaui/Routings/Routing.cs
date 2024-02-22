@@ -277,6 +277,7 @@ public sealed class Routing
 
         var findIndex = route.IndexOf('?');
         if (findIndex == 0) throw new Exception("符号“?”放置位置错误，错误示例：?a=1，正确示例：hemo?a=1");
+        // NETSTANDARD2_0 标准已被剔除，只保留net >= 7 版本
         //#if NETSTANDARD2_0
         //        // 格式化后的路由
         //        var formatRoute = findIndex == -1 ? route : route.Substring(0, findIndex);
