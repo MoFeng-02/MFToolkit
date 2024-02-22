@@ -81,7 +81,7 @@ public sealed class Routing
     {
         foreach (var item in routings)
         {
-            item.Route ??= Guid.NewGuid().ToString();
+            item.Route ??= item.PageType.Name.ToLower();
             if (RoutingInfos.Any(q => q.Route == item.Route))
                 throw new Exception($"路由已存在: {item.Route}");
             RoutingInfos.Add(item);
