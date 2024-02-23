@@ -269,7 +269,7 @@ public sealed class Routing
         if (!RoutingInfos.Any()) throw new Exception("未注册路由");
         // 如果需要返回上一页的话
         var queryIndex = route.IndexOf('.');
-        if (queryIndex < 1 && queryIndex > -1)
+        if (queryIndex == 0)
         {
             var result = await PrevToAsync(route);
             return result;
