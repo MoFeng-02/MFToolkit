@@ -238,7 +238,7 @@ public partial class MFSwitch : Border
     {
         // 使用代码进行控件初始化
         Background = IsChecked ? CheckedBrush : UnCheckedBrush; // 设为透明
-        Width = double.IsNaN(Width) ? 50 : Width; // 默认宽度为60
+        Width = double.IsNaN(Width) ? 50 : Width; // 默认宽度为50
         if (Padding is { Left: 0, Top: 0, Right: 0, Bottom: 0 })
             Padding = Thickness.Parse("2");
         CornerRadius = new CornerRadius(50);
@@ -261,7 +261,7 @@ public partial class MFSwitch : Border
 
         Tapped += (o, e) =>
         {
-            // 加载中不允许执行事物
+            // 加载中不允许执行事物/事件
             if (IsLoading) return;
             IsChecked = !IsChecked;
             if (CheckedCommand != null)

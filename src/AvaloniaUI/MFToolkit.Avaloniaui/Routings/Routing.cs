@@ -428,7 +428,7 @@ public sealed class Routing
     {
         // 首先获取本页是不是属于菜单页
         var findInfo = RoutingInfos.FirstOrDefault(q => q.Route == (_route ?? ThisRoute)) ??
-                       throw new Exception("This route does not exist");
+                       throw new Exception($"此路由不存在：{_route}");
         var isTopNavigation = findInfo.IsTopNavigation;
         if (isTopNavigation)
         {
@@ -436,7 +436,7 @@ public sealed class Routing
         }
 
         // 根据当前菜单Id和它的路由来查找当前所在位置
-        if (ThisTopNavigationId == Guid.Empty) throw new Exception("Route ID error");
+        if (ThisTopNavigationId == Guid.Empty) throw new Exception("顶级路由ID错误");
         // 当前循环所在下标
         var thisIndex = -1;
         if (!NavigationRoutings.TryGetValue(ThisTopNavigationId, out var navigations))

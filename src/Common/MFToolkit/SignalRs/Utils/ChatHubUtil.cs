@@ -26,7 +26,7 @@ public class ChatHubUtil
     /// <summary>
     /// 是否启动重连
     /// </summary>
-    public static bool IsStartReconnection;
+    public static bool IsStartReconnection {  get; private set; }
     /// <summary>
     /// 获取连接状态
     /// </summary>
@@ -160,6 +160,7 @@ public class ChatHubUtil
         }
         catch (Exception ex)
         {
+            await Console.Out.WriteLineAsync(ex.Message);
         }
         isStart = GetConnectState() == HubConnectionState.Connected;
     }

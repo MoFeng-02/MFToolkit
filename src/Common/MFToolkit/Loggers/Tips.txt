@@ -1,0 +1,3 @@
+﻿对于Web Api/Web 网页端（Blazor等），建议还是使用Serilogs里面的比较好
+桌面端可以使用LoggerExtensions里面的也可以选择Serilogs
+原因，LoggerExtensions内的我并没有进行特大规模高并发或者太多的多线程写入日志，所以我不做过多保证，不过我自己在桌面开发的时候选择的是我自己的LoggerExtensions内的
