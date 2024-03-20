@@ -1,6 +1,6 @@
-﻿using MFWeChatToolkit.Configurations.BasicConfiguration;
+﻿using MFToolkit.WeChat.Configurations.BasicConfiguration;
 
-namespace MFWeChatToolkit.Configurations;
+namespace MFToolkit.WeChat.Configurations;
 /// <summary>
 /// 微信开发配置工具
 /// </summary>

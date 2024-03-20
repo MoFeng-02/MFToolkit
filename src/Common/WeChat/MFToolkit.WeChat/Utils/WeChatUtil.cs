@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using MFToolkit.Utils.VerifyUtils;
-using MFWeChatToolkit.Configurations;
+using MFToolkit.WeChat.Configurations;
 using Microsoft.AspNetCore.Http;
 
-namespace MFWeChatToolkit.Utils;
+namespace MFToolkit.WeChat.Utils;
 /// <summary>
 /// 微信开发工具库
 /// </summary>

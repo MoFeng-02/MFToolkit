@@ -14,6 +14,7 @@ public static class AuthorizationExtension
     public static IServiceCollection AddJwtAuthorization(this IServiceCollection service, JsonWebTokenConfig config)
     {
         JsonWebTokenConfig.SetJsonWebTokenConfig(config);
+        service.AddAuthentication().AddJwtBearer();
         service.AddAuthorization(options =>
         {
             options.AddPolicy("jwt", policy =>
@@ -29,17 +30,19 @@ public static class AuthorizationExtension
     /// </summary>
     /// <param name="service"></param>
     /// <returns></returns>
-    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, JsonWebTokenConfig config) where THandler : class, new()
+    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, JsonWebTokenConfig config) where THandler : JwtAuthorizationHandler, new()
     {
 
-        THandler handler = new();
-        if (handler is not IAuthorizationRequirement r) return service;
+        THandler handler = new THandler();
+        if (handler is not IAuthorizationRequirement) return service;
+        service.AddSingleton<IAuthorizationHandler>(handler);
         JsonWebTokenConfig.SetJsonWebTokenConfig(config);
+        service.AddAuthentication().AddJwtBearer();
         service.AddAuthorization(options =>
         {
             options.AddPolicy("jwt", policy =>
             {
-                policy.Requirements.Add(r);
+                policy.Requirements.Add(handler);
             });
         });
         return service;
@@ -53,6 +56,7 @@ public static class AuthorizationExtension
     public static IServiceCollection AddJwtAuthorization(this IServiceCollection service, Dictionary<string, JsonWebTokenConfig> configs)
     {
         JsonWebTokenConfig.SetJsonWebTokenConfig(configs);
+        service.AddAuthentication().AddJwtBearer();
         service.AddAuthorization(options =>
         {
             options.AddPolicy("jwt", policy =>
@@ -68,17 +72,17 @@ public static class AuthorizationExtension
     /// </summary>
     /// <param name="service"></param>
     /// <returns></returns>
-    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, Dictionary<string, JsonWebTokenConfig> configs) where THandler : class, new()
+    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, Dictionary<string, JsonWebTokenConfig> configs) where THandler : JwtAuthorizationHandler, new()
     {
         THandler handler = new();
         if (handler is not IAuthorizationRequirement r) return service;
         JsonWebTokenConfig.SetJsonWebTokenConfig(configs);
+        service.AddAuthentication().AddJwtBearer();
         service.AddAuthorization(options =>
         {
             options.AddPolicy("jwt", policy =>
             {
-                THandler handler = new THandler();
-                policy.Requirements.Add(r);
+                policy.Requirements.Add(handler);
             });
         });
         return service;
