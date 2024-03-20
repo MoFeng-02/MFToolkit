@@ -1,6 +1,8 @@
 ﻿using System.Text;
+using MFToolkit.Utils.AppExtensions;
 using MFToolkit.Utils.VerifyUtils;
 using MFToolkit.WeChat.Configurations;
+using MFToolkit.WeChat.Services;
 using Microsoft.AspNetCore.Http;
 
 namespace MFToolkit.WeChat.Utils;
@@ -49,4 +51,13 @@ public class WeChatUtil
             Verify = verify == signature
         };
     }
+    /// <summary>
+    /// 所有服务默认提供类
+    /// </summary>
+    public static readonly AllService ServiceDefault = new();
+}
+
+public class AllService
+{
+    public IWeChatService WeChatServiceDefault => AppUtil.GetService<IWeChatService>() ?? throw new("无法获取IWeChatService");
 }

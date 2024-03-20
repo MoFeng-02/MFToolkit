@@ -1,16 +1,16 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MFToolkit.Authorization.JwtAuthorization.Configuration;
+using MFToolkit.Authentication.JwtAuthentication.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MFToolkit.Authorization.JwtAuthorization.Handler;
+namespace MFToolkit.Authentication.JwtAuthentication.Handler;
 /// <summary>
 /// JWT 默认验证授权
 /// </summary>
-public class JwtAuthorizationHandler : IAuthorizationHandler, IAuthorizationRequirement
+public class JwtAuthenticationHandler : IAuthorizationHandler, IAuthorizationRequirement
 {
     /// <summary>
     /// 校验JWT是否正确合规

@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MFToolkit.Authorization.JwtAuthorization.Configuration;
+using MFToolkit.Authentication.JwtAuthentication.Configuration;
 using MFToolkit.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MFToolkit.Authorization.JwtAuthorization.Utils;
+namespace MFToolkit.Authentication.JwtAuthentication.Utils;
 public class JwtUtil
 {
     /// <summary>

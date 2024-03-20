@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Authorization.JwtAuthorization.Configuration.BasicConfiguration;
+﻿namespace MFToolkit.Authentication.JwtAuthentication.Configuration.BasicConfiguration;
 public class BasicPayload
 {
     /// <summary>
