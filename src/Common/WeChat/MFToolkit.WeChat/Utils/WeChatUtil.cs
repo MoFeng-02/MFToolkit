@@ -1,7 +1,12 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
+using MFToolkit.JsonExtensions;
 using MFToolkit.Utils.AppExtensions;
+using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
 using MFToolkit.Utils.VerifyUtils;
 using MFToolkit.WeChat.Configurations;
+using MFToolkit.WeChat.Configurations.BasicConfiguration;
+using MFToolkit.WeChat.Json.AOT;
 using MFToolkit.WeChat.Services;
 using Microsoft.AspNetCore.Http;
 
@@ -55,6 +60,25 @@ public class WeChatUtil
     /// 所有服务默认提供类
     /// </summary>
     public static readonly AllService ServiceDefault = new();
+    /// <summary>
+    /// 注册WeChat配置持久化，不提供删除，删除需要自行去处理
+    /// <para>Version: 0.0.1-beta</para>
+    /// </summary>
+    /// <param name="readPath">读取路径，只能是文件夹</param>
+    /// <param name="encryptionKey">内容加密Key，如果是有加密的话</param>
+    public static async Task WeChatConfigurationLasting(string? readPath = null, string? encryptionKey = null) => await WeChatConfigLastingUtil.WeChatConfigurationLasting(readPath, encryptionKey);
+    /// <summary>
+    /// 读取持久化里面的值
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static async Task<WeChatConfig?> GetWeChatConfigLasting(string key) => await WeChatConfigLastingUtil.GetWeChatConfigLasting(key);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static async Task<WeChatConfig?> GetWeChatConfigCache(string key) => await WeChatConfigLastingUtil.GetWeChatConfigCache(key);
 }
 
 public class AllService

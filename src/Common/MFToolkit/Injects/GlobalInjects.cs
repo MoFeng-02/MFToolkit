@@ -44,7 +44,7 @@ public static class GlobalInjects
         Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
-        return new ServiceCollection().InjectServices(httpRequestConfiguration, signalRConfiguration, loggerOptions,
+        return new ServiceCollection().AddInjectServices(httpRequestConfiguration, signalRConfiguration, loggerOptions,
             serviceOptions);
     }
 
@@ -63,7 +63,7 @@ public static class GlobalInjects
     /// <param name="loggerOptions">日志配置</param>
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
-    public static IServiceCollection InjectServices(this IServiceCollection services,
+    public static IServiceCollection AddInjectServices(this IServiceCollection services,
         HttpRequestConfiguration? httpRequestConfiguration = null,
         SignalRConfiguration? signalRConfiguration = null,
         Action<LoggerConfiguration>? loggerOptions = null,

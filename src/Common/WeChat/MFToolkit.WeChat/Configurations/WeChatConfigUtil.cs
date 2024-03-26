@@ -8,6 +8,8 @@ public class WeChatConfigUtil
 {
     private static WeChatConfig? basicConfig;
     private static Dictionary<string, WeChatConfig>? basicConfigs;
+
+    internal static Dictionary<string, WeChatConfig>? GetBasicConfigs() => basicConfigs;
     #region 基本配置
     /// <summary>
     /// 设置基本的参数

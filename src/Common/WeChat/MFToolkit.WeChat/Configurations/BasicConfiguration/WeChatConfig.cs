@@ -31,10 +31,24 @@ public class WeChatConfig
     /// 微信支付密钥 V3版
     /// </summary>
     public string PaySecretApiV3 { get; init; }
+
+    #endregion
+
+    #region Lasting Field（持久化字段）
+    /// <summary>
+    /// 最后保存日期
+    /// </summary>
+    public DateTime LastUpdateTime { get; set; } = DateTime.UtcNow;
+    /// <summary>
+    /// 是否禁用
+    /// </summary>
+    public bool Disabled { get; set; } = false;
+    #endregion
+}
+public sealed class WeChatConfigConstant
+{
     /// <summary>
     /// 统一下单接口 V2版
     /// </summary>
     public const string WX_PAY_INTERFACE_API_V2 = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-
-    #endregion
 }

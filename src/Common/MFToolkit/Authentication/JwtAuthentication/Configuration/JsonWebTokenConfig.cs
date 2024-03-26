@@ -54,10 +54,10 @@ public class JsonWebTokenConfig
     /// <summary>
     /// Header 头
     /// </summary>
-    public BasicHeader Header { get; set; }
+    public BasicHeader Header { get; set; } = new();
     /// <summary>
     /// Payload 载荷
     /// </summary>
-    public BasicPayload Payload { get; set; }
+    public BasicPayload Payload { get; set; } = new();
 
 }
