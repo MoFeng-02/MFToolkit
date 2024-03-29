@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
+using MFToolkit.SqlSugarExtensions.Context;
 using SqlSugar;
 
-namespace MFToolkit.SqlSugarExtensions.AotUtils;
+namespace MFToolkit.SqlSugarExtensions.Configuration;
 
-public class SqlSugarAotConfiguration
+public class SqlSugarConfiguration
 {
     /// <summary>
     /// 单个连接配置
@@ -39,7 +40,7 @@ public class SqlSugarAotConfiguration
         {
             try
             {
-                //高版C#写法 支持string?和string Avalonia Android中不支持，不适用 
+                //高版C#写法 支持string?和string Avalonia Android中不支持，不适用
                 if (column.IsPrimarykey == false && new NullabilityInfoContext()
                         .Create(property).WriteState is NullabilityState.Nullable)
                 {
@@ -72,13 +73,28 @@ public class SqlSugarAotConfiguration
         get => _configureExternalServices ?? DefaultConfigureExternalServices;
         set => _configureExternalServices = value;
     }
-
     /// <summary>
-    /// 初始化设计表 Code First模式
+    /// 初始化设计表 Code First模式（非Aot模式）
     /// <para>建库：如果不存在创建数据库存在不会重复创建</para>
     /// <para>注意：Oracle和个别国产库需不支持该方法，需要手动建库</para>
     /// </summary>
     public static void CreateDataBase(params Type[] entityTypes)
+    {
+        StaticConfig.EnableAot = false;
+        using var aotClient = DbContext.CreateClient();
+        // 设置一下其他数据库配置
+        aotClient.CurrentConnectionConfig.ConfigureExternalServices = ConfigureExternalServices;
+        //建库：如果不存在创建数据库存在不会重复创建 
+        aotClient.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库
+        // 建表
+        aotClient.CodeFirst.InitTables(entityTypes);
+    }
+    /// <summary>
+    /// 初始化设计表 Code First模式（Aot模式）
+    /// <para>建库：如果不存在创建数据库存在不会重复创建</para>
+    /// <para>注意：Oracle和个别国产库需不支持该方法，需要手动建库</para>
+    /// </summary>
+    public static void CreateDataAotBase(params Type[] entityTypes)
     {
         StaticConfig.EnableAot = true;
         using var aotClient = DbContext.CreateClient();

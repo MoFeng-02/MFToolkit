@@ -1,8 +1,9 @@
 ﻿using MFToolkit.JsonExtensions;
+using MFToolkit.SqlSugarExtensions.Configuration;
 using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
 using SqlSugar;
 
-namespace MFToolkit.SqlSugarExtensions.AotUtils.PreferenceUtils;
+namespace MFToolkit.SqlSugarExtensions.Storage;
 
 /// <summary>
 /// 本类为，SqlSugar 的 SQLite 版偏好设置类
@@ -44,7 +45,7 @@ public class Preferences : IPreferences
         ConnectionConfig = config;
         using var aotClient = CreateClient();
         aotClient.CurrentConnectionConfig.ConfigureExternalServices =
-            SqlSugarAotConfiguration.ConfigureExternalServices;
+            SqlSugarConfiguration.ConfigureExternalServices;
         //建库：如果不存在创建数据库存在不会重复创建 
         aotClient.DbMaintenance.CreateDatabase();
         // 建表

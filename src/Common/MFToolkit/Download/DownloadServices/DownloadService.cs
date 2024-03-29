@@ -1,6 +1,7 @@
 ﻿using MFToolkit.Download.DownloadHandlers;
 using MFToolkit.Download.Models;
 using MFToolkit.Extensions;
+using MFToolkit.Utils.AppExtensions;
 using MFToolkit.Utils.HttpExtensions;
 
 namespace MFToolkit.Download.DownloadServices;
@@ -9,11 +10,18 @@ public class DownloadService : IDownloadService, IDisposable
     /// <summary>
     /// 下载Token
     /// </summary>
-    private CancellationTokenSource CancellationTokenSource = new();
-    private CancellationToken CancellationToken;
-    private DownloadModel? currentDownloadModel;
-    private readonly HttpClientService httpClient;
-    private readonly DownloadHandler downloadHandler;
+    protected virtual CancellationTokenSource CancellationTokenSource { get; set; } = new();
+    protected virtual CancellationToken CancellationToken { get; set; }
+    protected virtual DownloadModel currentDownloadModel { get; set; } = null!;
+    /// <summary>
+    /// 关于本字段，如遇到未注册，请注册，参考：
+    /// <para>
+    /// MFToolkit/Injects/GlobalInjects.cs下的AddInjectServices方法
+    /// </para>
+    /// </summary>
+    protected readonly HttpClientService httpClient;
+    //private readonly DownloadHandler? downloadHandler;
+    protected virtual DownloadPauseInfoHandler? downloadPauseInfoHandler { get; set; }
     /// <summary>
     /// 是否下载中
     /// </summary>
@@ -31,11 +39,12 @@ public class DownloadService : IDownloadService, IDisposable
     public Action<bool, DownloadState, Exception?>? DownloadStateAction { get; set; }
     public Action<long, long>? DownloadProgress { get; set; }
 
-    public DownloadService(HttpClientService _httpClient, DownloadHandler downloadHandler)
+    public DownloadService(HttpClientService httpClientService)
     {
-        httpClient = _httpClient;
+        httpClient = httpClientService;
         CancellationToken = CancellationTokenSource.Token;
-        this.downloadHandler = downloadHandler;
+        //downloadHandler = AppUtil.GetService<DownloadHandler>();
+        downloadPauseInfoHandler = AppUtil.GetService<DownloadPauseInfoHandler>();
     }
 
     public void Dispose()
@@ -48,6 +57,7 @@ public class DownloadService : IDownloadService, IDisposable
     {
         if (string.IsNullOrWhiteSpace(downloadModel.FileSavePath) || string.IsNullOrWhiteSpace(downloadModel.DownloadUrl)) throw new Exception("关键内容为空");
         DownloadResult? result = null;
+        currentDownloadModel = downloadModel;
         if (AutoRedownload)
         {
             int autoCount = 0;
@@ -60,7 +70,7 @@ public class DownloadService : IDownloadService, IDisposable
                 }
                 try
                 {
-                    result = await DownloadActionAsync(downloadModel);
+                    result = await DownloadActionAsync();
                 }
                 catch (Exception ex)
                 {
@@ -68,8 +78,14 @@ public class DownloadService : IDownloadService, IDisposable
                     if (isPause)
                     {
                         DownloadStateAction?.Invoke(false, DownloadState.PauseDownloading, ex);
-                        await downloadHandler.SetPauseInfoAsync(downloadModel);
-                        continue;
+
+                        if (downloadPauseInfoHandler == null)
+                        {
+                            DownloadStateAction?.Invoke(false, DownloadState.OtherError, new("请注册：AddDownloadPauseInfoHandler，服务以确保正常使用暂停信息处理"));
+                            break;
+                        }
+                        await downloadPauseInfoHandler.SavePauseInfoAsync(downloadModel);
+                        break;
                     }
                     else if (isStop)
                     {
@@ -92,7 +108,7 @@ public class DownloadService : IDownloadService, IDisposable
         {
             try
             {
-                result = await DownloadActionAsync(downloadModel);
+                result = await DownloadActionAsync();
             }
             catch (Exception ex)
             {
@@ -116,14 +132,13 @@ public class DownloadService : IDownloadService, IDisposable
     /// </summary>
     /// <param name="downloadModel"></param>
     /// <returns></returns>
-    private async Task<DownloadResult> DownloadActionAsync(DownloadModel downloadModel)
+    private async Task<DownloadResult> DownloadActionAsync()
     {
         DownloadStateAction?.Invoke(false, DownloadState.Init, null);
-        currentDownloadModel = downloadModel;
         // 更新偏移量
-        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(downloadModel.YetDownloadSize, null);
+        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(currentDownloadModel.YetDownloadSize, null);
         // 读取请求报头
-        using var response = await httpClient.GetAsync(downloadModel.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, CancellationToken);
+        using var response = await httpClient.GetAsync(currentDownloadModel.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, CancellationToken);
         DownloadResult downloadResult = new();
         if (!response.IsSuccessStatusCode)
         {
@@ -131,12 +146,12 @@ public class DownloadService : IDownloadService, IDisposable
             return downloadResult;
         }
         using Stream contentStream = await response.Content.ReadAsStreamAsync();
-        using FileStream fileStream = downloadModel.YetDownloadSize == 0 ? new(downloadModel.FileSavePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None) : new(downloadModel.FileSavePath, FileMode.Append, FileAccess.Write, FileShare.None);
+        using FileStream fileStream = currentDownloadModel.YetDownloadSize == 0 ? new(currentDownloadModel.FileSavePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None) : new(currentDownloadModel.FileSavePath, FileMode.Append, FileAccess.Write, FileShare.None);
         // 每次写入最大缓存
-        byte[] buffer = new byte[downloadModel.WirteSize];
+        byte[] buffer = new byte[currentDownloadModel.WirteSize];
         long sumCount = response.Content.Headers.GetHeaderValuesFirst<long>("Content-Length");
         int bytesRead;
-        downloadModel.SumDownloadSize ??= sumCount;
+        currentDownloadModel.SumDownloadSize ??= sumCount;
         downloadResult.Size = sumCount;
         DownloadStateAction?.Invoke(false, DownloadState.Ready, null);
         DownloadStateAction?.Invoke(true, DownloadState.Start, null);
@@ -145,21 +160,26 @@ public class DownloadService : IDownloadService, IDisposable
         {
             CancellationToken.ThrowIfCancellationRequested();
             await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), CancellationToken);
-            downloadModel.YetDownloadSize += bytesRead;
-            DownloadProgress?.Invoke(downloadModel.YetDownloadSize, downloadModel.SumDownloadSize ?? sumCount);
+            currentDownloadModel.YetDownloadSize += bytesRead;
+            DownloadProgress?.Invoke(currentDownloadModel.YetDownloadSize, currentDownloadModel.SumDownloadSize ?? sumCount);
             // 检查取消标记是否被设置，如果被设置则抛出异常以中止下载
         }
         downloadResult.Success = true;
         downloadResult.Message = "完成";
-        await fileStream.DisposeAsync();
+        DownloadStateAction?.Invoke(false, DownloadState.CompleteDownloading, null);
         return downloadResult;
     }
     public async Task PauseDownloadAsync()
     {
         CancellationTokenSource.Cancel();
         isPause = true;
-        await downloadHandler.SetPauseInfoAsync(currentDownloadModel);
         DownloadStateAction?.Invoke(true, DownloadState.PauseDownloading, null);
+        if (downloadPauseInfoHandler == null)
+        {
+            DownloadStateAction?.Invoke(false, DownloadState.OtherError, new("请注册：AddDownloadPauseInfoHandler，服务以确保正常使用暂停信息处理"));
+            return;
+        }
+        await Task.CompletedTask;
     }
 
     public async Task ResumeDownloadAsync()
@@ -178,6 +198,8 @@ public class DownloadService : IDownloadService, IDisposable
         CancellationTokenSource.Dispose();
 
         DownloadStateAction?.Invoke(false, DownloadState.Stop, null);
+        // 考虑取消后是否要删除已经下载的部分内容
+        // ...
         await Task.CompletedTask;
     }
 }

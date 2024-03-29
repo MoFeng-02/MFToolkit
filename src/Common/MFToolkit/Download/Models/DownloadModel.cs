@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using SqlSugar;
 
 namespace MFToolkit.Download.Models;
 /// <summary>
@@ -6,6 +6,11 @@ namespace MFToolkit.Download.Models;
 /// </summary>
 public sealed class DownloadModel
 {
+    /// <summary>
+    /// 下载Key
+    /// </summary>
+    [SugarColumn(IsPrimaryKey = true)]
+    public string Key { get; set; } = Guid.NewGuid().ToString();
     /// <summary>
     /// 文件保存路径
     /// </summary>
@@ -21,11 +26,11 @@ public sealed class DownloadModel
     /// <summary>
     /// 当前已经下载了多少了
     /// </summary>
-    public long YetDownloadSize { get; internal set; }
+    public long YetDownloadSize { get; set; }
     /// <summary>
     /// 一共多少
     /// </summary>
-    public long? SumDownloadSize { get; internal set; }
+    public long? SumDownloadSize { get; set; }
     /// <summary>
     /// 当前保存进度，总进度，这个不会保存到详情，请自行处理
     /// </summary>

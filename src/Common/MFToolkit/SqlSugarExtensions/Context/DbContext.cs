@@ -1,6 +1,7 @@
-﻿using SqlSugar;
+﻿using MFToolkit.SqlSugarExtensions.Configuration;
+using SqlSugar;
 
-namespace MFToolkit.SqlSugarExtensions.AotUtils;
+namespace MFToolkit.SqlSugarExtensions.Context;
 
 /// <summary>
 /// 全称：SqlSugarAotDataBaseContext
@@ -26,16 +27,16 @@ public class DbContext
     /// <returns></returns>
     public static SqlSugarClient CreateClient(bool isSingleConfig = true, Action<SqlSugarClient>? configAction = null)
     {
-        if (SqlSugarAotConfiguration.ConnectionConfig == null && (SqlSugarAotConfiguration.ConnectionConfigs == null ||
-                                                                  SqlSugarAotConfiguration.ConnectionConfigs.Count ==
+        if (SqlSugarConfiguration.ConnectionConfig == null && (SqlSugarConfiguration.ConnectionConfigs == null ||
+                                                                  SqlSugarConfiguration.ConnectionConfigs.Count ==
                                                                   0))
             throw new(
                 "数据库连接配置未初始化，它应该如此初始化：在应用程序启动目录等前文件中调用 SqlSugarAotConfiguration.SetConnectionConfig 或 SqlSugarAotConfiguration.SetConnectionConfigs 方法来初始化它");
         if (IsSingleConfig != null && !isSingleConfig) isSingleConfig = IsSingleConfig.Value;
         if (ConfigAction != null) configAction ??= ConfigAction;
         var db = isSingleConfig
-            ? new SqlSugarClient(SqlSugarAotConfiguration.ConnectionConfig, (action) => configAction?.Invoke(action))
-            : new SqlSugarClient(SqlSugarAotConfiguration.ConnectionConfigs, (action) => configAction?.Invoke(action));
+            ? new SqlSugarClient(SqlSugarConfiguration.ConnectionConfig, (action) => configAction?.Invoke(action))
+            : new SqlSugarClient(SqlSugarConfiguration.ConnectionConfigs, (action) => configAction?.Invoke(action));
         return db;
     }
 }

@@ -4,6 +4,7 @@ using MFToolkit.Download.Constant;
 using MFToolkit.Download.JsonAotContext;
 using MFToolkit.Download.Models;
 using MFToolkit.JsonExtensions;
+using MFToolkit.Utils.AppExtensions;
 using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
 
 namespace MFToolkit.Download.DownloadHandlers;
@@ -12,25 +13,25 @@ namespace MFToolkit.Download.DownloadHandlers;
 /// </summary>
 public class DownloadHandler
 {
+    public static readonly DownloadHandler Default = AppUtil.GetService<DownloadHandler>();
     private readonly string saveFolderPath = DownloadConstant.SaveFolderPath;
     private readonly string saveFolderPauseinfoPath = Path.Combine(DownloadConstant.SaveFolderPath, "pauseinfo");
     private readonly string eKey = "otEwyom+/bgjiUzyMio8aJfqfL44h5Xu";
     /// <summary>
     /// 获取暂停下载列表的信息
     /// </summary>
-    /// <param name="downloadUrl"></param>
+    /// <param name="downloadUrl">根据下载地址进行匹配</param>
     /// <param name="saveTime">该暂停信息保存的日期</param>
     /// <returns></returns>
     public virtual async Task<DownloadModel?> GetPauseInfoAsync(string downloadUrl, DateTime? saveTime = null)
     {
-        if (!Directory.Exists(saveFolderPath)) return null;
+        if (!Directory.Exists(saveFolderPauseinfoPath)) return null;
         string? queryTimeName = saveTime != null ? $"UTC_{saveTime:yyyyMMdd}.bin" : null;
         var filePath = queryTimeName == null ? saveFolderPauseinfoPath : Path.Combine(saveFolderPauseinfoPath, queryTimeName);
         List<DownloadModel> models;
         if (queryTimeName != null)
         {
-            byte[] bytes = await File.ReadAllBytesAsync(filePath);
-            var jstr = Encoding.UTF8.GetString(bytes);
+            var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) return null;
             var reValue = AesUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
@@ -41,8 +42,7 @@ public class DownloadHandler
         var files = Directory.GetFiles(saveFolderPauseinfoPath).Where(q => q.EndsWith(".bin"));
         foreach (var file in files)
         {
-            byte[] bytes = await File.ReadAllBytesAsync(filePath);
-            var jstr = Encoding.UTF8.GetString(bytes);
+            var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) continue;
             var reValue = AesUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
@@ -54,19 +54,18 @@ public class DownloadHandler
     /// <summary>
     /// 获取暂停下载列表的信息
     /// </summary>
-    /// <param name="model"></param>
+    /// <param name="model">主要根据下载地址进行匹配</param>
     /// <param name="saveTime">该暂停信息保存的日期</param>
     /// <returns></returns>
     public virtual async Task<DownloadModel?> GetPauseInfoAsync(DownloadModel model, DateTime? saveTime = null)
     {
-        if (!Directory.Exists(saveFolderPath)) return null;
+        if (!Directory.Exists(saveFolderPauseinfoPath)) return null;
         string? queryTimeName = saveTime != null ? $"UTC_{saveTime:yyyyMMdd}.bin" : null;
         var filePath = queryTimeName == null ? saveFolderPauseinfoPath : Path.Combine(saveFolderPauseinfoPath, queryTimeName);
         List<DownloadModel> models;
         if (queryTimeName != null)
         {
-            byte[] bytes = await File.ReadAllBytesAsync(filePath);
-            var jstr = Encoding.UTF8.GetString(bytes);
+            var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) return null;
             var reValue = AesUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
@@ -78,8 +77,7 @@ public class DownloadHandler
         var files = Directory.GetFiles(saveFolderPauseinfoPath).Where(q => q.EndsWith(".bin"));
         foreach (var file in files)
         {
-            byte[] bytes = await File.ReadAllBytesAsync(filePath);
-            var jstr = Encoding.UTF8.GetString(bytes);
+            var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) continue;
             var reValue = AesUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
@@ -141,9 +139,9 @@ public class DownloadHandler
             throw new Exception("加密失败");
 
         byte[] modelBytes = Encoding.UTF8.GetBytes(eStr);
-        using FileStream fileStream = new(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+        using FileStream fileStream = new(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         await fileStream.WriteAsync(modelBytes);
-
+        //await File.WriteAllBytesAsync(filePath, modelBytes);
         return true;
     }
 }

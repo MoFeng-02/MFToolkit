@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.SqlSugarExtensions.AotUtils.PreferenceUtils;
+﻿namespace MFToolkit.SqlSugarExtensions.Storage;
 
 /// <summary>
 /// Preferences API 用于在键/值存储中存储应用程序首选项

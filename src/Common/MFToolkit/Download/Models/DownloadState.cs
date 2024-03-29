@@ -43,5 +43,9 @@ public enum DownloadState
     /// <summary>
     /// 下载错误
     /// </summary>
-    DownloadingError
+    DownloadingError,
+    /// <summary>
+    /// 其他错误
+    /// </summary>
+    OtherError
 }
