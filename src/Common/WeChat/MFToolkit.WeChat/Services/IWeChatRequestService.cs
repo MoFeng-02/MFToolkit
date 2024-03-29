@@ -1,5 +1,5 @@
 ﻿namespace MFToolkit.WeChat.Services;
-public interface IWeChatService
+public interface IWeChatRequestService
 {
     /// <summary>
     /// 请求获取微信OpenID等信息

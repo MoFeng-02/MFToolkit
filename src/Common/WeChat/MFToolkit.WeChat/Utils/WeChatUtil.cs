@@ -83,5 +83,5 @@ public class WeChatUtil
 
 public class AllService
 {
-    public IWeChatService WeChatServiceDefault => AppUtil.GetService<IWeChatService>() ?? throw new("无法获取IWeChatService");
+    public IWeChatRequestService WeChatServiceDefault => AppUtil.GetService<IWeChatRequestService>() ?? throw new("无法获取IWeChatService");
 }

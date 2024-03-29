@@ -1,10 +1,11 @@
 ﻿using System.Net.Http.Handlers;
+using MFToolkit.Download.Models;
 
-namespace MFToolkit.Utils.FileExtensions.FileProgress;
+namespace MFToolkit.Download.DownloadProgress;
 
-internal partial class FileHttpProgress
+internal partial class DownloadHttpProgress
 {
-    internal static async Task FileSaveAsync(FileModel file)
+    internal static async Task FileSaveAsync(DownloadModel file)
     {
         using var progressMessageHandler = new ProgressMessageHandler(new HttpClientHandler());
         progressMessageHandler.HttpReceiveProgress += (_, e) =>

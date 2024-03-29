@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using MFToolkit.Download.Inject;
 using MFToolkit.JsonExtensions;
 using MFToolkit.Loggers.LoggerExtensions;
 using MFToolkit.Loggers.LoggerExtensions.Configurations;
@@ -40,7 +41,7 @@ public static class GlobalInjects
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
-        SignalRConfiguration? signalRConfiguration = null, 
+        SignalRConfiguration? signalRConfiguration = null,
         Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
@@ -111,12 +112,12 @@ public static class GlobalInjects
                 new AuthenticationHeaderValue("Bearer", httpRequestConfiguration?.RequestTokenFunc());
         })
             // 暂时先注释
-// #if DEBUG
+            // #if DEBUG
             .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
             {
                 ServerCertificateCustomValidationCallback = delegate { return true; }
             })
-// #endif
+            // #endif
             ;
         services.AddSingleton<HttpClientFactoryService>();
 
@@ -156,6 +157,9 @@ public static class GlobalInjects
         #endregion
 
         serviceOptions?.Invoke(services);
+
+        services.AddDownloadService();
+
         services.AddAppUtilService();
         return services;
     }

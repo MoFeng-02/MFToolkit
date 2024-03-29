@@ -42,6 +42,7 @@
 		<Folder Include="DependencyInjection\Attributes\" />
 		<Folder Include="Docs\SoftwareLicenseTerms\Microsoft\" />
 		<Folder Include="Grpcs\ProtoServices\" />
+		<Folder Include="Upload\Extensions\" />
 	</ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
 ﻿using MFToolkit.WeChat.Configurations;
 using MFToolkit.WeChat.Configurations.BasicConfiguration;
-using MFToolkit.WeChat.Inject;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.Integration.Applet.InjectionServices.WeChat;
@@ -9,6 +8,8 @@ namespace MFToolkit.Integration.Applet.InjectionServices.WeChat;
 /// </summary>
 public static class WeChatInjection
 {
+    private static bool _initialized = false;
+
     /// <summary>
     /// 注册微信相关服务
     /// </summary>
@@ -18,7 +19,6 @@ public static class WeChatInjection
     public static IServiceCollection AddWeChatApplet(this IServiceCollection service, WeChatConfig weChatConfig)
     {
         WeChatConfigUtil.SetBasicConfiguration(weChatConfig);
-        service.AddWeChatService();
         return service;
     }
     /// <summary>
@@ -30,7 +30,6 @@ public static class WeChatInjection
     public static IServiceCollection AddWeChatApplet(this IServiceCollection service, Dictionary<string, WeChatConfig> weChatConfig)
     {
         WeChatConfigUtil.SetBasicConfigurations(weChatConfig);
-        service.AddWeChatService();
         return service;
     }
 }

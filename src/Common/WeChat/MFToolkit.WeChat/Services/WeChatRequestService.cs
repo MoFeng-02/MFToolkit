@@ -3,7 +3,7 @@ using MFToolkit.WeChat.Configurations;
 using MFToolkit.WeChat.Configurations.BasicConfiguration;
 
 namespace MFToolkit.WeChat.Services;
-public class WeChatService(HttpClientService httpClientService) : IWeChatService
+public class WeChatRequestService(HttpClientService httpClientService) : IWeChatRequestService
 {
     /// <summary>
     /// 获取微信OpenId

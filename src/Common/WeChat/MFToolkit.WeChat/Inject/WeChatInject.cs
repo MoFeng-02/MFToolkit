@@ -10,9 +10,9 @@ public static class WeChatInject
     /// </summary>
     /// <param name="service"></param>
     /// <returns></returns>
-    public static IServiceCollection AddWeChatService(this IServiceCollection service)
+    public static IServiceCollection AddWeChatRequestService(this IServiceCollection service)
     {
-        service.AddTransient<IWeChatService, WeChatService>();
+        service.AddTransient<IWeChatRequestService, WeChatRequestService>();
         return service;
     }
     /// <summary>
