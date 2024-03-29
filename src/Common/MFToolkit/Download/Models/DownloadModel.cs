@@ -1,4 +1,6 @@
-﻿namespace MFToolkit.Download.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace MFToolkit.Download.Models;
 /// <summary>
 /// 文件保存模型
 /// </summary>
@@ -23,9 +25,10 @@ public sealed class DownloadModel
     /// <summary>
     /// 一共多少
     /// </summary>
-    public long SumDownloadSize { get; internal set; }
+    public long? SumDownloadSize { get; internal set; }
     /// <summary>
-    /// 当前保存进度，总进度
+    /// 当前保存进度，总进度，这个不会保存到详情，请自行处理
     /// </summary>
-    public Action<long, long>? SaveHandle { get; set; }
+    //[JsonIgnore]
+    //public Action<long, long>? SaveHandle { get; set; }
 }

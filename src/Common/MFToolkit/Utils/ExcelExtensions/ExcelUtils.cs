@@ -4,7 +4,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
 namespace MFToolkit.Utils.ExcelExtensions;
-public class ExcelUtils
+public sealed class ExcelUtils
 {
     private static readonly object lockObject = new();
     /// <summary>

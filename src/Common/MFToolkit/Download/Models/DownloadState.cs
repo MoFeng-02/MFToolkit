@@ -21,6 +21,10 @@ public enum DownloadState
     /// </summary>
     Stop,
     /// <summary>
+    /// 重试中
+    /// </summary>
+    RetryDownloading,
+    /// <summary>
     /// 下载中
     /// </summary>
     BeDownloading,

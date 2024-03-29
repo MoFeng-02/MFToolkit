@@ -159,6 +159,7 @@ public static class GlobalInjects
         serviceOptions?.Invoke(services);
 
         services.AddDownloadService();
+        //services.AddDownloadService<DownloadHandler>();
 
         services.AddAppUtilService();
         return services;

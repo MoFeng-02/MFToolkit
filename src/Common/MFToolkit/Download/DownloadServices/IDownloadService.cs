@@ -9,6 +9,10 @@ public interface IDownloadService
     /// </summary>
     bool AutoRedownload { get; set; }
     /// <summary>
+    /// 下载进度
+    /// </summary>
+    Action<long, long>? DownloadProgress { get; set; }
+    /// <summary>
     /// 启动下载
     /// </summary>
     /// <returns></returns>
@@ -17,17 +21,17 @@ public interface IDownloadService
     /// 暂停下载
     /// </summary>
     /// <returns></returns>
-    void PauseDownload();
+    Task PauseDownloadAsync();
     /// <summary>
     /// 继续下载
     /// </summary>
     /// <returns></returns>
-    void ResumeDownload();
+    Task ResumeDownloadAsync();
     /// <summary>
     /// 停止下载（删除已下载的数据）
     /// </summary>
     /// <returns></returns>
-    void StopDownload();
+    Task StopDownloadAsync();
     /// <summary>
     /// 下载文件
     /// </summary>

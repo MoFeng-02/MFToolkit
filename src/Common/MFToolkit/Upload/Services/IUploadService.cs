@@ -4,7 +4,7 @@ namespace MFToolkit.Upload.Services;
 /// <summary>
 /// 上传处理Handler
 /// </summary>
-public interface IUploadHandler
+public interface IUploadService
 {
     /// <summary>
     /// 获取文件信息
