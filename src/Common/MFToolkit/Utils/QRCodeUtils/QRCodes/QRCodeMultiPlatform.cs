@@ -1,9 +1,8 @@
-﻿using System.Drawing;
-using MFToolkit.Utils.QRCodeExtensions.QRCodeServices;
+﻿using MFToolkit.Utils.QRCodeUtils.QRCodeServices;
 using QRCoder;
 using static QRCoder.QRCodeGenerator;
 
-namespace MFToolkit.Utils.QRCodeExtensions.QRCodes;
+namespace MFToolkit.Utils.QRCodeUtils.QRCodes;
 
 internal class QRCodeMultiPlatform
 {

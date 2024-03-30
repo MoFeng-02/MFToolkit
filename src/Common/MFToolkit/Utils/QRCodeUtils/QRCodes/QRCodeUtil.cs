@@ -1,9 +1,9 @@
-﻿using MFToolkit.Utils.QRCodeExtensions.QRCodeServices;
+﻿using MFToolkit.Utils.QRCodeUtils.QRCodeServices;
 using static QRCoder.QRCodeGenerator;
 
-namespace MFToolkit.Utils.QRCodeExtensions.QRCodes;
+namespace MFToolkit.Utils.QRCodeUtils.QRCodes;
 
-public class QRCodeUtils
+public class QRCodeUtil
 {
     /// <summary>
     /// 生成QR码

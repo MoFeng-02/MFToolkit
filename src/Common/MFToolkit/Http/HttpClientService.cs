@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
-namespace MFToolkit.Utils.HttpExtensions;
+namespace MFToolkit.Http;
 /// <summary>
 /// 提供类型化HTTPClient服务
 /// </summary>

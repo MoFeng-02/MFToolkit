@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using MFToolkit.Utils.HttpExtensions.Results;
+using MFToolkit.Http.Models;
 
 namespace MFToolkit.JsonExtensions;
 

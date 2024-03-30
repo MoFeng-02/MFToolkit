@@ -1,12 +1,12 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
+using MFToolkit.Http.HttpClientFactorys;
+using MFToolkit.Http.Models;
 using MFToolkit.JsonExtensions;
 using MFToolkit.Utils.AppExtensions;
-using MFToolkit.Utils.HttpExtensions.HttpClientFactorys;
-using MFToolkit.Utils.HttpExtensions.Results;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MFToolkit.Utils.HttpExtensions;
+namespace MFToolkit.Http;
 
 /// <summary>
 /// Http 工具集

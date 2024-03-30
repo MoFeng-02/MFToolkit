@@ -1,4 +1,4 @@
-﻿using MFToolkit.Utils.HttpExtensions;
+﻿using MFToolkit.Http;
 using MFToolkit.WeChat.Configurations;
 using MFToolkit.WeChat.Configurations.BasicConfiguration;
 

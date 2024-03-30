@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Utils.HttpExtensions.HttpClientFactorys;
+﻿namespace MFToolkit.Http.HttpClientFactorys;
 
 /// <summary>
 /// 记得一定要这样

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace MFToolkit.Utils.QRCodeExtensions.QRCodeServices;
+namespace MFToolkit.Utils.QRCodeUtils.QRCodeServices;
 
 public class GenerateModel
 {

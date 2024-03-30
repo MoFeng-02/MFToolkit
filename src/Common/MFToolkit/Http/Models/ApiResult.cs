@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Utils.HttpExtensions.Results;
+﻿namespace MFToolkit.Http.Models;
 /// <summary>
 /// API通用返回参数
 /// </summary>

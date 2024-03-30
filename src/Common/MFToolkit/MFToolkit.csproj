@@ -41,6 +41,7 @@
 		<Folder Include="DependencyInjection\Attributes\" />
 		<Folder Include="Docs\SoftwareLicenseTerms\Microsoft\" />
 		<Folder Include="Grpcs\ProtoServices\" />
+		<Folder Include="Http\Results\" />
 		<Folder Include="Upload\Extensions\" />
 	</ItemGroup>
 

@@ -1,6 +1,6 @@
 ﻿using MFToolkit.Utils.AppExtensions;
 
-namespace MFToolkit.Utils.HttpExtensions.HttpClientFactorys;
+namespace MFToolkit.Http.HttpClientFactorys;
 internal partial class HttpClientExtension
 {
     // 单例实例
