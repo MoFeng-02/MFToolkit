@@ -3,8 +3,8 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
-namespace MFToolkit.Utils.ExcelExtensions;
-public sealed class ExcelUtils
+namespace MFToolkit.Utils.ExcelUtils;
+public sealed class NPOIExcelUtil
 {
     private static readonly object lockObject = new();
     /// <summary>

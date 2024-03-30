@@ -1,8 +1,8 @@
-﻿using MFToolkit.Download.DownloadHandlers;
+﻿using MFToolkit.App;
+using MFToolkit.Download.DownloadHandlers;
 using MFToolkit.Download.Models;
 using MFToolkit.Extensions;
 using MFToolkit.Http;
-using MFToolkit.Utils.AppExtensions;
 
 namespace MFToolkit.Download.DownloadServices;
 public class DownloadService : IDownloadService, IDisposable

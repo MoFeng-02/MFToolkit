@@ -1,7 +1,7 @@
 ﻿using MFToolkit.CommonTypes.Enumerates;
-using MFToolkit.SignalRs.Models;
+using MFToolkit.Socket.SignalR.Models;
 
-namespace MFToolkit.SignalRs.Interfaces.ChatInterfaces;
+namespace MFToolkit.Socket.SignalR.Interfaces.ChatInterfaces;
 public interface IChatMessageService
 {
     /// <summary>

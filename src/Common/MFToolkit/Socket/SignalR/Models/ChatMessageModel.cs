@@ -1,5 +1,5 @@
 ﻿#nullable disable
-namespace MFToolkit.SignalRs.Models;
+namespace MFToolkit.Socket.SignalR.Models;
 public class ChatMessageModel
 {
     /// <summary>

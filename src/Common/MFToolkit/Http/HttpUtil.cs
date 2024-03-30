@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
+using MFToolkit.App;
 using MFToolkit.Http.HttpClientFactorys;
 using MFToolkit.Http.Models;
 using MFToolkit.JsonExtensions;
-using MFToolkit.Utils.AppExtensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.Http;

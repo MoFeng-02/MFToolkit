@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using MFToolkit.JsonExtensions;
-using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
+using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using Mapster;
 
 namespace MFToolkit.Storage;

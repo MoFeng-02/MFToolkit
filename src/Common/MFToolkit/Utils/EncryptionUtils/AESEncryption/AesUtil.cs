@@ -2,9 +2,9 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using MFToolkit.Utils.EncryptionExtensions.MD5Encryption;
+using MFToolkit.Utils.EncryptionUtils.MD5Encryption;
 
-namespace MFToolkit.Utils.EncryptionExtensions.AESEncryption;
+namespace MFToolkit.Utils.EncryptionUtils.AESEncryption;
 
 public class AesUtil
 {

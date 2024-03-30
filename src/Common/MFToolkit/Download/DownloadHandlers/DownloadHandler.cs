@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using System.Text;
+using MFToolkit.App;
 using MFToolkit.Download.Constant;
 using MFToolkit.Download.JsonAotContext;
 using MFToolkit.Download.Models;
 using MFToolkit.JsonExtensions;
-using MFToolkit.Utils.AppExtensions;
-using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
+using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 
 namespace MFToolkit.Download.DownloadHandlers;
 /// <summary>

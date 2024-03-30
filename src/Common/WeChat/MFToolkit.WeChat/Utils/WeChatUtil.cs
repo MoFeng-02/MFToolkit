@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using MFToolkit.App;
 using MFToolkit.JsonExtensions;
-using MFToolkit.Utils.AppExtensions;
-using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
+using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using MFToolkit.Utils.VerifyUtils;
 using MFToolkit.WeChat.Configurations;
 using MFToolkit.WeChat.Configurations.BasicConfiguration;

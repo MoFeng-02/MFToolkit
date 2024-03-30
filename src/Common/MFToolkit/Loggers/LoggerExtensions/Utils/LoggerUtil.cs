@@ -1,4 +1,4 @@
-﻿using MFToolkit.Utils.AppExtensions;
+﻿using MFToolkit.App;
 using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.Loggers.LoggerExtensions.Utils;

@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using MFToolkit.App;
 using MFToolkit.Download.Inject;
 using MFToolkit.Http;
 using MFToolkit.Http.HttpClientFactorys;
@@ -6,8 +7,7 @@ using MFToolkit.JsonExtensions;
 using MFToolkit.Loggers.LoggerExtensions;
 using MFToolkit.Loggers.LoggerExtensions.Configurations;
 using MFToolkit.Loggers.LoggerExtensions.Tasks;
-using MFToolkit.SignalRs.Utils;
-using MFToolkit.Utils.AppExtensions;
+using MFToolkit.Socket.SignalR.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

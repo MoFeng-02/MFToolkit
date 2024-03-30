@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace MFToolkit.Utils.EncryptionExtensions;
+namespace MFToolkit.Utils.EncryptionUtils;
 /// <summary>
 /// 密钥生成
 /// </summary>

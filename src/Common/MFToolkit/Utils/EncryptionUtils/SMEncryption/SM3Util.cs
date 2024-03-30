@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Utils.EncryptionExtensions.SMEncryption;
+﻿namespace MFToolkit.Utils.EncryptionUtils.SMEncryption;
 
 public abstract class GeneralDigest
 {

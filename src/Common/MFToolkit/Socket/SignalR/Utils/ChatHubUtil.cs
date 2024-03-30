@@ -1,8 +1,8 @@
 ﻿using MFToolkit.CommonTypes.Enumerates;
-using MFToolkit.SignalRs.Models;
+using MFToolkit.Socket.SignalR.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace MFToolkit.SignalRs.Utils;
+namespace MFToolkit.Socket.SignalR.Utils;
 public class ChatHubUtil
 {
     /// <summary>
@@ -16,7 +16,7 @@ public class ChatHubUtil
     /// <summary>
     /// 是否已经启动了连接
     /// </summary>
-    public static bool isStart;
+    public static bool IsStart;
     /// <summary>
     /// 注册异常委托操作
     /// <para>Exception：异常</para>
@@ -26,7 +26,7 @@ public class ChatHubUtil
     /// <summary>
     /// 是否启动重连
     /// </summary>
-    public static bool IsStartReconnection {  get; private set; }
+    public static bool IsStartReconnection { get; private set; }
     /// <summary>
     /// 获取连接状态
     /// </summary>
@@ -50,7 +50,7 @@ public class ChatHubUtil
             // 取消以防止取消后自动重连
             _connectionTokenSource.Cancel();
             await Connection.StopAsync();
-            isStart = false;
+            IsStart = false;
         }
         catch (Exception ex)
         {
@@ -162,7 +162,7 @@ public class ChatHubUtil
         {
             await Console.Out.WriteLineAsync(ex.Message);
         }
-        isStart = GetConnectState() == HubConnectionState.Connected;
+        IsStart = GetConnectState() == HubConnectionState.Connected;
     }
     /// <summary>
     /// 最大重试次数
@@ -178,7 +178,7 @@ public class ChatHubUtil
     /// <returns></returns>
     public static async Task Reconnect(Action<int, HubConnectionState?>? connectionAction = null)
     {
-        isStart = false;
+        IsStart = false;
         // 如果已经启动
         int retryCount = 0;
         if (Connection == null) return;
@@ -221,7 +221,7 @@ public class ChatHubUtil
     /// <returns>发送成功为true，否则false</returns>
     public static async Task<bool> SendMessageAsync(ChatMessageModel message, string sendMethodName = nameof(SendMessageAsync), Action<Exception>? exceptionmAtion = null)
     {
-        if (Connection == null || GetConnectState() == (HubConnectionState.Disconnected | HubConnectionState.Connecting) || !isStart) return false;
+        if (Connection == null || GetConnectState() == (HubConnectionState.Disconnected | HubConnectionState.Connecting) || !IsStart) return false;
         try
         {
             // 发送单个

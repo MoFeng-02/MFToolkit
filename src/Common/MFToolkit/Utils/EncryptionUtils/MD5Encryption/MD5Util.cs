@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace MFToolkit.Utils.EncryptionExtensions.MD5Encryption;
+namespace MFToolkit.Utils.EncryptionUtils.MD5Encryption;
 
 public partial class MD5Util
 {

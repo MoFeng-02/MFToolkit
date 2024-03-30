@@ -1,5 +1,5 @@
-﻿using MFToolkit.Download.DownloadServices;
-using MFToolkit.Utils.AppExtensions;
+﻿using MFToolkit.App;
+using MFToolkit.Download.DownloadServices;
 
 namespace MFToolkit.Download.Utils;
 /// <summary>

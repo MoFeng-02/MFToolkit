@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using MFToolkit.Utils.EncryptionExtensions.MD5Encryption;
+using MFToolkit.Utils.EncryptionUtils.MD5Encryption;
 
 namespace MFToolkit.Extensions;
 public static class PasswordExtension

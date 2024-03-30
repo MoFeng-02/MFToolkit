@@ -1,9 +1,9 @@
 ﻿using MFToolkit.CommonTypes.Enumerates;
-using MFToolkit.SignalRs.Models;
-using MFToolkit.SignalRs.Utils;
+using MFToolkit.Socket.SignalR.Models;
+using MFToolkit.Socket.SignalR.Utils;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace MFToolkit.SignalRs.Extensions;
+namespace MFToolkit.Socket.SignalR.Extensions;
 public static class ChatHubExtension
 {
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace MFToolkit.Utils.AppExtensions;
+namespace MFToolkit.App;
 /// <summary>
 /// APP 拓展通用工具类
 /// </summary>

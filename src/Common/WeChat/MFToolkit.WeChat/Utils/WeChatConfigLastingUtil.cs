@@ -1,5 +1,5 @@
 ﻿using MFToolkit.JsonExtensions;
-using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
+using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using MFToolkit.WeChat.Configurations.BasicConfiguration;
 using MFToolkit.WeChat.Configurations;
 using MFToolkit.WeChat.Json.AOT;

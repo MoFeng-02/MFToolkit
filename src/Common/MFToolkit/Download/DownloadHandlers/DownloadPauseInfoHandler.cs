@@ -1,7 +1,7 @@
 ﻿using MFToolkit.Download.Constant;
 using MFToolkit.Download.Models;
 using MFToolkit.SqlSugarExtensions.Configuration;
-using MFToolkit.Utils.EncryptionExtensions.AESEncryption;
+using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 
