@@ -2,10 +2,9 @@
 using MFToolkit.Download.Models;
 using MFToolkit.SqlSugarExtensions.Configuration;
 using MFToolkit.Utils.EncryptionUtils.AESEncryption;
-using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 
-namespace MFToolkit.Download.DownloadHandlers;
+namespace MFToolkit.Download.Handler;
 /// <summary>
 /// 下载暂停信息
 /// </summary>

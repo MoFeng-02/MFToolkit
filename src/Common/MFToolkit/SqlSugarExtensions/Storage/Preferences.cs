@@ -1,4 +1,4 @@
-﻿using MFToolkit.JsonExtensions;
+﻿using MFToolkit.Json.Extensions;
 using MFToolkit.SqlSugarExtensions.Configuration;
 using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using SqlSugar;

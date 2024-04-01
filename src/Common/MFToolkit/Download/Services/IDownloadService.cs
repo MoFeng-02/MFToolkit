@@ -1,6 +1,6 @@
 ﻿using MFToolkit.Download.Models;
 
-namespace MFToolkit.Download.DownloadServices;
+namespace MFToolkit.Download.Services;
 public interface IDownloadService
 {
     /// <summary>

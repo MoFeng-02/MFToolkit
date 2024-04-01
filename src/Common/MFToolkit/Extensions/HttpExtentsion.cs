@@ -40,4 +40,8 @@ public static class HttpExtentsion
             return default;
         }
     }
+    public static void SetHttpHender(this HttpContext context,string headerName,string? value)
+    {
+        context.Response.Headers.Append(headerName, value);
+    }
 }

@@ -1,5 +1,5 @@
-﻿using MFToolkit.Download.DownloadHandlers;
-using MFToolkit.Download.DownloadServices;
+﻿using MFToolkit.Download.Handler;
+using MFToolkit.Download.Services;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 

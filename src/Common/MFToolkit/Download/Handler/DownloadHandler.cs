@@ -4,10 +4,10 @@ using MFToolkit.App;
 using MFToolkit.Download.Constant;
 using MFToolkit.Download.JsonAotContext;
 using MFToolkit.Download.Models;
-using MFToolkit.JsonExtensions;
+using MFToolkit.Json.Extensions;
 using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 
-namespace MFToolkit.Download.DownloadHandlers;
+namespace MFToolkit.Download.Handler;
 /// <summary>
 /// 下载处理
 /// </summary>

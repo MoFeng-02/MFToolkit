@@ -1,6 +1,6 @@
 ﻿namespace MFToolkit.Integration.Applet.Constants;
 /// <summary>
-/// 小程序常用类型
+/// 小程序/App 常用类型/平台
 /// </summary>
 public class AppletConstant
 {
@@ -23,7 +23,7 @@ public class AppletConstant
     /// <summary>
     /// web端
     /// </summary>
-    public const string WEB = "web";
+    public const string H5 = "h5";
     /// <summary>
     /// 快应用
     /// </summary>
@@ -36,4 +36,20 @@ public class AppletConstant
     /// 京东小程序
     /// </summary>
     public const string JD = "jd";
+    /// <summary>
+    /// React Native 
+    /// </summary>
+    public const string RN = "rn";
+    /// <summary>
+    /// 鸿蒙混合
+    /// </summary>
+    public const string HarmonyHybrid = "harmony-hybrid";
+    /// <summary>
+    /// WebAssembly
+    /// </summary>
+    public const string WASM = "WASM";
+    /// <summary>
+    /// 原生App
+    /// </summary>
+    public const string NativeApp = "NativeApp";
 }

@@ -1,16 +1,18 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MFToolkit.Authentication.JwtAuthentication.Configuration;
+using MFToolkit.Authentication.JwtAuthorization.Configuration;
+using MFToolkit.Authentication.JwtAuthorization.Utils;
+using MFToolkit.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MFToolkit.Authentication.JwtAuthentication.Handler;
+namespace MFToolkit.Authentication.JwtAuthorization.Handler;
 /// <summary>
 /// JWT 默认验证授权
 /// </summary>
-public class JwtAuthenticationHandler : IAuthorizationHandler, IAuthorizationRequirement
+public class JwtAuthorizationHandler : IAuthorizationHandler, IAuthorizationRequirement
 {
     /// <summary>
     /// 校验JWT是否正确合规
@@ -26,6 +28,24 @@ public class JwtAuthenticationHandler : IAuthorizationHandler, IAuthorizationReq
     /// <param name="httpContext"></param>
     /// <returns></returns>
     protected virtual Task<bool> VerificationAsync(AuthorizationHandlerContext context, HttpContext httpContext) => Task.FromResult(true);
+    /// <summary>
+    /// 定义需要刷新的JwtToken处理
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="httpContext"></param>
+    /// <returns></returns>
+    protected virtual Task RefreshAuthorizationAsync(AuthorizationHandlerContext context, HttpContext httpContext)
+    {
+        // 获取是否有需要刷新的Token，如果有的话
+        var xauth = httpContext.Request.Headers["X-Authorization"].ToString();
+        if (string.IsNullOrWhiteSpace(xauth)) return Task.CompletedTask;
+        // 获取所有的User值
+        var users = httpContext.User.Claims.ToArray();
+        var configKey = httpContext.Request.Headers[JsonWebTokenConfig.JwtConfigKey].ToString() ?? null;
+        var rToken = JwtUtil.GenerateToken(users, out var _, configKey: configKey);
+        httpContext.SetHttpHender("Authorization", rToken);
+        return Task.CompletedTask;
+    }
     /// <summary>
     /// 验证处理
     /// </summary>
@@ -51,7 +71,7 @@ public class JwtAuthenticationHandler : IAuthorizationHandler, IAuthorizationReq
         if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
         {
             // 获取 token 的值
-            var token = authorization.Substring("Bearer ".Length).Trim();
+            var token = authorization["Bearer ".Length..].Trim();
             // 定义一个密钥，用于验证 token 的签名
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.EncryptionKey));
             // 定义一个令牌验证参数
@@ -82,6 +102,7 @@ public class JwtAuthenticationHandler : IAuthorizationHandler, IAuthorizationReq
                     // 将主体赋值给 httpContext.User
                     httpContext!.User = user;
                     var userId = httpContext.User.FindFirstValue(ClaimTypes.Sid);
+                    await RefreshAuthorizationAsync(context, httpContext);
                     if (await VerificationAsync(context, httpContext))
                     {
                         // 标记需求为成功

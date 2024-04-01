@@ -1,13 +1,14 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using MFToolkit.Json.Contexts.AOT;
 
-namespace MFToolkit.JsonExtensions;
+namespace MFToolkit.Json.Extensions;
 
 /// <summary>
 /// json 拓展类
 /// <para>本类支持进行处理是AOT模式还是框架依赖模式</para>
 /// </summary>
-public static class JsonExtension
+public static class JsonSerializerExtension
 {
     /// <summary>
     /// 默认json配置

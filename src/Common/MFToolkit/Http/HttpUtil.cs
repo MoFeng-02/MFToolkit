@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using MFToolkit.App;
 using MFToolkit.Http.HttpClientFactorys;
 using MFToolkit.Http.Models;
-using MFToolkit.JsonExtensions;
+using MFToolkit.Json.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.Http;

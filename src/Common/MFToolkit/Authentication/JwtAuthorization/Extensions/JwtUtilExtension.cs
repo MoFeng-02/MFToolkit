@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
-using MFToolkit.Authentication.JwtAuthentication.Utils;
+using MFToolkit.Authentication.JwtAuthorization.Utils;
 
-namespace MFToolkit.Authentication.JwtAuthentication.Extensions;
+namespace MFToolkit.Authentication.JwtAuthorization.Extensions;
 public static class JwtUtilExtension
 {
     /// <summary>

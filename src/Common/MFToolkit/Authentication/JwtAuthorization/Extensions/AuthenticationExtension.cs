@@ -1,9 +1,9 @@
-﻿using MFToolkit.Authentication.JwtAuthentication.Configuration;
-using MFToolkit.Authentication.JwtAuthentication.Handler;
+﻿using MFToolkit.Authentication.JwtAuthorization.Configuration;
+using MFToolkit.Authentication.JwtAuthorization.Handler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MFToolkit.Authentication.JwtAuthentication.Extensions;
+namespace MFToolkit.Authentication.JwtAuthorization.Extensions;
 public static class AuthenticationExtension
 {
     /// <summary>
@@ -21,7 +21,7 @@ public static class AuthenticationExtension
         {
             options.AddPolicy("jwt", policy =>
             {
-                policy.Requirements.Add(new JwtAuthenticationHandler());
+                policy.Requirements.Add(new JwtAuthorizationHandler());
             });
         });
         return service;
@@ -32,7 +32,7 @@ public static class AuthenticationExtension
     /// </summary>
     /// <param name="service"></param>
     /// <returns></returns>
-    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, Action<JsonWebTokenConfig> configAction) where THandler : JwtAuthenticationHandler, new()
+    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, Action<JsonWebTokenConfig> configAction) where THandler : JwtAuthorizationHandler, new()
     {
 
         THandler handler = new THandler();
@@ -65,7 +65,7 @@ public static class AuthenticationExtension
         {
             options.AddPolicy("jwt", policy =>
             {
-                policy.Requirements.Add(new JwtAuthenticationHandler());
+                policy.Requirements.Add(new JwtAuthorizationHandler());
             });
         });
         return service;
@@ -76,7 +76,7 @@ public static class AuthenticationExtension
     /// </summary>
     /// <param name="service"></param>
     /// <returns></returns>
-    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, Dictionary<string, JsonWebTokenConfig> configs) where THandler : JwtAuthenticationHandler, new()
+    public static IServiceCollection AddJwtAuthorization<THandler>(this IServiceCollection service, Dictionary<string, JsonWebTokenConfig> configs) where THandler : JwtAuthorizationHandler, new()
     {
         THandler handler = new();
         if (handler is not IAuthorizationRequirement r) return service;

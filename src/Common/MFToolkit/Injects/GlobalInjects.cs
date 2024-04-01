@@ -3,7 +3,7 @@ using MFToolkit.App;
 using MFToolkit.Download.Inject;
 using MFToolkit.Http;
 using MFToolkit.Http.HttpClientFactorys;
-using MFToolkit.JsonExtensions;
+using MFToolkit.Json.Extensions;
 using MFToolkit.Loggers.LoggerExtensions;
 using MFToolkit.Loggers.LoggerExtensions.Configurations;
 using MFToolkit.Loggers.LoggerExtensions.Tasks;

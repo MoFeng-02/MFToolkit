@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MFToolkit.Authentication.JwtAuthentication.Configuration;
+using MFToolkit.Authentication.JwtAuthorization.Configuration;
 using MFToolkit.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MFToolkit.Authentication.JwtAuthentication.Utils;
+namespace MFToolkit.Authentication.JwtAuthorization.Utils;
 public class JwtUtil
 {
     /// <summary>
@@ -37,5 +37,22 @@ public class JwtUtil
                     );
         timetamp = now.AddSeconds(seconds).ToNowTimetamp();
         return token;
+    }
+    /// <summary>
+    /// 生成jwt token
+    /// </summary>
+    /// <param name="claims">要生成的值</param>
+    /// <param name="timetamp">有效期截止的时间戳</param>
+    /// <param name="seconds">有效期（秒），如果为-1则采用JsonWebTokenConfig配置，否则传输过来的值</param>
+    /// <param name="configKey">JsonWebTokenConfig配置key</param>
+    /// <returns></returns>
+    public static string GenerateToken(Dictionary<string, string> claims, out long timetamp, int seconds = -1, string? configKey = null)
+    {
+        List<Claim> cls = [];
+        foreach (var claim in claims)
+        {
+            cls.Add(new(claim.Key, claim.Value));
+        }
+        return GenerateToken(cls.ToArray(), out timetamp, seconds, configKey);
     }
 }

@@ -38,10 +38,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Assets\Handlers\" />
+		<Folder Include="Assets\Models\" />
+		<Folder Include="Assets\Utils\" />
+		<Folder Include="Assets\Extensions\" />
 		<Folder Include="DependencyInjection\Attributes\" />
 		<Folder Include="Docs\SoftwareLicenseTerms\Microsoft\" />
+		<Folder Include="Json\Serialization\" />
 		<Folder Include="Socket\Grpc\ProtoServices\" />
-		<Folder Include="Socket\TCP\" />
+		<Folder Include="Socket\TCP\Client\Utils\" />
+		<Folder Include="Socket\TCP\Client\Service\" />
+		<Folder Include="Socket\TCP\Client\Handler\" />
+		<Folder Include="Socket\TCP\Server\Utils\" />
 		<Folder Include="Socket\UDP\" />
 		<Folder Include="Socket\WebSocket\" />
 		<Folder Include="Upload\Extensions\" />

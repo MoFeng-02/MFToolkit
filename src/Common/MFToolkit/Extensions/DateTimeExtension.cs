@@ -11,10 +11,12 @@ public static class DateTimeExtensions
     /// <returns></returns>
     public static long ToNowTimetamp(this DateTime time)
     {
-        // 获取当前时间距离 Unix 时间戳起始点的时间间隔
-        var span = time - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        // 将时间间隔转换为秒，并取整数部分
-        var timestamp = (long)span.TotalSeconds;
-        return timestamp;
+        // 转换为 UTC 时间
+        DateTime utcTime = time.ToUniversalTime();
+
+        // 获取自 Unix 纪元以来的总毫秒数（时间戳）
+        long timestampInMilliseconds = (long)(utcTime - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+
+        return timestampInMilliseconds;
     }
 }

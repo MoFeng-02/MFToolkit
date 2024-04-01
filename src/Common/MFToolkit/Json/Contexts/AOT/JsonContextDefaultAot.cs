@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using MFToolkit.Http.Models;
 
-namespace MFToolkit.JsonExtensions;
+namespace MFToolkit.Json.Contexts.AOT;
 
 /// <summary>
 /// AOT JSON 序列化配置器

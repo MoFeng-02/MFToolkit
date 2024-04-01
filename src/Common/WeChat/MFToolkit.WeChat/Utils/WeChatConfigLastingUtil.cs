@@ -1,9 +1,9 @@
-﻿using MFToolkit.JsonExtensions;
-using MFToolkit.Utils.EncryptionUtils.AESEncryption;
+﻿using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using MFToolkit.WeChat.Configurations.BasicConfiguration;
 using MFToolkit.WeChat.Configurations;
 using MFToolkit.WeChat.Json.AOT;
 using System.Text.Json;
+using MFToolkit.Json.Extensions;
 
 namespace MFToolkit.WeChat.Utils;
 public class WeChatConfigLastingUtil

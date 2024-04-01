@@ -1,6 +1,6 @@
-﻿using MFToolkit.Authentication.JwtAuthentication.Configuration.BasicConfiguration;
+﻿using MFToolkit.Authentication.JwtAuthorization.Configuration.BasicConfiguration;
 
-namespace MFToolkit.Authentication.JwtAuthentication.Configuration;
+namespace MFToolkit.Authentication.JwtAuthorization.Configuration;
 /// <summary>
 /// jwt 配置
 /// </summary>

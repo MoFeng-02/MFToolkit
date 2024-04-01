@@ -1,4 +1,4 @@
-﻿using MFToolkit.JsonExtensions;
+﻿using MFToolkit.Json.Extensions;
 using MFToolkit.WeChat.Json.AOT;
 using MFToolkit.WeChat.Model;
 
