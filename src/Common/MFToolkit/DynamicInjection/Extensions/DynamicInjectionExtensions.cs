@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using MFToolkit.DependencyInjection.Dependencies;
+using MFToolkit.DynamicInjection.Dependencies;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MFToolkit.DependencyInjection.Extensions;
-public static class DependencyInjectionServiceCollectionExtensions
+namespace MFToolkit.DynamicInjection.Extensions;
+public static class DynamicInjectionExtensions
 {
 
     /// <summary>

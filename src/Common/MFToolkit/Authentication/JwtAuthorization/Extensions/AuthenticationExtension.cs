@@ -1,5 +1,5 @@
 ﻿using MFToolkit.Authentication.JwtAuthorization.Configuration;
-using MFToolkit.Authentication.JwtAuthorization.Handler;
+using MFToolkit.Authentication.JwtAuthorization.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 

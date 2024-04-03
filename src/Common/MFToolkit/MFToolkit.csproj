@@ -24,6 +24,7 @@
 		<PackageReference Include="Mapster" Version="7.4.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
@@ -38,13 +39,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Assets\Handlers\" />
-		<Folder Include="Assets\Models\" />
-		<Folder Include="Assets\Utils\" />
-		<Folder Include="Assets\Extensions\" />
-		<Folder Include="DependencyInjection\Attributes\" />
+		<Folder Include="Assets\" />
+		<Folder Include="Authentication\JwtAuthorization\Injects\" />
+		<Folder Include="DynamicInjection\Attributes\" />
 		<Folder Include="Docs\SoftwareLicenseTerms\Microsoft\" />
+		<Folder Include="EFCore\Extensions\" />
+		<Folder Include="EFCore\Injects\" />
+		<Folder Include="EFCore\Utils\" />
 		<Folder Include="Json\Serialization\" />
+		<Folder Include="FileManagement\Receive\Extensions\" />
+		<Folder Include="FileManagement\Receive\Injects\" />
+		<Folder Include="FileManagement\Receive\Utils\" />
+		<Folder Include="FileManagement\Receive\Handlers\" />
 		<Folder Include="Socket\Grpc\ProtoServices\" />
 		<Folder Include="Socket\TCP\Client\Utils\" />
 		<Folder Include="Socket\TCP\Client\Service\" />
@@ -52,7 +58,9 @@
 		<Folder Include="Socket\TCP\Server\Utils\" />
 		<Folder Include="Socket\UDP\" />
 		<Folder Include="Socket\WebSocket\" />
-		<Folder Include="Upload\Extensions\" />
+		<Folder Include="FileManagement\Upload\Extensions\" />
+		<Folder Include="FileManagement\Upload\Injects\" />
+		<Folder Include="FileManagement\Upload\Handlers\" />
 	</ItemGroup>
 
 </Project>

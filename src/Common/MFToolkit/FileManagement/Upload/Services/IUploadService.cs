@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace MFToolkit.Upload.Services;
+﻿namespace MFToolkit.FileManagement.Upload.Services;
 /// <summary>
 /// 上传处理Handler
 /// </summary>

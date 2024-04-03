@@ -4,7 +4,7 @@ namespace MFToolkit.Download.Services;
 public interface IDownloadService
 {
     /// <summary>
-    /// 是否启动自动重新下载，默认 自动重新下载
+    /// 是否启动自动重新下载，默认 自动重新下载，但是最大只能尝试五次，每次等待5秒，目前是如此限制，暂时不开放手动重试逻辑，因为有一些处理还未完善，代码有待优化
     /// <para>在例如非用户操作的情况下自动断开的下载继续尝试下载</para>
     /// </summary>
     bool AutoRedownload { get; set; }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MFToolkit.Authentication.JwtAuthorization.Handler;
+namespace MFToolkit.Authentication.JwtAuthorization.Handlers;
 /// <summary>
 /// JWT 默认验证授权
 /// </summary>

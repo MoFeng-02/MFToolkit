@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace MFToolkit.App;
@@ -16,6 +17,11 @@ public static class AppUtil
     /// 可以获取比如：开发，生产模式等等信息
     /// </summary>
     public static IHostEnvironment? HostEnvironment;
+
+    /// <summary>
+    /// 获取当前HttpContext，如果是后台服务则为空
+    /// </summary>
+    public static HttpContext? HttpContext { get; private set; } = GetService<HttpContext>();
 
     /// <summary>
     /// 注入给AppUtil获取配置

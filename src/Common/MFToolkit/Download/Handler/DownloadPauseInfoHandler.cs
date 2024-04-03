@@ -91,7 +91,7 @@ public class DownloadPauseInfoHandler
         if (isEdit)
         {
             query!.WirteSize = model.WirteSize;
-            query.YetDownloadSize = model.YetDownloadSize;
+            query.YetSize = model.YetSize;
             return await client.Updateable(query).ExecuteCommandAsync() > 0;
         }
         // 如果是新增

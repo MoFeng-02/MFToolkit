@@ -1,23 +1,9 @@
 ﻿using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Http;
 
 namespace MFToolkit.Extensions;
-public static class HttpExtentsion
+public static class HttpClientExtentsion
 {
-    /// <summary>
-    /// 获取指定请求头
-    /// </summary>
-    /// <param name="httpContext"></param>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    public static string? GetHeaderString(this HttpContext httpContext, string key)
-    {
-        var header = httpContext.Request.Headers[key];
-
-        var result = header.ToString();
-        if (string.IsNullOrWhiteSpace(result)) return null;
-        return result;
-    }
+    
     /// <summary>
     /// 提取对应Header（Key集合的第一个）
     /// </summary>
@@ -39,9 +25,5 @@ public static class HttpExtentsion
         {
             return default;
         }
-    }
-    public static void SetHttpHender(this HttpContext context,string headerName,string? value)
-    {
-        context.Response.Headers.Append(headerName, value);
     }
 }

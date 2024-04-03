@@ -1,5 +1,7 @@
 ﻿#nullable disable
-namespace MFToolkit.Upload.Models;
+using MFToolkit;
+
+namespace MFToolkit.FileManagement.Upload.Models;
 public class FileInfo
 {
     /// <summary>

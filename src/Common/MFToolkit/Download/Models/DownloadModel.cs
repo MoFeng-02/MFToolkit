@@ -26,11 +26,11 @@ public sealed class DownloadModel
     /// <summary>
     /// 当前已经下载了多少了
     /// </summary>
-    public long YetDownloadSize { get; set; }
+    public long YetSize { get; set; }
     /// <summary>
-    /// 一共多少
+    /// 一共多大
     /// </summary>
-    public long? SumDownloadSize { get; set; }
+    public long? SumSize { get; set; }
     /// <summary>
     /// 当前保存进度，总进度，这个不会保存到详情，请自行处理
     /// </summary>

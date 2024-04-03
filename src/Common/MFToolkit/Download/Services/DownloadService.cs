@@ -25,7 +25,7 @@ public class DownloadService : IDownloadService, IDisposable
     /// <summary>
     /// 是否下载中
     /// </summary>
-    private bool Downloading = false;
+    //private bool Downloading = false;
     /// <summary>
     /// 是否暂停
     /// </summary>
@@ -136,7 +136,7 @@ public class DownloadService : IDownloadService, IDisposable
     {
         DownloadStateAction?.Invoke(false, DownloadState.Init, null);
         // 更新偏移量
-        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(currentDownloadModel.YetDownloadSize, null);
+        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(currentDownloadModel.YetSize, null);
         // 读取请求报头
         using var response = await httpClient.GetAsync(currentDownloadModel.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, CancellationToken);
         DownloadResult downloadResult = new();
@@ -146,12 +146,12 @@ public class DownloadService : IDownloadService, IDisposable
             return downloadResult;
         }
         using Stream contentStream = await response.Content.ReadAsStreamAsync();
-        using FileStream fileStream = currentDownloadModel.YetDownloadSize == 0 ? new(currentDownloadModel.FileSavePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None) : new(currentDownloadModel.FileSavePath, FileMode.Append, FileAccess.Write, FileShare.None);
+        using FileStream fileStream = currentDownloadModel.YetSize == 0 ? new(currentDownloadModel.FileSavePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None) : new(currentDownloadModel.FileSavePath, FileMode.Append, FileAccess.Write, FileShare.None);
         // 每次写入最大缓存
         byte[] buffer = new byte[currentDownloadModel.WirteSize];
         long sumCount = response.Content.Headers.GetHeaderValuesFirst<long>("Content-Length");
         int bytesRead;
-        currentDownloadModel.SumDownloadSize ??= sumCount;
+        currentDownloadModel.SumSize ??= sumCount;
         downloadResult.Size = sumCount;
         DownloadStateAction?.Invoke(false, DownloadState.Ready, null);
         DownloadStateAction?.Invoke(true, DownloadState.Start, null);
@@ -160,8 +160,8 @@ public class DownloadService : IDownloadService, IDisposable
         {
             CancellationToken.ThrowIfCancellationRequested();
             await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), CancellationToken);
-            currentDownloadModel.YetDownloadSize += bytesRead;
-            DownloadProgress?.Invoke(currentDownloadModel.YetDownloadSize, currentDownloadModel.SumDownloadSize ?? sumCount);
+            currentDownloadModel.YetSize += bytesRead;
+            DownloadProgress?.Invoke(currentDownloadModel.YetSize, currentDownloadModel.SumSize ?? sumCount);
             // 检查取消标记是否被设置，如果被设置则抛出异常以中止下载
         }
         downloadResult.Success = true;

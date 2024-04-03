@@ -1,5 +1,7 @@
 ﻿#nullable disable
-namespace MFToolkit.Upload.Models;
+using MFToolkit;
+
+namespace MFToolkit.FileManagement.Upload.Models;
 /// <summary>
 /// 返回上传后的路径
 /// </summary>

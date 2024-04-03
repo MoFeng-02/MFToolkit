@@ -1,7 +1,7 @@
 ﻿using MFToolkit.Extensions;
 using Microsoft.AspNetCore.Http;
 
-namespace MFToolkit.Upload.Utils;
+namespace MFToolkit.FileManagement.Upload.Utils;
 public class UploadUtil
 {
     public static async Task DownloadAsync(HttpContext httpContext)
