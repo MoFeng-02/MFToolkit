@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using MFToolkit.App;
+using MFToolkit.App.Extensions;
 using MFToolkit.Download.Inject;
 using MFToolkit.Http;
 using MFToolkit.Http.HttpClientFactorys;
@@ -161,7 +162,7 @@ public static class GlobalInjects
         services.AddDownloadService().AddDownloadPauseInfoHandler();
         //services.AddDownloadService<DownloadHandler>();
 
-        services.AddAppUtilService();
+        services.AddMFAppService();
         return services;
     }
 }

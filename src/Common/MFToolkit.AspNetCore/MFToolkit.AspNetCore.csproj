@@ -1,25 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Authors>莫枫</Authors>
+		<Version>0.0.6-beta</Version>
+		<Description>通用.Net8及以上程序工具库</Description>
+		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
+		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-    </ItemGroup>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MFToolkit\MFToolkit.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MFToolkit\MFToolkit.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Authentication\JwtAuthorization\Injects\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Authentication\JwtAuthorization\Injects\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+	</ItemGroup>
 
 </Project>

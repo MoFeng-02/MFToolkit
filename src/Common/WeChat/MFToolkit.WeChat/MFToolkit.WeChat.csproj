@@ -19,7 +19,7 @@
 		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\MFToolkit\MFToolkit.csproj" />
+	  <ProjectReference Include="..\..\MFToolkit.AspNetCore\MFToolkit.AspNetCore.csproj" />
 	</ItemGroup>
 
 </Project>

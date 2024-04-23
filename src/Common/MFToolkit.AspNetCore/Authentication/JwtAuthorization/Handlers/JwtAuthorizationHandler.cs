@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MFToolkit.AspNetCore.Extensions;
 using MFToolkit.Authentication.JwtAuthorization.Configuration;
 using MFToolkit.Authentication.JwtAuthorization.Utils;
-using MFToolkit.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
