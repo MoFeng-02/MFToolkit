@@ -1,13 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
-using MFToolkit.Avaloniaui.Material.Controls.MFHanderTemplate;
+using MFToolkit.Avaloniaui.Material.Controls.MFBackHanderTemplate;
 
 namespace MFToolkit.Avaloniaui.Material.Controls;
 
-public partial class MFHeader : UserControl
+public partial class MFBackHeader : UserControl
 {
-    public static readonly StyledProperty<string?> TitleProperty = AvaloniaProperty.Register<MFHeader, string?>(
+    public static readonly StyledProperty<string?> TitleProperty = AvaloniaProperty.Register<MFBackHeader, string?>(
         nameof(Title));
 
     public string? Title
@@ -16,13 +16,13 @@ public partial class MFHeader : UserControl
         set => SetValue(TitleProperty, value);
     }
 
-    public static readonly StyledProperty<object?> CenterContentProperty = AvaloniaProperty.Register<MFHeader, object?>(
+    public static readonly StyledProperty<object?> CenterContentProperty = AvaloniaProperty.Register<MFBackHeader, object?>(
         nameof(CenterContent), default);
 
-    public static readonly StyledProperty<object?> LeftContentProperty = AvaloniaProperty.Register<MFHeader, object?>(
+    public static readonly StyledProperty<object?> LeftContentProperty = AvaloniaProperty.Register<MFBackHeader, object?>(
         nameof(LeftContent), default);
 
-    public static readonly StyledProperty<object?> RightContentProperty = AvaloniaProperty.Register<MFHeader, object?>(
+    public static readonly StyledProperty<object?> RightContentProperty = AvaloniaProperty.Register<MFBackHeader, object?>(
         nameof(RightContent), default);
 
     /// <summary>
@@ -52,7 +52,7 @@ public partial class MFHeader : UserControl
         set => SetValue(RightContentProperty, value);
     }
 
-    public MFHeader()
+    public MFBackHeader()
     {
         InitializeComponent();
     }

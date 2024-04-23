@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using MFToolkit.Avaloniaui.Routings;
 
-namespace MFToolkit.Avaloniaui.Material.Controls.MFHanderTemplate;
+namespace MFToolkit.Avaloniaui.Material.Controls.MFBackHanderTemplate;
 
 public partial class LeftTemplate : UserControl
 {

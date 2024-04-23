@@ -4,6 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:content="clr-namespace:MFToolkit.Avaloniaui.Content;assembly=MFToolkit.Avaloniaui"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MFToolkit.Avaloniaui.Material.Controls.MFHanderTemplate.LeftTemplate">
+             x:Class="MFToolkit.Avaloniaui.Material.Controls.MFBackHanderTemplate.LeftTemplate">
     <PathIcon Data="{x:Static content:Icons.ArrowLeft}" Foreground="#5d5d5c" />
 </UserControl>
