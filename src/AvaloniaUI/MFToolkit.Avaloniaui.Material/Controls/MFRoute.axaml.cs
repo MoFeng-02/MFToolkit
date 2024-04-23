@@ -8,16 +8,16 @@ namespace MFToolkit.Avaloniaui.Material.Controls;
 /// <summary>
 /// 路由显示页
 /// </summary>
-public partial class MFRoutePage : UserControl
+public partial class MFRoute : UserControl
 {
     public static readonly StyledProperty<Action<object?, RouteCurrentInfo>?> NavigationToProperty =
-        AvaloniaProperty.Register<MFRoutePage, Action<object?, RouteCurrentInfo>?>(
+        AvaloniaProperty.Register<MFRoute, Action<object?, RouteCurrentInfo>?>(
             nameof(NavigationTo), defaultBindingMode: BindingMode.OneWayToSource);
 
     public Action<object?, RouteCurrentInfo>? NavigationTo;
 
     public static readonly StyledProperty<object?> CurrentPageProperty =
-        AvaloniaProperty.Register<MFRoutePage, object?>(
+        AvaloniaProperty.Register<MFRoute, object?>(
             nameof(CurrentPage), defaultBindingMode: BindingMode.OneWayToSource);
 
     /// <summary>
@@ -29,7 +29,7 @@ public partial class MFRoutePage : UserControl
         set => SetValue(CurrentPageProperty, value);
     }
 
-    public static readonly StyledProperty<bool> IsPrevPageProperty = AvaloniaProperty.Register<MFRoutePage, bool>(
+    public static readonly StyledProperty<bool> IsPrevPageProperty = AvaloniaProperty.Register<MFRoute, bool>(
         nameof(IsPrevPage), defaultBindingMode: BindingMode.OneWayToSource);
 
     /// <summary>
@@ -41,7 +41,7 @@ public partial class MFRoutePage : UserControl
         set => SetValue(IsPrevPageProperty, value);
     }
 
-    public MFRoutePage()
+    public MFRoute()
     {
         InitializeComponent();
 
@@ -57,6 +57,6 @@ public partial class MFRoutePage : UserControl
 
     protected override void OnInitialized()
     {
-        CurrentPage ??= Routing.GetCurrentInfo()?.CurrentPage;
+        CurrentPage ??= Routing.CurrentInfo?.CurrentPage;
     }
 }

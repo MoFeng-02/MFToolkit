@@ -72,7 +72,7 @@ public static class GlobalInjects
     {
         if (_isInjectExist) return services;
         // 如果配置的不为Null，则返回本身
-        if (AppUtil.ServiceCollection != null)
+        if (MFApp.ServiceCollection != null)
         {
             _isInjectExist = true;
             return services;

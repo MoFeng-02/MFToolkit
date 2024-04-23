@@ -10,7 +10,7 @@ internal partial class HttpClientExtension
     {
         try
         {
-            clientFactoryService = AppUtil.GetService<HttpClientFactoryService>();
+            clientFactoryService = MFApp.GetService<HttpClientFactoryService>();
         }
         catch (Exception ex)
         {

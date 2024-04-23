@@ -13,34 +13,35 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Authentication\**" />
+	  <EmbeddedResource Remove="Authentication\**" />
+	  <None Remove="Authentication\**" />
+	</ItemGroup>
 	<ItemGroup>
 		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	</ItemGroup>
-	<ItemGroup>
 		<!--<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />-->
 		<PackageReference Include="Mapster" Version="7.4.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.3" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.3" />
+		<PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.4" />
 		<PackageReference Include="NPOI" Version="2.7.0" />
 		<PackageReference Include="QRCoder" Version="1.4.2" />
 		<PackageReference Include="Serilog" Version="3.1.1" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="SqlSugarCore" Version="5.1.4.148" />
+		<PackageReference Include="SqlSugarCore" Version="5.1.4.152" />
 		<PackageReference Include="Ulid" Version="1.3.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Folder Include="Assets\" />
-		<Folder Include="Authentication\JwtAuthorization\Injects\" />
 		<Folder Include="DynamicInjection\Attributes\" />
 		<Folder Include="Docs\SoftwareLicenseTerms\Microsoft\" />
 		<Folder Include="EFCore\Extensions\" />

@@ -6,7 +6,7 @@ namespace MFToolkit.EFCore.Services;
 public class Repository<T> : DbContext, IRepository<T> where T : class
 {
 
-    public DbContext Context => AppUtil.GetService<DbContext>() ?? throw new Exception("未注入DbContext");
+    public DbContext Context => MFApp.GetService<DbContext>() ?? throw new Exception("未注入DbContext");
 
     public DbSet<T> DbSet()
     {

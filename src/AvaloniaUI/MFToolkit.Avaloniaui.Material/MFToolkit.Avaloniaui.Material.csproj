@@ -18,9 +18,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="11.0.7" />
-		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.7" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7" />
+		<PackageReference Include="Avalonia" Version="11.0.10" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\MFToolkit.Avaloniaui\MFToolkit.Avaloniaui.csproj" />

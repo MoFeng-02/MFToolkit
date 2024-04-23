@@ -13,6 +13,9 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	<ItemGroup>
 		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	<ItemGroup>

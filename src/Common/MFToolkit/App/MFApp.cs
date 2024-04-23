@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MFToolkit.Injects;
+using MFToolkit.Loggers.LoggerExtensions.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -6,7 +7,7 @@ namespace MFToolkit.App;
 /// <summary>
 /// APP 拓展通用工具类
 /// </summary>
-public static class AppUtil
+public partial class MFApp
 {
     public static IServiceCollection? ServiceCollection;
     /// <summary>
@@ -21,31 +22,9 @@ public static class AppUtil
     /// <summary>
     /// 获取当前HttpContext，如果是后台服务则为空
     /// </summary>
-    public static HttpContext? HttpContext { get; private set; } = GetService<HttpContext>();
+    //public static HttpContext? HttpContext { get; private set; } = GetService<HttpContext>();
 
-    /// <summary>
-    /// 注入给AppUtil获取配置
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddAppUtilService(this IServiceCollection services)
-    {
-        #region 配置获取
-        ServiceCollection = services;
-        ServiceProvider = services.BuildServiceProvider();
-        #endregion
-        return services;
-    }
-    /// <summary>
-    /// 重新加载ServiceProvider
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    public static IServiceCollection ReloadAppUtilService(this IServiceCollection services)
-    {
-        ServiceProvider = services.BuildServiceProvider();
-        return services;
-    }
+    
 
     /// <summary>
     /// 获取注入的服务
@@ -89,6 +68,26 @@ public static class AppUtil
             return default;
         }
     }
-
+    /// <summary>
+    /// 注入Service，建议在没用类似于下面代码的时候调用，例如
+    /// <para>
+    /// 不存在这样调用的时候
+    /// <code>
+    /// var builder = MauiApp.CreateBuilder();
+    /// builder.Services.InjectServices();
+    /// </code>
+    /// 应该直接这样调用
+    /// <code>GlobalInjects.InjectServices();</code>
+    /// </para>
+    /// </summary>
+    /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>
+    /// <param name="signalRConfiguration">SignalR请求基本信息</param>
+    /// <param name="loggerOptions">日志配置</param>
+    /// <param name="serviceOptions">额外自己要注入的配置</param>
+    /// <returns></returns>
+    public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
+        SignalRConfiguration? signalRConfiguration = null,
+        Action<LoggerConfiguration>? loggerOptions = null,
+        Action<IServiceCollection> serviceOptions = null!) => GlobalInjects.InjectServices(httpRequestConfiguration, signalRConfiguration, loggerOptions, serviceOptions);
 
 }

@@ -44,7 +44,7 @@ public class DownloadService : IDownloadService, IDisposable
         httpClient = httpClientService;
         CancellationToken = CancellationTokenSource.Token;
         //downloadHandler = AppUtil.GetService<DownloadHandler>();
-        downloadPauseInfoHandler = AppUtil.GetService<DownloadPauseInfoHandler>();
+        downloadPauseInfoHandler = MFApp.GetService<DownloadPauseInfoHandler>();
     }
 
     public void Dispose()

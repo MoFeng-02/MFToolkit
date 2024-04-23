@@ -42,6 +42,19 @@ public sealed class LoggerConfiguration
         if (LogLevels.Contains(level)) return;
         LogLevels.Add(level);
     }
+    /// <summary>
+    /// 添加启用的日志级别
+    /// </summary>
+    /// <param name="levels"></param>
+    public void AddStartLogLevel(params LogLevel[] levels)
+    {
+        LogLevels ??= [];
+        foreach (var level in levels)
+        {
+            if (LogLevels.Contains(level)) continue;
+            LogLevels.Add(level);
+        }
+    }
 }
 /// <summary>
 /// 保存时间段区分

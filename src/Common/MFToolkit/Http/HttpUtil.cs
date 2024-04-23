@@ -31,7 +31,7 @@ public sealed class HttpUtil
     /// <returns></returns>
     public static HttpClientService GetHttpClientService()
     {
-        return AppUtil.GetService<HttpClientService>() ?? throw new(
+        return MFApp.GetService<HttpClientService>() ?? throw new(
             "未注册HttpClientService，参考链接：https://learn.microsoft.com/zh-cn/dotnet/core/extensions/httpclient-factory#typed-clients");
     }
 

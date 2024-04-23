@@ -22,8 +22,7 @@ public sealed class Routing
     /// </summary>
     private static string? ThisRoute;
 
-    private static RouteCurrentInfo? CurrentInfo;
-    public static RouteCurrentInfo? GetCurrentInfo() => CurrentInfo;
+    public static RouteCurrentInfo? CurrentInfo { get; private set; }
     /// <summary>
     /// 路由集合的顶级ID
     /// </summary>
@@ -77,7 +76,7 @@ public sealed class Routing
     /// </summary>
     /// <param name="routings"></param>
     /// <exception cref="Exception"></exception>
-    public static void RegisterRoute(params RoutingModel[] routings)
+    public static void RegisterRoutes(params RoutingModel[] routings)
     {
         foreach (var item in routings)
         {

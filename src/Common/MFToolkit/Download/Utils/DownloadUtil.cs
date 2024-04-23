@@ -11,5 +11,5 @@ public class DownloadUtil
     /// 获取下载文件实例
     /// </summary>
     /// <returns></returns>
-    public static IDownloadService? DownloadService() => AppUtil.GetService<IDownloadService>();
+    public static IDownloadService? DownloadService() => MFApp.GetService<IDownloadService>();
 }
