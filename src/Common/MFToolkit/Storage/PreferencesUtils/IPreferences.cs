@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Storage;
+﻿namespace MFToolkit.Storage.PreferencesUtils;
 
 /// <summary>
 /// Preferences API 用于在键/值存储中存储应用程序首选项

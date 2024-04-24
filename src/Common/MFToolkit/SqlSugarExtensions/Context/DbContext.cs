@@ -31,7 +31,7 @@ public class DbContext
                                                                   SqlSugarConfiguration.ConnectionConfigs.Count ==
                                                                   0))
             throw new(
-                "数据库连接配置未初始化，它应该如此初始化：在应用程序启动目录等前文件中调用 SqlSugarAotConfiguration.SetConnectionConfig 或 SqlSugarAotConfiguration.SetConnectionConfigs 方法来初始化它");
+                "数据库连接配置未初始化，它应该如此初始化：在应用程序启动目录等前文件中调用 SqlSugarConfiguration.SetConnectionConfig 或 SqlSugarConfiguration.SetConnectionConfigs 方法来初始化它");
         if (IsSingleConfig != null && !isSingleConfig) isSingleConfig = IsSingleConfig.Value;
         if (ConfigAction != null) configAction ??= ConfigAction;
         var db = isSingleConfig

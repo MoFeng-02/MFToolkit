@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Storage;
+﻿namespace MFToolkit.Storage.PreferencesUtils;
 
 class PreferencesImplementation : IPreferences
 {

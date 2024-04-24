@@ -31,6 +31,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.WeChat", "src\App
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Integration.Applet", "src\Applet\Integration\MFToolkit.Integration.Applet\MFToolkit.Integration.Applet.csproj", "{638B3504-CD42-4675-90C4-C980B217625D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{7BBB289A-8F63-4B68-88E8-DB1707C1AE34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.Android", "src\AvaloniaUI\Platform\MFToolkit.Avaloniaui.Android\MFToolkit.Avaloniaui.Android.csproj", "{19F049BD-BA7F-4FE9-8A4F-72290E6C3F33}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.Ios", "src\AvaloniaUI\Platform\MFToolkit.Avaloniaui.Ios\MFToolkit.Avaloniaui.Ios.csproj", "{7407E2EE-1AB7-4708-AB03-A881F885D2F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +75,14 @@ Global
 		{638B3504-CD42-4675-90C4-C980B217625D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{638B3504-CD42-4675-90C4-C980B217625D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{638B3504-CD42-4675-90C4-C980B217625D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F049BD-BA7F-4FE9-8A4F-72290E6C3F33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F049BD-BA7F-4FE9-8A4F-72290E6C3F33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F049BD-BA7F-4FE9-8A4F-72290E6C3F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F049BD-BA7F-4FE9-8A4F-72290E6C3F33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7407E2EE-1AB7-4708-AB03-A881F885D2F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7407E2EE-1AB7-4708-AB03-A881F885D2F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7407E2EE-1AB7-4708-AB03-A881F885D2F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7407E2EE-1AB7-4708-AB03-A881F885D2F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +101,9 @@ Global
 		{DA54901F-0B82-48B5-A784-4024D6DD3FB4} = {6D9C2431-9343-4C19-AF67-F98B7BE147DE}
 		{24436442-396B-4D54-8F8B-3674977E2343} = {15C20EF6-BB79-43DC-9817-B31E7DE743D5}
 		{638B3504-CD42-4675-90C4-C980B217625D} = {871DDEC1-44A0-448E-BD7F-3394C6D4CC81}
+		{7BBB289A-8F63-4B68-88E8-DB1707C1AE34} = {062531D0-AEC9-49B3-9268-D27738D36685}
+		{19F049BD-BA7F-4FE9-8A4F-72290E6C3F33} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
+		{7407E2EE-1AB7-4708-AB03-A881F885D2F2} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {26CBE323-C27F-4A10-9AB2-33096B423A66}

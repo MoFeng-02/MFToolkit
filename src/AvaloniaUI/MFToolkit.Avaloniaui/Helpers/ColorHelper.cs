@@ -15,6 +15,14 @@ public class ColorHelper
         Color c = Color.Parse(input);
         return c;
     }
+
+    /// <summary>
+    /// 生成十六进制颜色值
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public static string GenerateColorX8(string input) => GenerateColor(input).ToString();
+
     /// <summary>
     /// 生成纯色画笔
     /// </summary>

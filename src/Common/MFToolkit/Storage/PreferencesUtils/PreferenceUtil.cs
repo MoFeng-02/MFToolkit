@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Storage;
+﻿namespace MFToolkit.Storage.PreferencesUtils;
 
 /// <summary>
 /// 首选项工具类

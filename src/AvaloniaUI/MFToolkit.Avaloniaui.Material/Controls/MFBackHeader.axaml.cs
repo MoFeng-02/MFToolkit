@@ -37,7 +37,7 @@ public partial class MFBackHeader : UserControl
     /// <summary>
     /// 左边内容
     /// </summary>
-    public Object? LeftContent
+    public object? LeftContent
     {
         get => GetValue(LeftContentProperty);
         set => SetValue(LeftContentProperty, value);
@@ -46,7 +46,7 @@ public partial class MFBackHeader : UserControl
     /// <summary>
     /// 右边内容
     /// </summary>
-    public object RightContent
+    public object? RightContent
     {
         get => GetValue(RightContentProperty);
         set => SetValue(RightContentProperty, value);

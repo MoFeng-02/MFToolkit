@@ -3,7 +3,7 @@ using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using Mapster;
 using MFToolkit.Json.Extensions;
 
-namespace MFToolkit.Storage;
+namespace MFToolkit.Storage.PreferencesUtils;
 
 /// <summary>
 /// 偏好存储
