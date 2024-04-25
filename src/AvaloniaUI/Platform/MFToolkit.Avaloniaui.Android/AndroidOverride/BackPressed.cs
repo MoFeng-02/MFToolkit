@@ -1,4 +1,7 @@
-﻿using Avalonia.Android;
+﻿using System;
+using System.Threading.Tasks;
+using Android.Widget;
+using Avalonia.Android;
 using Java.Lang;
 using MFToolkit.Avaloniaui.Routings;
 using Dialog = MFToolkit.Avaloniaui.Material.Helpers.Dialog;

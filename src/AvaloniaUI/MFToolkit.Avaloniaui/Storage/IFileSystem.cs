@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Storage;
+﻿namespace MFToolkit.Avaloniaui.Storage;
 
 /// <summary>
 /// FileSystem 主要抽象类

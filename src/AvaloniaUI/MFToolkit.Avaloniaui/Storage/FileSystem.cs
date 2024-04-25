@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Storage;
+﻿namespace MFToolkit.Avaloniaui.Storage;
 
 /// <summary>
 /// 文件系统-App文件系统
