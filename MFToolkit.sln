@@ -37,6 +37,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.Androi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.Ios", "src\AvaloniaUI\Platform\MFToolkit.Avaloniaui.Ios\MFToolkit.Avaloniaui.Ios.csproj", "{7407E2EE-1AB7-4708-AB03-A881F885D2F2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.Platform", "src\AvaloniaUI\Platform\MFToolkit.Avaloniaui.Platform\MFToolkit.Avaloniaui.Platform.csproj", "{65C7FF0D-D41F-491F-BD45-314CE35FFC65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.Maccatalyst", "src\AvaloniaUI\Platform\MFToolkit.Avaloniaui.Maccatalyst\MFToolkit.Avaloniaui.Maccatalyst.csproj", "{E38E8F39-8A1B-4048-A188-014B43A22BE5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.WinUwp", "src\AvaloniaUI\Platform\MFToolkit.Avaloniaui.WinUwp\MFToolkit.Avaloniaui.WinUwp.csproj", "{A00829BE-D401-4F78-BC1F-52884763B388}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFToolkit.Avaloniaui.Windows", "src\AvaloniaUI\Platform\MFToolkit.Avaloniaui.Windows\MFToolkit.Avaloniaui.Windows.csproj", "{18BE9E7F-A74F-4E97-862D-D5F2DBB5F3B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +91,22 @@ Global
 		{7407E2EE-1AB7-4708-AB03-A881F885D2F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7407E2EE-1AB7-4708-AB03-A881F885D2F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7407E2EE-1AB7-4708-AB03-A881F885D2F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65C7FF0D-D41F-491F-BD45-314CE35FFC65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65C7FF0D-D41F-491F-BD45-314CE35FFC65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65C7FF0D-D41F-491F-BD45-314CE35FFC65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65C7FF0D-D41F-491F-BD45-314CE35FFC65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E38E8F39-8A1B-4048-A188-014B43A22BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E38E8F39-8A1B-4048-A188-014B43A22BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E38E8F39-8A1B-4048-A188-014B43A22BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E38E8F39-8A1B-4048-A188-014B43A22BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A00829BE-D401-4F78-BC1F-52884763B388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A00829BE-D401-4F78-BC1F-52884763B388}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A00829BE-D401-4F78-BC1F-52884763B388}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A00829BE-D401-4F78-BC1F-52884763B388}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18BE9E7F-A74F-4E97-862D-D5F2DBB5F3B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18BE9E7F-A74F-4E97-862D-D5F2DBB5F3B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18BE9E7F-A74F-4E97-862D-D5F2DBB5F3B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18BE9E7F-A74F-4E97-862D-D5F2DBB5F3B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +128,10 @@ Global
 		{7BBB289A-8F63-4B68-88E8-DB1707C1AE34} = {062531D0-AEC9-49B3-9268-D27738D36685}
 		{19F049BD-BA7F-4FE9-8A4F-72290E6C3F33} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
 		{7407E2EE-1AB7-4708-AB03-A881F885D2F2} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
+		{65C7FF0D-D41F-491F-BD45-314CE35FFC65} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
+		{E38E8F39-8A1B-4048-A188-014B43A22BE5} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
+		{A00829BE-D401-4F78-BC1F-52884763B388} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
+		{18BE9E7F-A74F-4E97-862D-D5F2DBB5F3B9} = {7BBB289A-8F63-4B68-88E8-DB1707C1AE34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {26CBE323-C27F-4A10-9AB2-33096B423A66}

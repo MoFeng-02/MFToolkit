@@ -126,6 +126,15 @@ public sealed class Routing
     }
 
     /// <summary>
+    /// 获取上一页的信息
+    /// </summary>
+    /// <returns></returns>
+    public static async Task<RouteCurrentInfo?> PrevPageAsync()
+    {
+        return await PrevRoutingAsync();
+    }
+
+    /// <summary>
     /// 获取路径后面的参数
     /// </summary>
     /// <param name="queryString">路由参数</param>
@@ -217,7 +226,7 @@ public sealed class Routing
         var reRoute = string.Empty;
         foreach (var item in routePathParameter.Routes)
             if (item == "..")
-                prev = await PrevRouting(prev?.Route);
+                prev = await PrevRoutingAsync(prev?.Route);
             else
                 reRoute = item;
 
@@ -423,7 +432,7 @@ public sealed class Routing
     /// </summary>
     /// <param name="_route">导航路由</param>
     /// <returns></returns>
-    private static Task<RouteCurrentInfo?> PrevRouting(string? _route = null)
+    private static Task<RouteCurrentInfo?> PrevRoutingAsync(string? _route = null)
     {
         // 首先获取本页是不是属于菜单页
         var findInfo = RoutingInfos.FirstOrDefault(q => q.Route == (_route ?? ThisRoute)) ??
@@ -457,8 +466,7 @@ public sealed class Routing
 
         // 否则返回菜单页面
         var findTopNavigation = TopNavigations.FirstOrDefault(q => q.Value.RoutingId == ThisTopNavigationId).Value;
-        if (findTopNavigation == null) return null;
-        return Task.FromResult(findTopNavigation);
+        return findTopNavigation == null ? null : Task.FromResult(findTopNavigation);
     }
 
     /// <summary>
@@ -526,6 +534,11 @@ public class RouteCurrentInfo
     /// 参数集合
     /// </summary>
     public Dictionary<string, object?>? Parameters { get; internal set; }
+
+    /// <summary>
+    /// 标题
+    /// </summary>
+    public string? Title { get; set; }
 }
 
 public class RoutePathParameter

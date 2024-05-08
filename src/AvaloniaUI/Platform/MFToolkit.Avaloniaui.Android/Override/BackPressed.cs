@@ -7,7 +7,7 @@ using MFToolkit.Avaloniaui.Routings;
 using Dialog = MFToolkit.Avaloniaui.Material.Helpers.Dialog;
 using Toast = Android.Widget.Toast;
 
-namespace MFToolkit.Avaloniaui.Android.AndroidOverride;
+namespace MFToolkit.Avaloniaui.Android.Override;
 
 /// <summary>
 /// 封装的返回操作

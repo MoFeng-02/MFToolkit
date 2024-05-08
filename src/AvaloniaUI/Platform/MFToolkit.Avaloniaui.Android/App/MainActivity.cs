@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Android;
-using MFToolkit.Avaloniaui.Android.AndroidOverride;
+using MFToolkit.Avaloniaui.Android.Override;
 using MFToolkit.Avaloniaui.Android.AppStyle;
 using MFToolkit.Avaloniaui.Android.Storage;
 
