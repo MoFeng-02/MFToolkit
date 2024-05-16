@@ -1,2 +1,3 @@
 ﻿不适配AOT！
 Not suitable for AOT!
+（或许你也可以试一下？也许可以AOT只不过需要一丢丢处理？）

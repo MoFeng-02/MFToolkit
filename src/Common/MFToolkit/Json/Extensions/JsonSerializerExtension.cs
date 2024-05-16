@@ -58,7 +58,7 @@ public static class JsonSerializerExtension
             var re = JsonSerializer.Serialize(t, typeof(T), context);
             return re;
         }
-        catch (Exception ex)
+        catch
         {
             return default;
         }
@@ -88,7 +88,7 @@ public static class JsonSerializerExtension
             var re = JsonSerializer.SerializeToUtf8Bytes(t, typeof(T), context);
             return re;
         }
-        catch (Exception)
+        catch
         {
             return default;
         }
@@ -121,7 +121,7 @@ public static class JsonSerializerExtension
             if (re is not T result) return defaultValue ?? default;
             return result;
         }
-        catch (Exception ex)
+        catch
         {
             return defaultValue ?? default;
         }
@@ -156,7 +156,7 @@ public static class JsonSerializerExtension
             if (re is not T result) return defaultValue ?? default;
             return result;
         }
-        catch (Exception)
+        catch
         {
             return defaultValue ?? default;
         }

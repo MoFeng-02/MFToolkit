@@ -13,8 +13,7 @@ namespace MFToolkit.Download.Handler;
 /// </summary>
 public class DownloadHandler
 {
-    public static readonly DownloadHandler Default = MFApp.GetService<DownloadHandler>();
-    private readonly string saveFolderPath = DownloadConstant.SaveFolderPath;
+    //private readonly string saveFolderPath = DownloadConstant.SaveFolderPath;
     private readonly string saveFolderPauseinfoPath = Path.Combine(DownloadConstant.SaveFolderPath, "pauseinfo");
     private readonly string eKey = "otEwyom+/bgjiUzyMio8aJfqfL44h5Xu";
     /// <summary>

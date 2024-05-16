@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using MFToolkit.DynamicInjection.Dependencies;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +17,7 @@ public static class DynamicInjectionExtensions
     /// <param name="services">服务容器</param>
     /// <param name="assembly">程序集</param>
     /// <exception cref="InvalidOperationException"></exception>
+    [RequiresUnreferencedCode("由于它是使用 Assembly 的，在未知情况下可能失效")]
     public static IServiceCollection AddDependencyInjection(this IServiceCollection services, Assembly assembly)
     {
         var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => typeof(IPrivateDependency).IsAssignableFrom(i)));

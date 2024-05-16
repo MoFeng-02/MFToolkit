@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using MFToolkit.App;
+using MFToolkit.Exceptions;
 using MFToolkit.Http.HttpClientFactorys;
 using MFToolkit.Http.Models;
 using MFToolkit.Json.Extensions;
@@ -43,7 +44,7 @@ public sealed class HttpUtil
     /// <returns></returns>
     public static HttpClient CreateHttpClient(string name = "", bool isAddBaseUri = true)
     {
-        var httpClient = HttpClientExtension.Instance.CreateHttpClient(name);
+        var httpClient = MFApp.GetService<HttpClientFactoryService>()?.CreateHttpClient(name) ?? throw MFAppException.UnRealizedException;
         if (isAddBaseUri) httpClient.BaseAddress = _baseUri ?? default;
         return httpClient;
     }
