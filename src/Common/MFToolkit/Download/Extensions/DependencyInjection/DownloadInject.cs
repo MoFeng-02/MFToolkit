@@ -3,7 +3,7 @@ using MFToolkit.Download.Services;
 using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 
-namespace MFToolkit.Download.Inject;
+namespace MFToolkit.Download.Extensions.DependencyInjection;
 public static class DownloadInject
 {
     /// <summary>

@@ -2,8 +2,8 @@
 using MFToolkit.Socket.SignalR.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace MFToolkit.Socket.SignalR.Utils;
-public class ChatHubUtil
+namespace MFToolkit.Socket.SignalR.Client;
+public static class ChatHubClient
 {
     /// <summary>
     /// 连接
@@ -152,8 +152,9 @@ public class ChatHubUtil
         if (Connection == null) return;
         ReceiveMessage ??= action;
         Connection.Remove(nameof(ReceiveMessage));
+        if (ReceiveMessage != null)
+            Connection.On(nameof(ReceiveMessage), ReceiveMessage);
 
-        Connection.On(nameof(ReceiveMessage), ReceiveMessage);
         try
         {
             await Connection.StartAsync();
@@ -194,7 +195,7 @@ public class ChatHubUtil
                 await StartConnection();
 
             }
-            catch (Exception ex)
+            catch
             {
 
             }

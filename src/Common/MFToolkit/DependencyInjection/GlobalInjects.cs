@@ -1,18 +1,14 @@
 ﻿using System.Net.Http.Headers;
 using MFToolkit.App;
-using MFToolkit.App.Extensions;
-using MFToolkit.Download.Inject;
+using MFToolkit.App.Extensions.DependencyInjection;
 using MFToolkit.Http;
+using MFToolkit.Http.Extensions.DependencyInjection;
 using MFToolkit.Http.HttpClientFactorys;
 using MFToolkit.Json.Extensions;
-using MFToolkit.Loggers.LoggerExtensions;
-using MFToolkit.Loggers.LoggerExtensions.Configurations;
-using MFToolkit.Loggers.LoggerExtensions.Tasks;
-using MFToolkit.Socket.SignalR.Utils;
+using MFToolkit.Loggers.MFLogger.Configurations;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
-namespace MFToolkit.Injects;
+namespace MFToolkit.DependencyInjection;
 
 /// <summary>
 /// 注入
@@ -42,11 +38,10 @@ public static class GlobalInjects
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
-        SignalRConfiguration? signalRConfiguration = null,
         Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
-        return new ServiceCollection().AddInjectServices(httpRequestConfiguration, signalRConfiguration, loggerOptions,
+        return new ServiceCollection().AddInjectServices(httpRequestConfiguration, loggerOptions,
             serviceOptions);
     }
 
@@ -67,7 +62,6 @@ public static class GlobalInjects
     /// <returns></returns>
     public static IServiceCollection AddInjectServices(this IServiceCollection services,
         HttpRequestConfiguration? httpRequestConfiguration = null,
-        SignalRConfiguration? signalRConfiguration = null,
         Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
@@ -87,24 +81,24 @@ public static class GlobalInjects
             // 设置Json转义的时候忽略大小写
             PropertyNameCaseInsensitive = true,
         });
-        services.AddLogging(logging =>
-        {
-            logging.AddLocalFileLogger(loggerOptions ??= (options) =>
-            {
-                options.AddStartLogLevel(LogLevel.Information);
-                options.AddStartLogLevel(LogLevel.Error);
-                options.AddStartLogLevel(LogLevel.Warning);
+        //services.AddLogging(logging =>
+        //{
+        //    logging.AddLocalFileLogger(loggerOptions ??= (options) =>
+        //    {
+        //        options.AddStartLogLevel(LogLevel.Information);
+        //        options.AddStartLogLevel(LogLevel.Error);
+        //        options.AddStartLogLevel(LogLevel.Warning);
 
-                options.BasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-                options.OpenGroupLevel = true;
-                options.SaveTimeType = SaveTimeType.Hour;
-                Task.Run(() => LogClear.ClearLogs(options));
-            });
-        });
+        //        options.BasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+        //        options.OpenGroupLevel = true;
+        //        options.SaveTimeType = SaveTimeType.Hour;
+        //        Task.Run(() => LogClear.ClearLogs(options));
+        //    });
+        //});
 
         #region HTTP Clent
 
-        services.AddHttpClient<HttpClientService>(options =>
+        services.AddHttpClientService(options =>
         {
             options.BaseAddress = httpRequestConfiguration == null
                 ? null
@@ -148,18 +142,9 @@ public static class GlobalInjects
 
         #endregion
 
-        #region SignalR
-
-        if (signalRConfiguration != null)
-        {
-            ChatHubUtil.ConnectionBuild(signalRConfiguration.BaseRequestUri, signalRConfiguration.RequestTokenFunc);
-        }
-
-        #endregion
-
         serviceOptions?.Invoke(services);
-
-        services.AddDownloadService().AddDownloadPauseInfoHandler();
+        // 取消内部注册，由用户自行注册
+        //services.AddDownloadService().AddDownloadPauseInfoHandler();
         //services.AddDownloadService<DownloadHandler>();
 
         services.AddMFAppService();
@@ -180,17 +165,4 @@ public class HttpRequestConfiguration
 
     public string BaseRequestUri { get; set; }
     public Func<string> RequestTokenFunc { get; set; }
-}
-
-public class SignalRConfiguration
-{
-    /// <summary>
-    /// 请求地址
-    /// </summary>
-    public string BaseRequestUri { get; set; } = null!;
-
-    /// <summary>
-    /// 获取token的方法，如果需要token的话就传这个
-    /// </summary>
-    public Func<string?> RequestTokenFunc { get; set; } = null!;
 }

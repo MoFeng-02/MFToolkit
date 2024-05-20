@@ -2,7 +2,7 @@
 using MFToolkit.Exceptions;
 using Microsoft.Extensions.Logging;
 
-namespace MFToolkit.Loggers.LoggerExtensions.Utils;
+namespace MFToolkit.Loggers.MFLogger.Utils;
 
 public class LoggerUtil
 {

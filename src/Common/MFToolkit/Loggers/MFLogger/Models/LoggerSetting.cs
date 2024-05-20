@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Loggers.LoggerExtensions.Models;
+﻿namespace MFToolkit.Loggers.MFLogger.Models;
 public class LoggerSetting
 {
     /// <summary>

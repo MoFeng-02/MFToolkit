@@ -1,5 +1,6 @@
-﻿using MFToolkit.Injects;
-using MFToolkit.Loggers.LoggerExtensions.Configurations;
+﻿using MFToolkit.DependencyInjection;
+using MFToolkit.Loggers.MFLogger.Configurations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -18,13 +19,11 @@ public partial class MFApp
     /// 可以获取比如：开发，生产模式等等信息
     /// </summary>
     public static IHostEnvironment? HostEnvironment;
-
     /// <summary>
-    /// 获取当前HttpContext，如果是后台服务则为空
+    /// 应用程序配置 <see cref="IConfiguration"/>
     /// </summary>
-    //public static HttpContext? HttpContext { get; private set; } = GetService<HttpContext>();
+    public static IConfiguration? Configuration;
 
-    
 
     /// <summary>
     /// 获取注入的服务
@@ -68,6 +67,7 @@ public partial class MFApp
             return default;
         }
     }
+
     /// <summary>
     /// 注入Service，建议在没用类似于下面代码的时候调用，例如
     /// <para>
@@ -86,8 +86,8 @@ public partial class MFApp
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
-        SignalRConfiguration? signalRConfiguration = null,
         Action<LoggerConfiguration>? loggerOptions = null,
-        Action<IServiceCollection> serviceOptions = null!) => GlobalInjects.InjectServices(httpRequestConfiguration, signalRConfiguration, loggerOptions, serviceOptions);
+        Action<IServiceCollection> serviceOptions = null!) =>
+        GlobalInjects.InjectServices(httpRequestConfiguration, loggerOptions, serviceOptions);
 
 }

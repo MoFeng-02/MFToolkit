@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿#nullable disable
+using Microsoft.Extensions.Logging;
 
-namespace MFToolkit.Loggers.LoggerExtensions.Configurations;
+namespace MFToolkit.Loggers.MFLogger.Configurations;
 public sealed class LoggerConfiguration
 {
     /// <summary>

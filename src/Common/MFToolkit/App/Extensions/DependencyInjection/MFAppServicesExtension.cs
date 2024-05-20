@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace MFToolkit.App.Extensions;
+namespace MFToolkit.App.Extensions.DependencyInjection;
 public static class MFAppServicesExtension
 {
     /// <summary>

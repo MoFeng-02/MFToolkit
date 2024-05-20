@@ -1,10 +1,10 @@
-﻿using MFToolkit.Loggers.LoggerExtensions.Configurations;
+﻿using MFToolkit.Loggers.MFLogger.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
 
-namespace MFToolkit.Loggers.LoggerExtensions;
+namespace MFToolkit.Loggers.MFLogger.Extensions.DependencyInjection;
 public static class LoggingBuilderExtensions
 {
     /// <summary>

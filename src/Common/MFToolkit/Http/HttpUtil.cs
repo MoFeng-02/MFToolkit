@@ -199,8 +199,7 @@ public static partial class HttpClientExtensionTwo
     public static HttpClientService SetAuthorization(this HttpClientService httpClientService, string scheme = "Bearer",
         string? parameter = null)
     {
-        var httpClient = httpClientService.GetHttpClient();
-        httpClient.DefaultRequestHeaders.Authorization =
+        httpClientService.DefaultRequestHeaders.Authorization =
             string.IsNullOrEmpty(parameter) ? new(scheme) : new(scheme, parameter);
         return httpClientService;
     }

@@ -1,10 +1,9 @@
 ﻿using MFToolkit.CommonTypes.Enumerates;
 using MFToolkit.Socket.SignalR.Models;
-using MFToolkit.Socket.SignalR.Utils;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace MFToolkit.Socket.SignalR.Extensions;
-public static class ChatHubExtension
+namespace MFToolkit.Socket.SignalR.Client.Extensions;
+public static class ChatHubClientExtension
 {
     /// <summary>
     /// 启动自动重连
@@ -18,11 +17,11 @@ public static class ChatHubExtension
     public static HubConnection Reconnection(this HubConnection connection, Action<int, HubConnectionState?> connectionAction = null)
     {
         // 如果已经启动自动重连
-        if (ChatHubUtil.ToIsStartReconnection()) return connection;
+        if (ChatHubClient.ToIsStartReconnection()) return connection;
         connection.Closed += async (state) =>
         {
             await Console.Out.WriteLineAsync("尝试重连");
-            await ChatHubUtil.Reconnect(connectionAction);
+            await ChatHubClient.Reconnect(connectionAction);
         };
         return connection;
     }
@@ -34,7 +33,7 @@ public static class ChatHubExtension
     /// <returns></returns>
     public static HubConnection ReceiveMessage(this HubConnection connection, Action<ChatMessageModel, ChatContactType> action)
     {
-        ChatHubUtil.ReceiveMessage = action;
+        ChatHubClient.ReceiveMessage = action;
         return connection;
     }
 }

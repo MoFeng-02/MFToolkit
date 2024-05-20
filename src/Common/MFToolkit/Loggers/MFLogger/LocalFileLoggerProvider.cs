@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using MFToolkit.Loggers.LoggerExtensions.Configurations;
+using MFToolkit.Loggers.MFLogger.Configurations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace MFToolkit.Loggers.LoggerExtensions;
+namespace MFToolkit.Loggers.MFLogger;
 public class LocalFileLoggerProvider : ILoggerProvider
 {
     private readonly IDisposable? _onChangeToken;

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
-using MFToolkit.Loggers.LoggerExtensions.Configurations;
+using MFToolkit.Loggers.MFLogger.Configurations;
 using Microsoft.Extensions.Logging;
 
-namespace MFToolkit.Loggers.LoggerExtensions;
+namespace MFToolkit.Loggers.MFLogger;
 public class LocalFileLogger : ILogger
 {
     /// <summary>
@@ -11,7 +11,7 @@ public class LocalFileLogger : ILogger
     /// </summary>
     private static readonly ConcurrentQueue<WaitWirteInfo> queue = new();
     private static readonly CancellationTokenSource cancellationTokenSource = new();
-    private static Task writeTask;
+    private static Task writeTask = null!;
     private string _name;
     private readonly Func<LoggerConfiguration> _getCurrentConfig;
 
@@ -28,38 +28,42 @@ public class LocalFileLogger : ILogger
         return _getCurrentConfig().LogLevels.Contains(logLevel);
     }
 
-    public async void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         if (!IsEnabled(logLevel))
         {
             return;
         }
-        var config = _getCurrentConfig() ?? throw new ArgumentNullException("config");
-        var groupFileInfo = GroupFile(logLevel, config);
+        var config = _getCurrentConfig() ?? throw new ArgumentNullException("config", "未提供配置参数，请提供配置参数");
+        var dateTime = DateTime.Now;
+        var groupFileInfo = GroupFile(logLevel, config, dateTime);
         var content = formatter.Invoke(state, exception);
         //await FileWriteAsync(config, savePath, FormatterContent(content, logLevel));
-        queue.Enqueue(new()
+        var waitWirteInfo = new WaitWirteInfo()
         {
-            Content = FormatterContent(content, logLevel),
+            Content = FormatterContent(content, logLevel, dateTime),
             GroupFileInfo = groupFileInfo,
             LogLevel = logLevel,
-        });
+        };
+        queue.Enqueue(waitWirteInfo);
     }
     class WaitWirteInfo
     {
+        public DateTime CreateTime { get; set; } = DateTime.Now;
         public LogLevel LogLevel { get; set; }
-        public string Content { get; set; }
-        public GroupFileInfo GroupFileInfo { get; set; }
+        public string? Content { get; set; }
+        public GroupFileInfo? GroupFileInfo { get; set; }
     }
     /// <summary>
     /// 格式化文件
     /// </summary>
     /// <param name="content"></param>
     /// <param name="logLevel"></param>
+    /// <param name="dateTime"></param>
     /// <returns></returns>
-    private string FormatterContent(string content, LogLevel logLevel)
+    private string FormatterContent(string content, LogLevel logLevel, DateTime? dateTime = null)
     {
-        return $"[{DateTime.Now}] {logLevel} {_name}  {content}\n";
+        return $"[{dateTime ?? DateTime.Now}] {logLevel} {_name}  {content}\n";
     }
     private async Task StartWriteTask()
     {
@@ -73,7 +77,7 @@ public class LocalFileLogger : ILogger
             {
                 var config = _getCurrentConfig() ?? throw new ArgumentNullException("logger config");
                 var group = GroupFile(info.LogLevel, config);
-                await FileWriteAsync(config, group, info.Content);
+                await FileWriteAsync(config, group, info.Content!);
             }
             else
             {
@@ -81,7 +85,7 @@ public class LocalFileLogger : ILogger
             }
         }
     }
-    public static async void StopWriteTask()
+    public static async Task StopWriteTask()
     {
         cancellationTokenSource.Cancel();
         await writeTask;
@@ -89,10 +93,13 @@ public class LocalFileLogger : ILogger
     /// <summary>
     /// 返回分组后的路径
     /// </summary>
+    /// <param name="logLevel"></param>
+    /// <param name="config"></param>
+    /// <param name="dateTime"></param>
     /// <returns></returns>
-    private GroupFileInfo GroupFile(LogLevel logLevel, LoggerConfiguration config)
+    private GroupFileInfo GroupFile(LogLevel logLevel, LoggerConfiguration config, DateTime? dateTime = null)
     {
-        DateTime time = DateTime.Now;
+        DateTime time = dateTime ?? DateTime.Now;
         var dateStr = config.SaveTimeType switch
         {
             SaveTimeType.Day => $"{time:yyyy_MM_dd}",
@@ -131,8 +138,8 @@ public class LocalFileLogger : ILogger
     /// </summary>
     private class GroupFileInfo
     {
-        public string Path { get; set; }
-        public string Hour { get; set; }
+        public string? Path { get; set; }
+        public string? Hour { get; set; }
     }
     /// <summary>
     /// 写入文件方法
@@ -142,13 +149,13 @@ public class LocalFileLogger : ILogger
     /// <param name="content">保存内容</param>
     /// <param name="retry">重新尝试</param>
     /// <returns></returns>
-    private async Task FileWriteAsync(LoggerConfiguration config, GroupFileInfo info, string content, int retry = 0, string path = null)
+    private async Task FileWriteAsync(LoggerConfiguration config, GroupFileInfo info, string content, int retry = 0, string? path = null)
     {
         if (retry == 0)
         {
             if (!Directory.Exists(info.Path))
             {
-                Directory.CreateDirectory(info.Path);
+                Directory.CreateDirectory(info.Path ?? throw new("路径值为空"));
             }
             if (config.SaveTimeType == SaveTimeType.Hour)
             {
@@ -163,7 +170,7 @@ public class LocalFileLogger : ILogger
         try
         {
             //await File.AppendAllTextAsync(path, content, Encoding.UTF8);
-            using FileStream fileStream = new(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite, 4096, true);
+            using FileStream fileStream = new(path!, FileMode.Append, FileAccess.Write, FileShare.ReadWrite, 4096, true);
             byte[] encodedText = Encoding.UTF8.GetBytes(content);
             await fileStream.WriteAsync(encodedText);
 
