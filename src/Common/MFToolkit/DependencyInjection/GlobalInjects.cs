@@ -33,15 +33,14 @@ public static class GlobalInjects
     /// </para>
     /// </summary>
     /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>
-    /// <param name="signalRConfiguration">SignalR请求基本信息</param>
     /// <param name="loggerOptions">日志配置</param>
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
-        Action<LoggerConfiguration>? loggerOptions = null,
+        //Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
-        return new ServiceCollection().AddInjectServices(httpRequestConfiguration, loggerOptions,
+        return new ServiceCollection().AddInjectServices(httpRequestConfiguration,
             serviceOptions);
     }
 
@@ -56,13 +55,12 @@ public static class GlobalInjects
     /// </summary>
     /// <param name="services">服务集合</param>
     /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>
-    /// <param name="signalRConfiguration">SignalR请求基本信息</param>
     /// <param name="loggerOptions">日志配置</param>
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection AddInjectServices(this IServiceCollection services,
         HttpRequestConfiguration? httpRequestConfiguration = null,
-        Action<LoggerConfiguration>? loggerOptions = null,
+        //Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
         if (_isInjectExist) return services;
@@ -103,8 +101,9 @@ public static class GlobalInjects
             options.BaseAddress = httpRequestConfiguration == null
                 ? null
                 : new(httpRequestConfiguration.BaseRequestUri);
-            options.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", httpRequestConfiguration?.RequestTokenFunc());
+            if (httpRequestConfiguration?.RequestTokenFunc != null)
+                options.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", httpRequestConfiguration?.RequestTokenFunc());
         })
             // 暂时先注释
             // #if DEBUG

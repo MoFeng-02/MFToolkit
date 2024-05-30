@@ -80,14 +80,13 @@ public partial class MFApp
     /// <code>GlobalInjects.InjectServices();</code>
     /// </para>
     /// </summary>
-    /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>
-    /// <param name="signalRConfiguration">SignalR请求基本信息</param>
+    /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>\
     /// <param name="loggerOptions">日志配置</param>
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
-        Action<LoggerConfiguration>? loggerOptions = null,
+        //Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!) =>
-        GlobalInjects.InjectServices(httpRequestConfiguration, loggerOptions, serviceOptions);
+        GlobalInjects.InjectServices(httpRequestConfiguration, serviceOptions);
 
 }

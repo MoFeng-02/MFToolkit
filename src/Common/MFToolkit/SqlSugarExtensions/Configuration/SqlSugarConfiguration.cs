@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using MFToolkit.SqlSugarExtensions.Context;
+using MFToolkit.SqlSugarExtensions.Converter;
 using SqlSugar;
+using SqlSugar.DbConvert;
 
 namespace MFToolkit.SqlSugarExtensions.Configuration;
 
@@ -22,11 +24,6 @@ public class SqlSugarConfiguration
     /// <param name="config"></param>
     public static void SetConnectionConfig(ConnectionConfig config) => ConnectionConfig = config;
 
-    private static bool IsNullable(Type type)
-    {
-        var isNull = Nullable.GetUnderlyingType(type);
-        return isNull != null;
-    }
 
     /// <summary>
     /// 设置连接库配置
@@ -59,6 +56,7 @@ public class SqlSugarConfiguration
             if (column.PropertyInfo.PropertyType == typeof(Ulid))
             {
                 column.DataType = "nvarchar(26)";
+                column.SqlParameterDbType = typeof(UlidToStringConverter);
             }
         }
     };
@@ -81,7 +79,26 @@ public class SqlSugarConfiguration
     public static void CreateDataBase(params Type[] entityTypes)
     {
         StaticConfig.EnableAot = false;
+        using var client = DbContext.CreateClient();
+
+        //var diffString = client.CodeFirst.GetDifferenceTables(entityTypes).ToDiffString();
+        // 设置一下其他数据库配置
+        client.CurrentConnectionConfig.ConfigureExternalServices = ConfigureExternalServices;
+        //建库：如果不存在创建数据库存在不会重复创建 
+        client.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库
+        // 建表
+        client.CodeFirst.InitTables(entityTypes);
+    }
+    /// <summary>
+    /// 初始化设计表 Code First模式（非Aot模式）
+    /// <para>建库：如果不存在创建数据库存在不会重复创建</para>
+    /// <para>注意：Oracle和个别国产库需不支持该方法，需要手动建库</para>
+    /// </summary>
+    public static void CreateDataBase(object? configId = null, params Type[] entityTypes)
+    {
+        StaticConfig.EnableAot = false;
         using var aotClient = DbContext.CreateClient();
+        if (configId != null) aotClient.GetConnection(configId);
         // 设置一下其他数据库配置
         aotClient.CurrentConnectionConfig.ConfigureExternalServices = ConfigureExternalServices;
         //建库：如果不存在创建数据库存在不会重复创建 
@@ -98,6 +115,23 @@ public class SqlSugarConfiguration
     {
         StaticConfig.EnableAot = true;
         using var aotClient = DbContext.CreateClient();
+        // 设置一下其他数据库配置
+        aotClient.CurrentConnectionConfig.ConfigureExternalServices = ConfigureExternalServices;
+        //建库：如果不存在创建数据库存在不会重复创建 
+        aotClient.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库
+        // 建表
+        aotClient.CodeFirst.InitTables(entityTypes);
+    }
+    /// <summary>
+    /// 初始化设计表 Code First模式（Aot模式）
+    /// <para>建库：如果不存在创建数据库存在不会重复创建</para>
+    /// <para>注意：Oracle和个别国产库需不支持该方法，需要手动建库</para>
+    /// </summary>
+    public static void CreateDataAotBase(object? configId = null, params Type[] entityTypes)
+    {
+        StaticConfig.EnableAot = true;
+        using var aotClient = DbContext.CreateClient();
+        if (configId != null) aotClient.GetConnection(configId);
         // 设置一下其他数据库配置
         aotClient.CurrentConnectionConfig.ConfigureExternalServices = ConfigureExternalServices;
         //建库：如果不存在创建数据库存在不会重复创建 

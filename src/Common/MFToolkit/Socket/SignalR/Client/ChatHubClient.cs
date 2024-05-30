@@ -28,6 +28,10 @@ public static class ChatHubClient
     /// </summary>
     public static bool IsStartReconnection { get; private set; }
     /// <summary>
+    /// 接收信息的委托
+    /// </summary>
+    public static Action<ChatMessageModel, ChatContactType>? ReceiveMessage;
+    /// <summary>
     /// 获取连接状态
     /// </summary>
     /// <returns></returns>
@@ -206,10 +210,6 @@ public static class ChatHubClient
             if (GetConnectState() == HubConnectionState.Connected) await Console.Out.WriteLineAsync("重新连接成功");
         }
     }
-    /// <summary>
-    /// 接收信息的委托
-    /// </summary>
-    public static Action<ChatMessageModel, ChatContactType>? ReceiveMessage;
 
     #region 发送单个接收者的信息
     /// <summary>

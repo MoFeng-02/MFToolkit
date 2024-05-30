@@ -10,7 +10,7 @@ public static class ChatHubClientExtensions
     /// <param name="url"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    public static IServiceCollection ChatHubClientBuilder(this IServiceCollection services, string url, Func<string> token)
+    public static IServiceCollection AddMFChatHubClientBuilder(this IServiceCollection services, string url, Func<string> token)
     {
         ChatHubClient.ConnectionBuild(url, token);
         return services;

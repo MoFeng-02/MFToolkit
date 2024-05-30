@@ -1,5 +1,4 @@
 ﻿using System;
-using MFToolkit.DI.DynamicInject;
 using MFToolkit.DI.DynamicInjection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,10 +6,10 @@ namespace MFToolkit.DI.DynamicInject
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     [System.Diagnostics.Conditional("DynamicInjectGenerator_DEBUG")]
-    public sealed partial class DynamicInjectAttribute : Attribute
+    public class DynamicInjectAttribute : Attribute
     {
         public static IServiceCollection DefaultServices = new ServiceCollection();
-        public Dependencies Dependencies { get; set; }
+        public virtual Dependencies Dependencies { get; set; }
         public Type ServiceType { get; set; }
         public Type ImplementationType { get; set; }
         public DynamicInjectAttribute()

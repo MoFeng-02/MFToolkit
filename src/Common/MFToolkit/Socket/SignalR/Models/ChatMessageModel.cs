@@ -14,4 +14,8 @@ public class ChatMessageModel
     /// 内容
     /// </summary>
     public string Message { get; set; }
+    /// <summary>
+    /// 发送时间
+    /// </summary>
+    public DateTime SendTime { get; set; } = DateTime.Now;
 }
