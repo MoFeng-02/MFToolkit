@@ -7,9 +7,8 @@ public class UlidToStringConverter : ISugarDataConverter
 {
     public SugarParameter ParameterConverter<T>(object columnValue, int columnIndex)
     {
-        var type = typeof(T);
         var name = "@Ulid" + columnIndex;
-        var str = columnValue.ValueToJson();
+        if (columnValue == null) return new SugarParameter(name, null);
         return new SugarParameter(name, columnValue.ToString());
     }
 

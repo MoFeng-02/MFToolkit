@@ -23,6 +23,7 @@ public class DbContext
     /// 创建SqlSugarAot实例
     /// </summary>
     /// <param name="isSingleConfig">单个库配置还是多个库配置</param>
+    /// <param name="connectionConfig">独特单个配置操作</param>
     /// <param name="configAction">配置操作</param>
     /// <exception cref="Exception">数据库连接配置未初始化</exception>
     /// <returns></returns>

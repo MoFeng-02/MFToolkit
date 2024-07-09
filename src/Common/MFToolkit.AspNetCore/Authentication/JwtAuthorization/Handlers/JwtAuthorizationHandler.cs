@@ -43,7 +43,7 @@ public class JwtAuthorizationHandler : IAuthorizationHandler, IAuthorizationRequ
         var users = httpContext.User.Claims.ToArray();
         var configKey = httpContext.Request.Headers[JsonWebTokenConfig.JwtConfigKey].ToString() ?? null;
         var rToken = JwtUtil.GenerateToken(users, out var _, configKey: configKey);
-        httpContext.SetHttpHender("Authorization", rToken);
+        httpContext.SetResponseHender("Authorization", rToken);
         return Task.CompletedTask;
     }
     /// <summary>

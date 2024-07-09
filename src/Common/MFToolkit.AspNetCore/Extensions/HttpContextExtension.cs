@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.AspNetCore.Extensions;
 public static class HttpContextExtension
@@ -24,7 +25,7 @@ public static class HttpContextExtension
     /// <param name="context"></param>
     /// <param name="headerName"></param>
     /// <param name="value"></param>
-    public static void SetHttpHender(this HttpContext context, string headerName, string? value)
+    public static void SetResponseHender(this HttpContext context, string headerName, string? value)
     {
         context.Response.Headers.Append(headerName, value);
     }
@@ -37,5 +38,35 @@ public static class HttpContextExtension
     public static string? GetUserValue(this HttpContext context, string claimType)
     {
         return context.User.FindFirstValue(claimType);
+    }
+    /// <summary>
+    /// 获取IPV4地址
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static string? GetIpV4(this HttpContext context)
+    {
+        return context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+    }
+    /// <summary>
+    /// 获取IPV6地址
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static string? GetIpV6(this HttpContext context)
+    {
+        return context.Connection.RemoteIpAddress?.MapToIPv6().ToString();
+    }
+    /// <summary>
+    /// 获取访问日志
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="context"></param>
+    /// <param name="logger"></param>
+    /// <param name="message"></param>
+    public static void VisitLog<T>(this HttpContext context, ILogger<T> logger, string? message = null)
+    {
+        var visitLog = $"IPV4:{context.GetIpV4()}，IPV6:{context.GetIpV6()}，访问方法:{context.Request.Path}" + (message != null ? "," + message : null);
+        logger.LogInformation(visitLog);
     }
 }

@@ -53,7 +53,7 @@ public class SqlSugarConfiguration
             //var b = column.PropertyInfo.PropertyType;
             //PropertyInfo
             // 让 ulid 进行数据库适配
-            if (column.PropertyInfo.PropertyType == typeof(Ulid))
+            if (column.PropertyInfo.PropertyType == typeof(Ulid) || column.PropertyInfo.PropertyType == typeof(Ulid?))
             {
                 column.DataType = "nvarchar(26)";
                 column.SqlParameterDbType = typeof(UlidToStringConverter);

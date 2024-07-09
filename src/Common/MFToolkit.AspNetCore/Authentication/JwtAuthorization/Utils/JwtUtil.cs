@@ -19,7 +19,7 @@ public class JwtUtil
     public static string GenerateToken(Claim[] claims, out long timetamp, int seconds = -1, string? configKey = null)
     {
         var config = JsonWebTokenConfig.GetJsonWebTokenConfig(configKey);
-        if (config == null) throw new Exception("未配置JsonWebTokenConfig");
+        if (config == null) throw new Exception($"未配置该JsonWebTokenConfig，key:{configKey}");
         var hender = config.Header;
         var payload = config.Payload;
         var now = DateTime.UtcNow;
