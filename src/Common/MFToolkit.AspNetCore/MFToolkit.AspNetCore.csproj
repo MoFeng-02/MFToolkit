@@ -20,14 +20,21 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MFToolkit\MFToolkit.csproj" />
+		<Protobuf Include="..\MFToolkit\Socket\Grpc\Protos\communication.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Folder Include="Authentication\JwtAuthorization\Injects\" />
+		<Folder Include="Socket\Grpc\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
+		<PackageReference Include="Grpc.Tools" Version="2.65.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
 	</ItemGroup>
 
 </Project>

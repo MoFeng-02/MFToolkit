@@ -2,7 +2,7 @@
 /// <summary>
 /// 聊天接触者的类型
 /// </summary>
-public enum ChatContactType
+public enum CommunicationContactType
 {
     /// <summary>
     /// 陌生人
@@ -15,5 +15,13 @@ public enum ChatContactType
     /// <summary>
     /// 群聊
     /// </summary>
-    Group = 2
+    Group = 2,
+    /// <summary>
+    /// 系统信息
+    /// </summary>
+    System = 3,
+    /// <summary>
+    /// 其他（或许客服或许管理通知）
+    /// </summary>
+    Other = 4
 }

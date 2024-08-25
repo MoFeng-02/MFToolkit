@@ -30,7 +30,7 @@ public static class ChatHubClient
     /// <summary>
     /// 接收信息的委托
     /// </summary>
-    public static Action<ChatMessageModel, ChatContactType>? ReceiveMessage;
+    public static Action<ChatMessageModel, CommunicationContactType>? ReceiveMessage;
     /// <summary>
     /// 获取连接状态
     /// </summary>
@@ -151,7 +151,7 @@ public static class ChatHubClient
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    public static async Task StartConnection(Action<ChatMessageModel, ChatContactType>? action = null)
+    public static async Task StartConnection(Action<ChatMessageModel, CommunicationContactType>? action = null)
     {
         if (Connection == null) return;
         ReceiveMessage ??= action;

@@ -11,7 +11,7 @@ public interface IChatMessageService
     /// <param name="message">信息</param>
     /// <param name="chatContactType"></param>
     /// <returns></returns>
-    Task ReceiveMessage(ChatMessageModel message, ChatContactType chatContactType);
+    Task ReceiveMessage(ChatMessageModel message, CommunicationContactType chatContactType);
     /// <summary>
     /// 发送信息方法
     /// </summary>

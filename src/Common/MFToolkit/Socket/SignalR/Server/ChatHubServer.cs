@@ -11,7 +11,7 @@ namespace MFToolkit.Socket.SignalR.Server;
 public class ChatHubServer : Hub<IChatMessageService>, IChatMessageService
 {
 
-    public async Task ReceiveMessage(ChatMessageModel message, ChatContactType chatContactType)
+    public async Task ReceiveMessage(ChatMessageModel message, CommunicationContactType chatContactType)
     {
         await Clients.User(message.To).ReceiveMessage(message, chatContactType);
     }

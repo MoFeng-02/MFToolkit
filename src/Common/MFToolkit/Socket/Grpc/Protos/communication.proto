@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option csharp_namespace = "Common";
+package GrpcCommunication;
+
+// Communication集群中心
+service GrpcCommunicationHub {
+  // 连接到聊天中心
+  rpc ConnectAsync (stream ClientInfo) returns (stream CommunicationSendMessage);
+  // 重连到聊天中心
+  rpc ReConnectAsync (ClientInfo) returns (CommunicationResult);
+  // 断开连接到聊天中心
+  rpc DisconnectAsync (ClientInfo) returns (CommunicationResult);
+  // 信息通信（发送信息）
+  rpc SendMessageAsync (CommunicationSendMessage) returns (CommunicationResult);
+  // 接收信息
+  rpc ReceiveMessageAsync (CommunicationSendMessage) returns (CommunicationResult);
+}
+// 沟通类型
+enum CommunicationType {
+  // 陌生人
+  Stranger = 0;
+  // 好友
+  Friend = 1;
+  // 群聊
+  Group = 2;
+  // 系统信息
+  System = 3;
+  // 其他（或许客服或许管理通知）
+  Other = 4;
+}
+// 连接请求
+message ClientInfo {
+  // 本机ID标识
+  string client_id = 1;
+}
+// 返回响应
+message CommunicationResult {
+  // 是否发送成功
+  bool successed = 1;
+  // 其他信息
+  string message = 2;
+}
+// 信息沟通
+message CommunicationSendMessage {
+  // 发送者标识
+  string from = 1;
+  // 发送的信息
+  string message = 2;
+  // 接收者标识（非接收人/接收人，因为可能是陌生人也可能是好友也可能是群聊，因为是基于CommunicationType来判断的）
+  string to = 3;
+  // 发送消息类型，是发送的个人还是群聊还是陌生人，在Net中是枚举类型
+  CommunicationType Communication_send_message_type = 4;
+  // 信息返回
+  // CommunicationResult Result = 5;
+}

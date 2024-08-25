@@ -31,7 +31,7 @@ public static class ChatHubClientExtension
     /// <param name="connection"></param>
     /// <param name="action"></param>
     /// <returns></returns>
-    public static HubConnection ReceiveMessage(this HubConnection connection, Action<ChatMessageModel, ChatContactType> action)
+    public static HubConnection ReceiveMessage(this HubConnection connection, Action<ChatMessageModel, CommunicationContactType> action)
     {
         ChatHubClient.ReceiveMessage = action;
         return connection;
