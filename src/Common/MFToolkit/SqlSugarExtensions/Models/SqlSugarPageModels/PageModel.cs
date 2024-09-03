@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace MFToolkit.CommonTypes.SqlSugarPageModels;
+namespace MFToolkit.SqlSugarExtensions.Models.SqlSugarPageModels;
 public class PageModel<Condition> where Condition : class
 {
     /// <summary>
@@ -15,5 +15,5 @@ public class PageModel<Condition> where Condition : class
     /// 总数据量
     /// </summary>
     public RefAsync<int> TotalCount { get; set; } = new();
-    public Condition SearchCondition { get; set; }
+    public Condition? SearchCondition { get; set; }
 }
