@@ -15,7 +15,7 @@ public class PageResult<T>
     /// <summary>
     /// 总数据量
     /// </summary>
-    public RefAsync<int> TotalCount { get; set; }
+    public RefAsync<int> Total { get; set; } = null!;
     /// <summary>
     /// 返回数据
     /// </summary>

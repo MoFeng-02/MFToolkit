@@ -26,45 +26,27 @@ public sealed class Routing
     /// <summary>
     /// 路由集合的顶级ID
     /// </summary>
-#if NET8_0_OR_GREATER
     private static readonly ConcurrentDictionary<string, RouteCurrentInfo> TopNavigations = [];
-#else
-    private static readonly ConcurrentDictionary<string, RouteCurrentInfo> TopNavigations = new();
-#endif
     /// <summary>
     /// 保活页面
     /// </summary>
-#if NET8_0_OR_GREATER
     private static readonly ConcurrentDictionary<string, RouteCurrentInfo> KeepAlives = [];
-#else
-    private static readonly ConcurrentDictionary<string, RouteCurrentInfo> KeepAlives = new();
-#endif
     /// <summary>
     /// 路由集合
     /// Guid: RoutingId
     /// List: RouteInfos
     /// </summary>
-#if NET8_0_OR_GREATER
     private static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutings = [];
-#else
-    private static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutings = new();
-#endif
     /// <summary>
     /// 分割处理符号
     /// </summary>
-#if NET8_0_OR_GREATER
     private static readonly char[] separator = ['/'];
-#else
-    private static readonly char[] separator = { '/' };
-#endif
     /// <summary>
     /// 路由信息
     /// </summary>
-#if NET8_0_OR_GREATER
     private static List<RoutingModel> RoutingInfos { get; } = [];
-#else
-    private static List<RoutingModel> RoutingInfos { get; } = new();
-#endif
+
+    private static readonly char[] separatorArray = new[] { '?' };
     /// <summary>
     /// 获取路由详情信息
     /// </summary>
@@ -183,7 +165,7 @@ public sealed class Routing
             thisStr = part;
             if (part.Contains('?'))
             {
-                var subParts = part.Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries);
+                var subParts = part.Split(separatorArray, StringSplitOptions.RemoveEmptyEntries);
                 result.AddRange(subParts.Take(1));
                 if (subParts.Length > 1)
                 {
@@ -198,7 +180,7 @@ public sealed class Routing
             }
         }
 
-        if (!isOkRoute) routePathParameter.ErrorMessage = $"错误路由：{path}";
+        if (!isOkRoute) routePathParameter.ErrorMessage = $"Route error: {path}";
         routePathParameter.IsRouteOk = isOkRoute;
         routePathParameter.Routes = result;
         return routePathParameter;
@@ -414,11 +396,7 @@ public sealed class Routing
         else
         {
             NavigationRoutings.TryGetValue(ThisTopNavigationId, out var navigations);
-#if NET8_0_OR_GREATER
             if (navigations == null || navigations.Count == 0) navigations = [];
-#else
-            if (navigations == null || navigations.Count == 0) navigations = new();
-#endif
             CurrentInfo ??= routeCurrentInfo;
             navigations.Add(routeCurrentInfo);
             NavigationRoutings.AddOrUpdate(ThisTopNavigationId, navigations, (key, value) => navigations);

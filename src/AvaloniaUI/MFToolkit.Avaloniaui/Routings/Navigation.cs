@@ -45,11 +45,7 @@ public sealed class Navigation
         {
             var vm = control.DataContext as ViewModelBase;
             // 调用子类的接收参数方法
-#if NET8_0_OR_GREATER
             vm?.ApplyQueryAttributes(page.Parameters ?? parameters ?? []);
-#else
-            vm?.ApplyQueryAttributes(page.Parameters ?? parameters ?? new());
-#endif
         }
 
         if (page.CurrentPage is IQueryAttributable queryAttributable)
@@ -86,11 +82,7 @@ public sealed class Navigation
         {
             var vm = control.DataContext as ViewModelBase;
             // 调用子类的接收参数方法
-#if NET8_0_OR_GREATER
             vm?.ApplyQueryAttributes(parameters ?? []);
-#else
-            vm?.ApplyQueryAttributes(parameters ?? new());
-#endif
         }
 
         if (page.CurrentPage is IQueryAttributable queryAttributable)
@@ -127,7 +119,7 @@ public sealed class Navigation
     public static async Task<object?> GoToAsync(Type pageType, Dictionary<string, object?>? parameters = null)
     {
         var route = Routing.PageTypeToRoute(pageType);
-        if (string.IsNullOrWhiteSpace(route)) throw new("您的页面未找到");
+        if (string.IsNullOrWhiteSpace(route)) throw new("No route");
         var page = await Routing.GoToAsync(route);
 
         if (!SetParameters(page, route, parameters)) return null;
