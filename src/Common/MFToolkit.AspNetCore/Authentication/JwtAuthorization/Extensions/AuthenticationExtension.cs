@@ -1,11 +1,11 @@
-﻿using MFToolkit.Authentication.JwtAuthorization.Configuration;
-using MFToolkit.Authentication.JwtAuthorization.Handlers;
+﻿using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Configuration;
+using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MFToolkit.Authentication.JwtAuthorization.Extensions;
+namespace MFToolkit.AspNetCore.Authentication.JwtAuthorization.Extensions;
 public static class AuthenticationExtension
 {
     private const string DefaultPolicyName = "jwt";
@@ -50,11 +50,11 @@ public static class AuthenticationExtension
 
         THandler handler = new THandler();
         if (handler is not IAuthorizationRequirement) return service;
-        service.AddSingleton<IAuthorizationHandler>(handler);
+        service.AddAuthentication().AddJwtBearer();
+        //service.AddSingleton<IAuthorizationHandler>(handler);
         JsonWebTokenConfig config = new();
         configAction.Invoke(config);
         JsonWebTokenConfig.SetJsonWebTokenConfig(config);
-        service.AddAuthentication().AddJwtBearer();
         service.AddAuthorization(options =>
         {
             options.AddPolicy(policyName, policy =>

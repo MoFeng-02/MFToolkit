@@ -1,19 +1,23 @@
-﻿using MFToolkit.Authentication.JwtAuthorization.Configuration.BasicConfiguration;
+﻿using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Configuration.BasicConfiguration;
 
-namespace MFToolkit.Authentication.JwtAuthorization.Configuration;
+namespace MFToolkit.AspNetCore.Authentication.JwtAuthorization.Configuration;
 /// <summary>
 /// jwt 配置
 /// </summary>
 public class JsonWebTokenConfig
 {
-    private static JsonWebTokenConfig _jsonWebTokenConfig;
-    private static Dictionary<string, JsonWebTokenConfig> _jsonWebTokenConfigDictionary;
+    private static JsonWebTokenConfig _jsonWebTokenConfig = null!;
+    private static Dictionary<string, JsonWebTokenConfig> _jsonWebTokenConfigDictionary = null!;
     /// <summary>
     /// JWT的请求key
     /// <para>一般用于前端请求头里面的配置,例如：</para>
     /// <code>auth-key: 123456789，这代表key，根据这个获取相关Jwt的配置</code>
     /// </summary>
     public static string JwtConfigKey = "auth-key";
+    /// <summary>
+    /// JWT的请求key
+    /// </summary>
+    public static string JwtConfigKeyRefresh = "auth-refresh-key";
     /// <summary>
     /// 获取配置
     /// </summary>
@@ -26,6 +30,7 @@ public class JsonWebTokenConfig
         {
             return _jsonWebTokenConfig;
         }
+#nullable disable
         if (_jsonWebTokenConfigDictionary.TryGetValue(key, out JsonWebTokenConfig jsonWebTokenConfig)) { return jsonWebTokenConfig; }
         throw new Exception("您未设置JWT配置，请注册，注册方法：service.AddJwtAuthorization(new JsonWebTokenConfig...)");
     }
@@ -51,6 +56,10 @@ public class JsonWebTokenConfig
     /// 加密密钥
     /// </summary>
     public string EncryptionKey { get; set; }
+    /// <summary>
+    /// 刷新Token加密密钥
+    /// </summary>
+    public string RefreshEncryptionKey { get; set; }
     /// <summary>
     /// Header 头
     /// </summary>

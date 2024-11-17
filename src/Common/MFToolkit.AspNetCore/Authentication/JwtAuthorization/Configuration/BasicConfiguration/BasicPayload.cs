@@ -1,11 +1,15 @@
-﻿namespace MFToolkit.Authentication.JwtAuthorization.Configuration.BasicConfiguration;
+﻿namespace MFToolkit.AspNetCore.Authentication.JwtAuthorization.Configuration.BasicConfiguration;
 public class BasicPayload
 {
     /// <summary>
     /// 过期时间（单位：秒）/ 别名：expires
-    /// <para>默认一个小时过期</para>
+    /// <para>默认两个小时过期</para>
     /// </summary>
-    public double ExpirationTime { get; set; } = 3600;
+    public double ExpirationTime { get; set; } = 60 * 60 * 2;
+    /// <summary>
+    /// 刷新Token过期时间(默认一天)
+    /// </summary>
+    public double RefreshExpirationTime { get; set; } = (DateTime.Now.AddDays(1) - DateTime.UtcNow).TotalSeconds;
     /// <summary>
     /// 签发方
     /// </summary>
