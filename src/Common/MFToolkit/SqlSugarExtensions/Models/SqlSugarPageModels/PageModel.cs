@@ -14,6 +14,6 @@ public class PageModel<Condition> where Condition : class
     /// <summary>
     /// 总数据量
     /// </summary>
-    public RefAsync<int> TotalCount { get; set; } = new();
+    public RefAsync<int> Total { get; set; } = new();
     public Condition? SearchCondition { get; set; }
 }

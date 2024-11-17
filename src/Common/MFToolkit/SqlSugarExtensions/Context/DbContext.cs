@@ -20,7 +20,7 @@ public class DbContext
     public static Action<SqlSugarClient>? ConfigAction;
 
     /// <summary>
-    /// 创建SqlSugarAot实例
+    /// 创建SqlSugar实例
     /// </summary>
     /// <param name="isSingleConfig">单个库配置还是多个库配置</param>
     /// <param name="connectionConfig">独特单个配置操作</param>

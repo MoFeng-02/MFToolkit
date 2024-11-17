@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
+using MFToolkit.Exceptions;
 using MFToolkit.Loggers.MFLogger.Configurations;
 using Microsoft.Extensions.Logging;
 
@@ -36,7 +37,7 @@ public class LocalFileLogger : ILogger
         }
         var config = _getCurrentConfig() ?? throw new ArgumentNullException("config", "未提供配置参数，请提供配置参数");
         var dateTime = DateTime.Now;
-        var groupFileInfo = GroupFile(logLevel, config, dateTime);
+        var groupFileInfo = GroupFile(logLevel, config, dateTime, exception);
         var content = formatter.Invoke(state, exception);
         //await FileWriteAsync(config, savePath, FormatterContent(content, logLevel));
         var waitWirteInfo = new WaitWirteInfo()
@@ -61,7 +62,7 @@ public class LocalFileLogger : ILogger
     /// <param name="logLevel"></param>
     /// <param name="dateTime"></param>
     /// <returns></returns>
-    private string FormatterContent(string content, LogLevel logLevel, DateTime? dateTime = null)
+    private string FormatterContent(string content, LogLevel logLevel, DateTime? dateTime = null, Exception? exception = null)
     {
         return $"[{dateTime ?? DateTime.Now}] {logLevel} {_name}  {content}\n";
     }
@@ -76,7 +77,7 @@ public class LocalFileLogger : ILogger
             if (queue.TryDequeue(out var info))
             {
                 var config = _getCurrentConfig() ?? throw new ArgumentNullException("logger config");
-                var group = GroupFile(info.LogLevel, config);
+                var group = info.GroupFileInfo ?? GroupFile(info.LogLevel, config);
                 await FileWriteAsync(config, group, info.Content!);
             }
             else
@@ -93,11 +94,12 @@ public class LocalFileLogger : ILogger
     /// <summary>
     /// 返回分组后的路径
     /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="config"></param>
-    /// <param name="dateTime"></param>
+    /// <param name="logLevel">日志级别</param>
+    /// <param name="config">配置信息</param>
+    /// <param name="dateTime">日志时间</param>
+    /// <param name="exception">异常</param>
     /// <returns></returns>
-    private GroupFileInfo GroupFile(LogLevel logLevel, LoggerConfiguration config, DateTime? dateTime = null)
+    private GroupFileInfo GroupFile(LogLevel logLevel, LoggerConfiguration config, DateTime? dateTime = null, Exception? exception = null)
     {
         DateTime time = dateTime ?? DateTime.Now;
         var dateStr = config.SaveTimeType switch
@@ -111,7 +113,12 @@ public class LocalFileLogger : ILogger
         // 如果启动了类型分组
         if (config.OpenGroupLevel)
         {
-            rePath = Path.Combine(rePath, logLevel.ToString());
+            if (exception != null && exception is MFCommonException baseException)
+            {
+                rePath = Path.Combine(rePath, logLevel.ToString(), baseException.ExceptionLevel.ToString());
+            }
+            else
+                rePath = Path.Combine(rePath, logLevel.ToString());
         }
         return new()
         {

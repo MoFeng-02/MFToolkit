@@ -1,4 +1,6 @@
-﻿namespace MFToolkit.Exceptions;
+﻿using MFToolkit.Exceptions.Enums;
+
+namespace MFToolkit.Exceptions;
 public static class MFAppException
 {
     /// <summary>
@@ -10,9 +12,12 @@ public static class MFAppException
 /// <summary>
 /// 未实现MFApp异常
 /// </summary>
-public class MFUnRealizedException : SystemException
+public class MFUnRealizedException : MFCommonException
 {
-    public MFUnRealizedException() : base("未实现/注册 MFApp ，请在程序入口Services注册后注入 services.AddMFAppService() 以绑定")
+    /// <summary>
+    /// 所处异常级别
+    /// </summary>
+    public MFUnRealizedException() : base("未实现/注册 MFApp ，请在程序入口Services注册后注入 services.AddMFAppService() 以绑定，即放在",ExceptionLevel.ApplicationError)
     {
     }
 }

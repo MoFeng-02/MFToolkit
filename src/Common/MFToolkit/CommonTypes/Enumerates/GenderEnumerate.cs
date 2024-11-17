@@ -10,11 +10,11 @@ public enum GenderEnumerate
     /// </summary>
     Unknown = 0,
     /// <summary>
-    /// 女性
-    /// </summary>
-    Woman = 1,
-    /// <summary>
     /// 男性
     /// </summary>
-    Man = 2
+    Man = 1,
+    /// <summary>
+    /// 女性
+    /// </summary>
+    Woman = 2,
 }
