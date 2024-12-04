@@ -3,7 +3,7 @@
 /// <summary>
 /// 性别枚举类
 /// </summary>
-public enum GenderEnumerate
+public enum Gender
 {
     /// <summary>
     /// 不愿透露性别

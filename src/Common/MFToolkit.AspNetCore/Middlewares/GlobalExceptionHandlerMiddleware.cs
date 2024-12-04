@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
+using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Configuration;
 using MFToolkit.AspNetCore.Extensions.ResultExttensions.Models;
 using MFToolkit.Exceptions;
+using MFToolkit.Json.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -53,7 +55,7 @@ public class GlobalExceptionHandlerMiddleware
     /// <param name="httpContext">HTTP 上下文。</param>
     /// <param name="exception">捕获到的异常。</param>
     /// <returns>一个 Task 表示异步操作。</returns>
-    private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
         // 设置响应的内容类型为 JSON
         httpContext.Response.ContentType = MediaTypeNames.Application.Json;
@@ -75,11 +77,9 @@ public class GlobalExceptionHandlerMiddleware
             Error = error
         };
 
-        // 创建 JSON 序列化选项，启用缩进以提高可读性
-        var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
 
         // 将 CommonErrorModel 序列化为 JSON 字符串
-        var errorJson = JsonSerializer.Serialize(commonErrorModel, jsonOptions);
+        var errorJson = JsonSerializer.Serialize(commonErrorModel, JsonSerializerExtension.DefaultJsonSerializerOptions);
 
         // 将 JSON 字符串写入响应体
         await httpContext.Response.WriteAsync(errorJson);

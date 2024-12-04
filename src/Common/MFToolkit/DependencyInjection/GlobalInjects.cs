@@ -73,26 +73,6 @@ public static class GlobalInjects
 
         _isInjectExist = true;
         services ??= new ServiceCollection();
-        // 设置默认的Json转义配置
-        services.SetDefaultJsonSerializerOptions(new()
-        {
-            // 设置Json转义的时候忽略大小写
-            PropertyNameCaseInsensitive = true,
-        });
-        //services.AddLogging(logging =>
-        //{
-        //    logging.AddLocalFileLogger(loggerOptions ??= (options) =>
-        //    {
-        //        options.AddStartLogLevel(LogLevel.Information);
-        //        options.AddStartLogLevel(LogLevel.Error);
-        //        options.AddStartLogLevel(LogLevel.Warning);
-
-        //        options.BasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-        //        options.OpenGroupLevel = true;
-        //        options.SaveTimeType = SaveTimeType.Hour;
-        //        Task.Run(() => LogClear.ClearLogs(options));
-        //    });
-        //});
 
         #region HTTP Clent
 

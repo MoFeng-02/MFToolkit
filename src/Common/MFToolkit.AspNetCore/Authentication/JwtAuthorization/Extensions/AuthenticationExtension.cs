@@ -66,6 +66,7 @@ public static class AuthenticationExtension
         if (corsOptions != null)
         {
             service.AddCors(corsOptions);
+
             _useCorsPolicyName = policyName;
         }
         return service;

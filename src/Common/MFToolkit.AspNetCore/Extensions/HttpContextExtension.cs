@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using MFToolkit.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -18,6 +19,20 @@ public static class HttpContextExtension
         var result = header.ToString();
         if (string.IsNullOrWhiteSpace(result)) return null;
         return result;
+    }
+    /// <summary>
+    /// 获取指定类型的Header值
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="httpContext"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static T? GetHeaderValue<T>(this HttpContext httpContext, string key)
+    {
+        var header = httpContext.Request.Headers[key];
+        var result = header.ToString();
+        if (string.IsNullOrWhiteSpace(result)) return default(T);
+        return result.ConvertTo<T>();
     }
     /// <summary>
     /// 添加HttpContext返回的标头

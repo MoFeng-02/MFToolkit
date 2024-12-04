@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using System.Text.Json.Serialization;
+using Mapster;
 using SqlSugar;
 
 namespace MFToolkit.SqlSugarExtensions.Models.SqlSugarPageModels;
@@ -15,7 +16,9 @@ public class PageResult<T>
     /// <summary>
     /// 总数据量
     /// </summary>
-    public RefAsync<int> Total { get; set; } = null!;
+    [JsonIgnore]
+    public RefAsync<int> TotalCount { get; set; } = null!;
+    public int Total { get => TotalCount.Value; }
     /// <summary>
     /// 返回数据
     /// </summary>

@@ -14,7 +14,10 @@ public static class JsonSerializerExtension
     /// 默认json配置
     /// </summary>
     private static JsonSerializerOptions? _defaultJsonSerializerOptions;
-
+    /// <summary>
+    /// 全局Json配置
+    /// </summary>
+    public static JsonSerializerOptions? DefaultJsonSerializerOptions => _defaultJsonSerializerOptions;
     /// <summary>
     /// 设置默认Json配置，如果调用本拓展类中的转换方法并且设置了Json配置，那默认配置不生效，AOT模式不适用
     /// </summary>
@@ -51,7 +54,7 @@ public static class JsonSerializerExtension
             if (JsonSerializer.IsReflectionEnabledByDefault)
             {
                 options ??= _defaultJsonSerializerOptions;
-                return JsonSerializer.Serialize(t, typeof(T), options);
+                return JsonSerializer.Serialize(t, options);
             }
 
             context ??= JsonContextDefaultAot.Default;
@@ -81,7 +84,7 @@ public static class JsonSerializerExtension
             if (JsonSerializer.IsReflectionEnabledByDefault)
             {
                 options ??= _defaultJsonSerializerOptions;
-                return JsonSerializer.SerializeToUtf8Bytes(t, typeof(T), options);
+                return JsonSerializer.SerializeToUtf8Bytes(t, options);
             }
 
             context ??= JsonContextDefaultAot.Default;
