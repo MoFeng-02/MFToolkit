@@ -21,17 +21,22 @@ public enum ExceptionLevel
     UserError = 2,
 
     /// <summary>
+    /// 参数错误 - 通常是属于前端传输过来的参数出现错误，例如：不属于这个用户权限的查询参数，其他参数异常等等
+    /// </summary>
+    ParamError = 3,
+
+    /// <summary>
     /// 应用程序错误 - 指应用程序内部出现的问题，通常需要开发者介入解决
     /// </summary>
-    ApplicationError = 3,
+    ApplicationError = 4,
 
     /// <summary>
     /// 系统错误 - 严重的错误，可能涉及到操作系统或外部服务，可能导致应用部分功能不可用
     /// </summary>
-    SystemError = 4,
+    SystemError = 5,
 
     /// <summary>
     /// 致命错误 - 最严重的错误类型，可能导致整个应用程序崩溃或无法继续运行
     /// </summary>
-    FatalError = 5
+    FatalError = 6
 }

@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
-using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Configuration;
 using MFToolkit.AspNetCore.Extensions.ResultExttensions.Models;
 using MFToolkit.Exceptions;
 using MFToolkit.Json.Extensions;

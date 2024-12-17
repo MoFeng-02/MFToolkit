@@ -20,7 +20,7 @@ public class LocalFileLogger : ILogger
     {
         _name = name;
         _getCurrentConfig = getCurrentConfig;
-        writeTask ??= Task.Run(StartWriteTask);
+        writeTask ??= Task.Run(StartWriteTaskAsync);
     }
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull => default!;
@@ -66,7 +66,7 @@ public class LocalFileLogger : ILogger
     {
         return $"[{dateTime ?? DateTime.Now}] {logLevel} {_name}  {content}\n";
     }
-    private async Task StartWriteTask()
+    private async Task StartWriteTaskAsync()
     {
         while (true)
         {

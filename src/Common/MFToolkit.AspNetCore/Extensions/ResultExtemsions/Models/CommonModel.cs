@@ -21,7 +21,7 @@ public class CommonModel
     /// <summary>
     /// 返回时间戳
     /// </summary>
-    public long Timetamp { get; } = DateTime.UtcNow.ToNowTimetampInSeconds();
+    public long Timestamp { get; } = DateTime.UtcNow.ToNowTimetampInSeconds();
 }
 /// <summary>
 /// 返回值模型

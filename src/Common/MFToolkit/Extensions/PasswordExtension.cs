@@ -22,47 +22,22 @@ public static class PasswordExtension
         {
             return MD5Util.Encrypt(oriPwd + encryptionKey);
         }
-        if (encryptionType == EncryptionType.SHA1)
+
+        HashAlgorithm hashAlgorithm = encryptionType switch
         {
-            // 将字符串转换为字节数组
-            byte[] data = Encoding.UTF8.GetBytes(oriPwd + encryptionKey);
-            // 计算字节数组的散列值
-            byte[] hash = SHA1.HashData(data);
-            // 将散列值转换为十六进制字符串
-            string output = BitConverter.ToString(hash).Replace("-", "");
-            return output;
-        }
-        if(encryptionType == EncryptionType.SHA256)
-        {
-            // 将字符串转换为字节数组
-            byte[] data = Encoding.UTF8.GetBytes(oriPwd + encryptionKey);
-            // 计算字节数组的散列值
-            byte[] hash = SHA256.HashData(data);
-            // 将散列值转换为十六进制字符串
-            string output = BitConverter.ToString(hash).Replace("-", "");
-            return output;
-        }
-        if(encryptionType == EncryptionType.SHA384)
-        {
-            // 将字符串转换为字节数组
-            byte[] data = Encoding.UTF8.GetBytes(oriPwd + encryptionKey);
-            // 计算字节数组的散列值
-            byte[] hash = SHA384.HashData(data);
-            // 将散列值转换为十六进制字符串
-            string output = BitConverter.ToString(hash).Replace("-", "");
-            return output;
-        }
-        if (encryptionType == EncryptionType.SHA512)
-        {
-            // 将字符串转换为字节数组
-            byte[] data = Encoding.UTF8.GetBytes(oriPwd + encryptionKey);
-            // 计算字节数组的散列值
-            byte[] hash = SHA512.HashData(data);
-            // 将散列值转换为十六进制字符串
-            string output = BitConverter.ToString(hash).Replace("-", "");
-            return output;
-        }
-        return "";
+            EncryptionType.SHA1 => SHA1.Create(),
+            EncryptionType.SHA256 => SHA256.Create(),
+            EncryptionType.SHA384 => SHA384.Create(),
+            EncryptionType.SHA512 => SHA512.Create(),
+            _ => throw new ArgumentException("Unsupported encryption type.", nameof(encryptionType)),
+        };
+
+        // 计算字节数组的散列值
+        byte[] data = Encoding.UTF8.GetBytes(oriPwd + encryptionKey);
+        byte[] hash = hashAlgorithm.ComputeHash(data);
+
+        // 将散列值转换为十六进制字符串
+        return Convert.ToHexString(hash);
     }
 }
 public enum EncryptionType
