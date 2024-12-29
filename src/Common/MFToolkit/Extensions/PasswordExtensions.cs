@@ -3,7 +3,7 @@ using System.Text;
 using MFToolkit.Utils.EncryptionUtils.MD5Encryption;
 
 namespace MFToolkit.Extensions;
-public static class PasswordExtension
+public static class PasswordExtensions
 {
     /// <summary>
     /// 加密密钥,自己可以提供
@@ -20,7 +20,7 @@ public static class PasswordExtension
     {
         if (encryptionType == EncryptionType.MD5)
         {
-            return MD5Util.Encrypt(oriPwd + encryptionKey);
+            return MD5EncryptionUtil.Encrypt(oriPwd + encryptionKey);
         }
 
         HashAlgorithm hashAlgorithm = encryptionType switch

@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.DI.DynamicInjection;
+﻿namespace MFToolkit.DI.DynamicInjection.Enumerate;
 
 public enum Dependencies
 {

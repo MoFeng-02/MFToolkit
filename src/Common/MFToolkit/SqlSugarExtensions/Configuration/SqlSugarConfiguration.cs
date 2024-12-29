@@ -2,7 +2,6 @@
 using MFToolkit.SqlSugarExtensions.Context;
 using MFToolkit.SqlSugarExtensions.Converter;
 using SqlSugar;
-using SqlSugar.DbConvert;
 
 namespace MFToolkit.SqlSugarExtensions.Configuration;
 

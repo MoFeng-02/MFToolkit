@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 
 namespace MFToolkit.Extensions;
-public static class HttpClientExtentsion
+public static class HttpClientExtentsions
 {
     
     /// <summary>

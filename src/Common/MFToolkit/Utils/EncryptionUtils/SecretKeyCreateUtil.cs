@@ -6,51 +6,52 @@ namespace MFToolkit.Utils.EncryptionUtils;
 /// </summary>
 public class SecretKeyCreateUtil
 {
+    public static readonly int[] ValidSymmetricKeySizesInBytes = [16, 24, 32];
+
     /// <summary>
     /// 创建对称密钥
     /// </summary>
-    /// <param name="length">长度（位）</param>
+    /// <param name="keySizeInBytes">密钥大小（字节）</param>
     /// <returns></returns>
-    public static string CreateSymmetricKey(int length = 32)
+    public static byte[] CreateSymmetricKey(int keySizeInBytes = 32)
     {
-        if (length % 8 != 0) throw new ArgumentException("Invalid key length. The length should be a multiple of 8.");
+        if (!ValidSymmetricKeySizesInBytes.Contains(keySizeInBytes))
+        {
+            throw new ArgumentException("无效的密钥大小。有效的大小为16、24或32字节。\nInvalid key size. Valid sizes are 16, 24, or 32 bytes.");
+        }
+
         using Aes aes = Aes.Create();
-        aes.KeySize = length * 8;   // 指定密钥大小（位）
-        aes.GenerateKey();      // 生成一个随机密钥
-        string symmetricKey = Convert.ToBase64String(aes.Key); // 将密钥转换为Base64字符串
-        return symmetricKey;
-    }
-    /// <summary>
-    /// 非对称加密 密钥类
-    /// </summary>
-    public class AsymmetricalSecretKey
-    {
-        public string PrivateKey { get; set; } = null!;
-        public string PublicKey { get; set; } = null!;
+        aes.KeySize = keySizeInBytes * 8; // 指定密钥大小（位）
+        aes.GenerateKey(); // 生成一个随机密钥
+        return aes.Key;
     }
     /// <summary>
     /// 创建非对称加密密钥
+    /// <para>
+    /// 可使用本方法生成的公私钥在本类中使用加解密<see cref="RSAEncryption.RSAEncryptionUtil"/>
+    /// </para>
     /// </summary>
-    /// <param name="length">长度（位）</param>
+    /// <param name="keySizeInBits">长度（位）</param>
     /// <returns></returns>
-    public static AsymmetricalSecretKey CreateAsymmetricalSecretKey(int length = 2048)
+    public static AsymmetricalSecretKey CreateAsymmetricalSecretKey(int keySizeInBits = 2048)
     {
-        if (length < 384 || length > 16384 || length % 8 != 0)
+        if (keySizeInBits < 384 || keySizeInBits > 16384 || keySizeInBits % 64 != 0)
         {
             // 如果不合法，抛出一个异常或者使用一个默认值
-            throw new ArgumentException("The length is not a multiple of 8 between 384 and 16384");
+            throw new ArgumentException("密钥长度必须是384 ~ 16384位之间64的整数倍\nThe key size must be a multiple of 64 between 384 and 16384 bits");
             // 或者
-            // length = 384;
+            // keySizeInBits = 384;
         }
-        using RSA rsa = RSA.Create(length);
-        RSAParameters rsaKeyInfo = rsa.ExportParameters(true); // 导出密钥信息
-        string publicKey = Convert.ToBase64String(rsaKeyInfo.Modulus); // 将公钥转换为Base64字符串
-        string privateKey = Convert.ToBase64String(rsaKeyInfo.D); // 将私钥转换为Base64字符串
-        var result = new AsymmetricalSecretKey
-        {
-            PrivateKey = privateKey,
-            PublicKey = publicKey,
-        };
-        return result;
+        using RSA rsa = RSA.Create(keySizeInBits);
+        return new AsymmetricalSecretKey(
+            rsa.ExportRSAPrivateKey(),
+            rsa.ExportRSAPublicKey()
+        );
     }
 }
+
+
+/// <summary>
+/// 非对称加密 密钥类
+/// </summary>
+public sealed record AsymmetricalSecretKey(byte[] PrivateKey, byte[] PublicKey);

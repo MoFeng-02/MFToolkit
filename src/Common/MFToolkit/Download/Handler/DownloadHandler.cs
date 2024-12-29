@@ -32,7 +32,7 @@ public class DownloadHandler
         {
             var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) return null;
-            var reValue = AesUtil.Decrypt(jstr, eKey);
+            var reValue = AesEncryptionUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
             var existingModel = models.FirstOrDefault(q => q.DownloadUrl == downloadUrl);
             return existingModel;
@@ -43,7 +43,7 @@ public class DownloadHandler
         {
             var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) continue;
-            var reValue = AesUtil.Decrypt(jstr, eKey);
+            var reValue = AesEncryptionUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
             var existingModel = models.FirstOrDefault(q => q.DownloadUrl == downloadUrl);
             return existingModel;
@@ -66,7 +66,7 @@ public class DownloadHandler
         {
             var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) return null;
-            var reValue = AesUtil.Decrypt(jstr, eKey);
+            var reValue = AesEncryptionUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
             var existingModel = models.FirstOrDefault(q => q.DownloadUrl == model.DownloadUrl);
             if (existingModel == null) return null;
@@ -78,7 +78,7 @@ public class DownloadHandler
         {
             var jstr = await File.ReadAllTextAsync(filePath);
             if (string.IsNullOrEmpty(jstr)) continue;
-            var reValue = AesUtil.Decrypt(jstr, eKey);
+            var reValue = AesEncryptionUtil.Decrypt(jstr, eKey);
             models = reValue.JsonToDeserialize<List<DownloadModel>>(context: DownloadJsonAotContext.Default) ?? new List<DownloadModel>();
             var existingModel = models.FirstOrDefault(q => q.DownloadUrl == model.DownloadUrl);
             if (existingModel == null) return null;
@@ -133,7 +133,7 @@ public class DownloadHandler
             throw new Exception("转换失败，将类型DownloadModel转换为字符串json的时候失败");
 
         // 加密
-        var eStr = AesUtil.Encrypt(valueJson, eKey);
+        var eStr = AesEncryptionUtil.Encrypt(valueJson, eKey);
         if (string.IsNullOrEmpty(eStr))
             throw new Exception("加密失败");
 

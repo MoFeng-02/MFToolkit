@@ -13,9 +13,9 @@ public sealed class ReponseToken
     /// <summary>
     /// Token 有效期
     /// </summary>
-    public double Timetamp { get; set; }
+    public long Timetamp { get; set; }
     /// <summary>
     /// 刷新 Token 有效期
     /// </summary>
-    public double RefreshTimetamp { get; set; }
+    public long RefreshTimetamp { get; set; }
 }

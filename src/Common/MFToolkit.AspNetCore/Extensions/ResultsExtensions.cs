@@ -24,6 +24,8 @@ public static class ResultsExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="resultExtensions"></param>
     /// <param name="common"></param>
+    /// <param name="statusCode"></param>
+    /// <param name="context">AOT JSON 序列化上下文</param>
     /// <returns></returns>
     public static IResult Common<T>(this IResultExtensions resultExtensions, T common, int statusCode = 200, JsonSerializerContext? context = null)
     {

@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<Authors>莫枫</Authors>
-		<Version>0.0.6-beta</Version>
+		<Version>0.0.7-beta</Version>
 		<Description>通用.Net8及以上程序工具库</Description>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
@@ -26,7 +26,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<!--<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />-->
-		<PackageReference Include="Google.Protobuf" Version="3.29.1" />
+		<PackageReference Include="Google.Protobuf" Version="3.29.2" />
 		<PackageReference Include="Grpc.Net.Common" Version="2.67.0" />
 		<PackageReference Include="Grpc.Tools" Version="2.68.1">
 		  <PrivateAssets>all</PrivateAssets>

@@ -1,5 +1,5 @@
 ﻿namespace MFToolkit.Extensions;
-public static class ConvertExtension
+public static class ConvertExtensions
 {
     /// <summary>
     /// 从对象转换为布尔值。

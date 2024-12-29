@@ -74,7 +74,7 @@ public class DownloadPauseInfoHandler
         var query = await client.Queryable<DownloadModel>().FirstAsync(q => q.Key == key);
         if (query == null || !IsStartEncryption) return query;
         // 解密
-        query.DownloadUrl = AesUtil.Decrypt(query.DownloadUrl, EncryptionKey);
+        query.DownloadUrl = AesEncryptionUtil.Decrypt(query.DownloadUrl, EncryptionKey);
         return query;
     }
     /// <summary>
@@ -97,7 +97,7 @@ public class DownloadPauseInfoHandler
         // 如果是新增
         if (IsStartEncryption)
         {
-            model.DownloadUrl = AesUtil.Encrypt(model.DownloadUrl, EncryptionKey) ?? model.DownloadUrl;
+            model.DownloadUrl = AesEncryptionUtil.Encrypt(model.DownloadUrl, EncryptionKey) ?? model.DownloadUrl;
         }
         return await client.Insertable(model).ExecuteCommandAsync() > 0;
     }

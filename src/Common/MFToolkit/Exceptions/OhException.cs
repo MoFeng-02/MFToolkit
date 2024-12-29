@@ -1,4 +1,4 @@
-﻿using MFToolkit.Exceptions.Enums;
+﻿using MFToolkit.CommonTypes.Enumerates;
 
 namespace MFToolkit.Exceptions;
 /// <summary>

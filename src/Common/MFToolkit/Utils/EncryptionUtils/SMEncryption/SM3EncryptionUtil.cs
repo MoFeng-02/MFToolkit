@@ -334,7 +334,7 @@ public class SM3Digest : GeneralDigest
         return DIGEST_LENGTH;
     }
 
-    private int ROTATE(int x, int n)
+    private static int ROTATE(int x, int n)
     {
         return (x << n) | (SupportClass.URShift(x, (32 - n)));
     }
@@ -382,4 +382,11 @@ public class SM3Digest : GeneralDigest
 
     //    Console.ReadLine();
     //}
+}
+/// <summary>
+/// SM3加密工具类
+/// </summary>
+public sealed class SM3EncryptionUtil
+{
+    public static readonly SM3Digest Default = new();
 }

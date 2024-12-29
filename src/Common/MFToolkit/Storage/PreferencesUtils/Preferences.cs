@@ -180,7 +180,7 @@ public class Preferences : IPreferences
                 ? file.Name
                 : file.Name + suffix));
             if (string.IsNullOrWhiteSpace(encryptedData)) continue;
-            string decryptedData = AesUtil.Decrypt(encryptedData, _encryptionKey);
+            string decryptedData = AesEncryptionUtil.Decrypt(encryptedData, _encryptionKey);
             var value = decryptedData.JsonToDeserialize<List<PreferencesModel>>();
             var sharedName = value?.FirstOrDefault()?.SharedName;
             if (string.IsNullOrWhiteSpace(sharedName)) return;
@@ -201,7 +201,7 @@ public class Preferences : IPreferences
 
             var path = Path.Combine(directoryPath, sharedName + suffix);
             var jsonData = value.ValueToJson();
-            var encryptedData = AesUtil.Encrypt(jsonData, _encryptionKey);
+            var encryptedData = AesEncryptionUtil.Encrypt(jsonData, _encryptionKey);
             File.WriteAllText(path, encryptedData);
         }
         catch (Exception e)

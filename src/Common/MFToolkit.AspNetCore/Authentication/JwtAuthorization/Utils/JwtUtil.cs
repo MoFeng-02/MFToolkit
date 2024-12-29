@@ -28,19 +28,20 @@ public class JwtUtil
         var payload = config.Payload;
         var tokenTime = seconds == -1 ? payload.ExpirationTime : seconds;
         var now = DateTime.UtcNow;
+        var expires = now.AddSeconds(tokenTime);
         var token = new JwtSecurityTokenHandler().WriteToken(
                     new JwtSecurityToken(
                         issuer: payload.Issuer,
                         audience: payload.Audience,
                         claims: claims,
                         notBefore: now,
-                        expires: now.AddSeconds(tokenTime),
+                        expires: expires,
                         signingCredentials: new SigningCredentials(
                             new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.EncryptionKey)),
                             hender.Algorithm)
                         )
                     );
-        var timetamp = now.AddSeconds(tokenTime).ToNowTimetampInSeconds();
+        var timetamp = expires.ToNowTimetampInSeconds();
         var refreshToken = GenerateRefreshToken(claims, out var refreshTimetamp, refreshSeconds, configKey);
         var result = new ReponseToken
         {
@@ -113,8 +114,8 @@ public class JwtUtil
     {
         try
         {
-            var c = GetPrincipalFromToken(token, configKey, true);
-            return true;
+            var r = GetPrincipalFromToken(token, configKey, true);
+            return r != null;
         }
         catch (Exception)
         {

@@ -108,7 +108,7 @@ public class Preferences : IPreferences
         CheckIsSupportedType<T>();
         using var aotClient = CreateClient();
         var query = aotClient.Queryable<PreferenceModel>().First(q => q.Key == key && q.SharedName == sharedName);
-        var encryptionData = AesUtil.Encrypt(value?.ValueToJson()!, _encryptionKey);
+        var encryptionData = AesEncryptionUtil.Encrypt(value?.ValueToJson()!, _encryptionKey);
         if (query != null)
         {
             query.Value = encryptionData;
@@ -131,7 +131,7 @@ public class Preferences : IPreferences
         using var aotClient = CreateClient();
         var query = await aotClient.Queryable<PreferenceModel>().FirstAsync(q => q.Key == key && q.SharedName ==
             sharedName);
-        var encryptionData = AesUtil.Encrypt(value?.ValueToJson()!, _encryptionKey);
+        var encryptionData = AesEncryptionUtil.Encrypt(value?.ValueToJson()!, _encryptionKey);
         if (query != null)
         {
             query.Value = encryptionData;
@@ -153,7 +153,7 @@ public class Preferences : IPreferences
         CheckIsSupportedType<T>();
         using var aotClient = CreateClient();
         var query = aotClient.Queryable<PreferenceModel>().First(q => q.Key == key && q.SharedName == sharedName);
-        var d = AesUtil.Decrypt(query?.Value!, _encryptionKey);
+        var d = AesEncryptionUtil.Decrypt(query?.Value!, _encryptionKey);
         var result = d.JsonToDeserialize(defaultValue: defaultValue);
         return result!;
     }
@@ -164,7 +164,7 @@ public class Preferences : IPreferences
         using var aotClient = CreateClient();
         var query = await aotClient.Queryable<PreferenceModel>().FirstAsync(q => q.Key == key && q.SharedName ==
             sharedName);
-        var d = AesUtil.Decrypt(query?.Value!, _encryptionKey);
+        var d = AesEncryptionUtil.Decrypt(query?.Value!, _encryptionKey);
         var result = d.JsonToDeserialize(defaultValue: defaultValue);
         return result!;
     }

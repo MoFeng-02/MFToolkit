@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.AspNetCore.Extensions;
-public static class HttpContextExtension
+public static class HttpContextExtensions
 {
     /// <summary>
     /// 获取指定请求头
@@ -31,8 +31,23 @@ public static class HttpContextExtension
     {
         var header = httpContext.Request.Headers[key];
         var result = header.ToString();
-        if (string.IsNullOrWhiteSpace(result)) return default(T);
+        if (string.IsNullOrWhiteSpace(result)) return default;
         return result.ConvertTo<T>();
+    }
+    /// <summary>
+    /// 获取指定的Enum值
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="httpContext"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static T? GetHeaderEnum<T>(this HttpContext httpContext, string key) where T : struct, Enum
+    {
+        var header = httpContext.Request.Headers[key];
+        var result = header.ToString();
+        if (string.IsNullOrWhiteSpace(result)) return default;
+        var r = Enum.Parse<T>(result);
+        return r;
     }
     /// <summary>
     /// 添加HttpContext返回的标头

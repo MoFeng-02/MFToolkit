@@ -3,7 +3,7 @@ using System.Text;
 
 namespace MFToolkit.Utils.EncryptionUtils.MD5Encryption;
 
-public partial class MD5Util
+public partial class MD5EncryptionUtil
 {
     /// <summary>
     /// MD5 比较
@@ -66,7 +66,7 @@ public partial class MD5Util
         return hash.Equals(hashOfInput, StringComparison.OrdinalIgnoreCase);
     }
 }
-static public partial class MD5Util
+static public partial class MD5EncryptionUtil
 {
     /// <summary>
     /// MD5 比较

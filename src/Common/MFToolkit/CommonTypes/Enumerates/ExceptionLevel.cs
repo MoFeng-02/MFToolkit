@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Exceptions.Enums;
+﻿namespace MFToolkit.CommonTypes.Enumerates;
 
 /// <summary>
 /// 定义了异常的严重级别
