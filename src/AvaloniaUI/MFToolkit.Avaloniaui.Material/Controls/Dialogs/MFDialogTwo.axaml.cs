@@ -79,9 +79,9 @@ public partial class MFDialogTwo : Border
 
     protected override void OnInitialized()
     {
-        LeftButton.ButtonClasses = LeftButtonClass;
-        RightButton.ButtonClasses = RightButtonClass;
-        LeftButton.Content = LeftButtonText;
-        RightButton.Content = RightButtonText;
+        //LeftButton.ButtonClasses = LeftButtonClass;
+        //RightButton.ButtonClasses = RightButtonClass;
+        //LeftButton.Content = LeftButtonText;
+        //RightButton.Content = RightButtonText;
     }
 }

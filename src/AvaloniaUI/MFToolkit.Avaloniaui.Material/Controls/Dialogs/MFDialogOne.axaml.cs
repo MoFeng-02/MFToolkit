@@ -45,8 +45,8 @@ public partial class MFDialogOne : Border
 
     protected override void OnInitialized()
     {
-        ButtonOne.ButtonClasses = ButtonClass;
-        ButtonOne.Content = ButtonText;
+        //ButtonOne.ButtonClasses = ButtonClass;
+        //ButtonOne.Content = ButtonText;
     }
 
     private void Button_OnClick(object sender, RoutedEventArgs e)

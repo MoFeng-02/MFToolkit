@@ -2,5 +2,7 @@ obj/
 bin/
 .vs/
 .idea/
+.nuget/
 ## 忽略文件
 *.vsidx
+*.nupkg
