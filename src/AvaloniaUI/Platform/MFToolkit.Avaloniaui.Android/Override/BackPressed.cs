@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android.Widget;
+﻿
 using Avalonia.Android;
 using Java.Lang;
 using MFToolkit.Avaloniaui.Routings;
-using Dialog = MFToolkit.Avaloniaui.Material.Helpers.Dialog;
 using Toast = Android.Widget.Toast;
 
 namespace MFToolkit.Avaloniaui.Android.Override;
@@ -23,14 +20,6 @@ public class BackPressed(AvaloniaMainActivity app)
     /// <param name="baseOnBackPressed">基本的返回</param>
     public async Task OnBackPressedTwoAsync(Action? baseOnBackPressed)
     {
-        try
-        {
-            Dialog.CloasDialog();
-        }
-        catch
-        {
-            // ignored
-        }
 
         var isPrev = Navigation.GetPrevRouting();
         // 如果还有上一页就返回上一页

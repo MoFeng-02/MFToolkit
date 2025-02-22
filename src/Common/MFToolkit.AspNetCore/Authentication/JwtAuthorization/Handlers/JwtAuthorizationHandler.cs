@@ -1,5 +1,6 @@
 ﻿using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Configuration;
 using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Utils;
+using MFToolkit.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
@@ -84,11 +85,12 @@ public class JwtAuthorizationHandler : IAuthorizationHandler, IAuthorizationRequ
                 httpContext!.Response.StatusCode = 401;
                 await httpContext.Response.WriteAsync($"Token 验证失败: {ex.Message}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // 如果出现异常，标记需求为失败，并记录异常信息
                 context.Fail();
                 httpContext!.Response.StatusCode = 401;
+                throw OhException.ApplicationError(ex.Message, ex, 401);
             }
         }
         else

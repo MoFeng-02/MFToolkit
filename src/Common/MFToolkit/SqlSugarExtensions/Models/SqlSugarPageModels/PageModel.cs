@@ -1,7 +1,7 @@
 ﻿using SqlSugar;
 
 namespace MFToolkit.SqlSugarExtensions.Models.SqlSugarPageModels;
-public class PageModel<Condition> where Condition : class
+public class PageModel
 {
     /// <summary>
     /// 下标
@@ -15,5 +15,4 @@ public class PageModel<Condition> where Condition : class
     /// 总数据量
     /// </summary>
     public RefAsync<int> TotalCount { get; set; } = new();
-    public Condition? SearchCondition { get; set; }
 }

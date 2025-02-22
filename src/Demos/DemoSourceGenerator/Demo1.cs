@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DemoSourceGenerator;
+namespace DemoV1;
 public class Demo1
 {
 }

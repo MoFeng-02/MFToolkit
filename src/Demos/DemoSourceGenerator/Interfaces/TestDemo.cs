@@ -1,4 +1,4 @@
-﻿namespace DemoSourceGenerator.Interfaces;
+﻿namespace DemoV1.Interfaces;
 public interface TestDemo
 {
 }

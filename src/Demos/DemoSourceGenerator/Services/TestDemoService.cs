@@ -1,7 +1,6 @@
-﻿using DemoSourceGenerator.Interfaces;
-using MFToolkit.DI.DynamicInjection;
+﻿using DemoV1.Interfaces;
 
-namespace DemoSourceGenerator.Services;
+namespace DemoV1.Services;
 
 public class TestDemoService : TestDemo
 {

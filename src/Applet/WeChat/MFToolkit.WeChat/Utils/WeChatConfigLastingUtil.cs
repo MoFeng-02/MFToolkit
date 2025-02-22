@@ -49,7 +49,7 @@ public class WeChatConfigLastingUtil
                 if (!filePath.EndsWith(isJiaMi ? ".conf" : ".json")) continue;
                 var oldStr = File.ReadAllText(filePath);
                 if (oldStr == null) continue;
-                var rstr = isJiaMi ? AesUtil.Decrypt(oldStr, encryptionKey) : oldStr;
+                var rstr = isJiaMi ? AesEncryptionUtil.Decrypt(oldStr, encryptionKey) : oldStr;
                 if (rstr == null) continue;
                 configs.Add(rstr.JsonToDeserialize<Dictionary<string, WeChatConfig>>(context: WeChatConfigJsonContext.Default) ?? []);
                 filePaths.Add(filePath);
@@ -103,7 +103,8 @@ public class WeChatConfigLastingUtil
                 string content;
                 if (isJiaMi)
                 {
-                    content = AesUtil.Encrypt(cc.ValueToJson(context: WeChatConfigJsonContext.Default), encryptionKey);
+
+                    content = AesEncryptionUtil.Encrypt(cc.ValueToJson(context: WeChatConfigJsonContext.Default), encryptionKey);
                 }
                 else
                 {
@@ -141,7 +142,7 @@ public class WeChatConfigLastingUtil
                 }
                 else
                 {
-                    var etxt = AesUtil.Encrypt(jsonStr, encryptionKey);
+                    var etxt = AesEncryptionUtil.Encrypt(jsonStr, encryptionKey);
                     await File.WriteAllTextAsync(path, etxt);
                 }
             }
@@ -163,7 +164,7 @@ public class WeChatConfigLastingUtil
                 string content;
                 if (isJiaMi)
                 {
-                    content = AesUtil.Encrypt(cc.ValueToJson(context: WeChatConfigJsonContext.Default), encryptionKey);
+                    content = AesEncryptionUtil.Encrypt(cc.ValueToJson(context: WeChatConfigJsonContext.Default), encryptionKey);
                 }
                 else
                 {
@@ -197,7 +198,7 @@ public class WeChatConfigLastingUtil
         if (!filePaths.Any()) throw new("可读取配置为空");
         foreach (var filePath in filePaths)
         {
-            var content = isJiaMi ? AesUtil.Decrypt(await File.ReadAllTextAsync(filePath), _encryptionKey) : await File.ReadAllTextAsync(filePath);
+            var content = isJiaMi ? AesEncryptionUtil.Decrypt(await File.ReadAllTextAsync(filePath), _encryptionKey) : await File.ReadAllTextAsync(filePath);
             var json = content.JsonToDeserialize<Dictionary<string, WeChatConfig>>(context: WeChatConfigJsonContext.Default);
             //var jsonNode = JsonSerializer.SerializeToNode(content, inputType: typeof(string), context: WeChatConfigJsonContext.Default);
             var value = json?[key];

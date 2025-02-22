@@ -1,21 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		
-		
+
+		<Authors>莫枫</Authors>
+		<Version>0.0.7-beta</Version>
+		<Description>通用.Net8及以上AvaloniaUI样式控件库</Description>
+		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
+		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="11.1.4" />
-	  <PackageReference Include="Avalonia.Skia" Version="11.1.4" />
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+	  <PackageReference Include="Avalonia" Version="11.2.4" />
+	  <PackageReference Include="Avalonia.Skia" Version="11.2.4" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using MFToolkit.DependencyInjection;
+using MFToolkit.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -65,6 +66,31 @@ public partial class MFApp
         {
             return default;
         }
+    }
+
+    /// <summary>
+    /// 获取注入的服务,带有异常抛出的
+    /// </summary>
+    /// <param name="serviceType">查找的服务类型</param>
+    /// <param name="message">异常信息</param>
+    /// <param name="code">状态码</param>
+    /// <returns></returns>
+    /// <exception cref="OhException.ApplicationError" />
+    public static object GetService(Type serviceType, string message, int code = 500)
+    {
+        return GetService(serviceType) ?? throw OhException.ApplicationError(message, code);
+    }
+    /// <summary>
+    /// 获取注入的服务,带有异常抛出的
+    /// </summary>
+    /// <typeparam name="T">要解析的类型</typeparam>
+    /// <param name="message">异常信息</param>
+    /// <param name="code">状态码</param>
+    /// <returns></returns>
+    /// <exception cref="OhException.ApplicationError" />
+    public static T GetService<T>(string message, int code = 500) where T : notnull
+    {
+        return GetService<T>() ?? throw OhException.ApplicationError(message, code);
     }
 
     /// <summary>

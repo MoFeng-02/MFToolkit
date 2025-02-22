@@ -84,3 +84,19 @@ public class Repository<T> : DbContext, IRepository<T> where T : class
         return await Context.SaveChangesAsync();
     }
 }
+public class model
+{
+    public int Id { get; set; }
+}
+public class V
+{
+    private readonly IRepository<model> repository;
+    public V(IRepository<model> repository)
+    {
+        this.repository = repository;
+    }
+    public async Task A()
+    {
+      await  repository.Queryable().Where(q => q.Id == 0).ExecuteDeleteAsync();
+    }
+}

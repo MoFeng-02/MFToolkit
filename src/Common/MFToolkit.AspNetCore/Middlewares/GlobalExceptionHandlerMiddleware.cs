@@ -54,34 +54,42 @@ public class GlobalExceptionHandlerMiddleware
     /// <param name="httpContext">HTTP 上下文。</param>
     /// <param name="exception">捕获到的异常。</param>
     /// <returns>一个 Task 表示异步操作。</returns>
-    private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+    private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
-        // 设置响应的内容类型为 JSON
-        httpContext.Response.ContentType = MediaTypeNames.Application.Json;
-
-        // 根据异常类型设置响应的状态码和错误信息
-        var (statusCode, errorMessage) = GetExceptionDetails(exception);
-        // 创建错误模型
-        var error = new ErrorModel
+        try
         {
-            ErrorCode = statusCode,
-            Message = errorMessage
-        };
+            // 设置响应的内容类型为 JSON
+            httpContext.Response.ContentType = MediaTypeNames.Application.Json;
 
-        // 创建 CommonErrorModel 包装错误
-        var commonErrorModel = new CommonErrorModel<ErrorModel>
+            // 根据异常类型设置响应的状态码和错误信息
+            var (statusCode, errorMessage) = GetExceptionDetails(exception);
+            // 创建错误模型
+            var error = new ErrorModel
+            {
+                ErrorCode = statusCode,
+                Message = errorMessage
+            };
+
+            // 创建 CommonErrorModel 包装错误
+            var commonErrorModel = new CommonErrorModel<ErrorModel>
+            {
+                StatusCode = httpContext.Response.StatusCode,
+                IsSuccess = false,
+                Error = error
+            };
+
+
+            // 将 CommonErrorModel 序列化为 JSON 字符串
+            var errorJson = JsonSerializer.Serialize(commonErrorModel, JsonSerializerExtension.DefaultJsonSerializerOptions);
+
+            // 将 JSON 字符串写入响应体
+            await httpContext.Response.WriteAsync(errorJson);
+
+        }
+        catch (Exception ex)
         {
-            StatusCode = httpContext.Response.StatusCode,
-            IsSuccess = false,
-            Error = error
-        };
-
-
-        // 将 CommonErrorModel 序列化为 JSON 字符串
-        var errorJson = JsonSerializer.Serialize(commonErrorModel, JsonSerializerExtension.DefaultJsonSerializerOptions);
-
-        // 将 JSON 字符串写入响应体
-        await httpContext.Response.WriteAsync(errorJson);
+            _logger.LogError(ex, "全局异常反馈错误");
+        }
     }
     private static (int, string) GetExceptionDetails(Exception exception)
     {

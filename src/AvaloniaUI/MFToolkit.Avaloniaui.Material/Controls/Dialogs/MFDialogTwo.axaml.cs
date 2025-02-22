@@ -1,8 +1,6 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using MFToolkit.Avaloniaui.Helpers;
 using MFToolkit.Avaloniaui.Material.BaseExtensions;
 
 namespace MFToolkit.Avaloniaui.Material.Controls.Dialogs;

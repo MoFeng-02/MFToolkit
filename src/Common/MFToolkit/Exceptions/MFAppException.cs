@@ -6,7 +6,7 @@ public static class MFAppException
     /// <summary>
     /// 未实现MFApp异常
     /// </summary>
-    public static MFUnRealizedException UnRealizedException = new();
+    public static readonly MFUnRealizedException UnRealizedException = new();
 }
 
 /// <summary>
