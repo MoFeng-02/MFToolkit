@@ -42,11 +42,6 @@ public static class RoutingServiceExtensions
                 services.AddTransient(route.PageType);
             }
         // 3.设置 ServiceProvider
-        services.AddSingleton(s =>
-        {
-            Routing.ServiceProvider = s;
-            return s;
-        });
         services.AddSingleton<Routing>();
         return services;
     }

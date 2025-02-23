@@ -134,7 +134,7 @@ public sealed class Navigation
 
         // 合并参数（路径参数优先）
         var mergedParams = existingParams
-            .Concat(parameters)
+            .Concat(parameters ?? [])
             .ToDictionary(p => p.Key, p => p.Value);
 
         // 构建查询字符串

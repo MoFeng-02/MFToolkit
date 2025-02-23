@@ -265,7 +265,7 @@ public sealed class Routing
     internal static async Task<RouteCurrentInfo?> GoToAsync(string route, bool isThisAction = false)
     {
         if (string.IsNullOrWhiteSpace(route)) return CurrentInfo;
-        if (!RoutingModels.Any()) throw new Exception("未注册路由");
+        if (RoutingModels.Count == 0) throw new Exception("未注册路由");
         // 如果需要返回上一页的话
         var queryIndex = route.IndexOf('.');
         if (queryIndex == 0)
