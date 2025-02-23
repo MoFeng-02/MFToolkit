@@ -29,10 +29,11 @@ public static class RoutingServiceExtensions
             configureRoutes?.Invoke(routeBuilder);
             services.AddSingleton(routeBuilder.Build());
             routes.Clear();
+            var routings = routeBuilder.Build();
+            Routing.RegisterRoutes([.. routings]);
             foreach (var route in routeBuilder.Build())
             {
                 services.AddTransient(route.PageType);
-                routes.Add(route);
             }
         }
         else
@@ -68,20 +69,20 @@ public static class RoutingServiceExtensions
 /// </summary>
 public interface IRouteBuilder
 {
-    IRouteBuilder AddRoute<T>(string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0);
-    IRouteBuilder AddRoute(Type pageType, string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0);
+    IRouteBuilder AddRoute<T>(string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0, RoutingMeta? meta = null);
+    IRouteBuilder AddRoute(Type pageType, string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0, RoutingMeta? meta = null);
 }
 
 internal class RouteBuilder : IRouteBuilder
 {
     private readonly List<RoutingModel> _routes = [];
 
-    public IRouteBuilder AddRoute<T>(string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0)
+    public IRouteBuilder AddRoute<T>(string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0, RoutingMeta? meta = null)
     {
-        return AddRoute(typeof(T), route, isTopNavigation, isKeepAlive, priority);
+        return AddRoute(typeof(T), route, isTopNavigation, isKeepAlive, priority, meta);
     }
 
-    public IRouteBuilder AddRoute(Type pageType, string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0)
+    public IRouteBuilder AddRoute(Type pageType, string? route = null, bool isTopNavigation = false, bool isKeepAlive = false, int priority = 0, RoutingMeta? meta = null)
     {
         _routes.Add(new RoutingModel
         {
@@ -89,7 +90,8 @@ internal class RouteBuilder : IRouteBuilder
             Route = route ?? pageType.Name.ToLower(),
             IsTopNavigation = isTopNavigation,
             IsKeepAlive = isKeepAlive,
-            Priority = priority
+            Priority = priority,
+            Meta = meta
         });
         return this;
     }

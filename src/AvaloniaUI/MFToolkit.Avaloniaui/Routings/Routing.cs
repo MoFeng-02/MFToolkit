@@ -86,7 +86,7 @@ public sealed class Routing
         false, bool isKeepAlive = false, int priority = 0,RoutingMeta? meta = null)
     {
         // 如果路由为空，则设置随机路由
-        route ??= type.Name.ToLower();
+        route ??= Guid.NewGuid().ToString();
         if (RoutingModels.Any(q => q.Route == route))
             throw new Exception($"Route already exists: {route}");
 

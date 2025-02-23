@@ -54,6 +54,18 @@ public sealed class Navigation
         return await GoToAsync(route, parameters);
     }
 
+
+    /// <summary>
+    /// 通过页面类型导航
+    /// </summary>
+    public static async Task<object?> GoToAsync<TType>(Dictionary<string, object?> parameters = null!)
+    {
+        var route = Routing.PageTypeToRoute(typeof(TType)) ?? throw new Exception("未找到对应路由");
+        return await GoToAsync(route, parameters);
+    }
+
+
+
     /// <summary>
     /// 处理导航结果
     /// </summary>
