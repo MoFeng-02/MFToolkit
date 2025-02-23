@@ -83,7 +83,7 @@ public sealed class Routing
     /// <param name="isKeepAlive">是否保活页</param>
     /// <param name="priority">页面优先级（排序）</param>
     public static void RegisterRoute(Type type, string? route = null, bool isTopNavigation =
-        false, bool isKeepAlive = false, int priority = 0)
+        false, bool isKeepAlive = false, int priority = 0,RoutingMeta? meta = null)
     {
         // 如果路由为空，则设置随机路由
         route ??= type.Name.ToLower();
@@ -96,7 +96,8 @@ public sealed class Routing
             PageType = type,
             IsTopNavigation = isTopNavigation,
             IsKeepAlive = isKeepAlive,
-            Priority = priority
+            Priority = priority,
+            Meta = meta
         });
 
         // 按优先级排序
@@ -290,7 +291,7 @@ public sealed class Routing
         // 创建实例（兼容原有逻辑）
         var instance = CreatePageInstance(routingModel, ServiceProvider);
         var routeInfo = BuildRouteInfo(routingModel, path, parameters, instance);
-
+        routeInfo.Meta = routingModel.Meta;
         // 生命周期处理（新增异步逻辑）
         await InvokeActivateLifecycleAsync(routeInfo);
 

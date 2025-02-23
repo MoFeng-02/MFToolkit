@@ -37,6 +37,13 @@ public class RoutingModel
     /// 优先级
     /// </summary>
     public int Priority { get; init; }
+
+    /// <summary>
+    /// 其他项
+    /// </summary>
+    public RoutingMeta? Meta { get; set; }
+
+
 }
 
 /// <summary>
@@ -58,6 +65,11 @@ public class RouteCurrentInfo
     /// 参数集合
     /// </summary>
     public Dictionary<string, object?> Parameters { get; internal set; } = [];
+
+    /// <summary>
+    /// 其他项
+    /// </summary>
+    public RoutingMeta? Meta { get; set; }
 }
 
 
@@ -87,4 +99,16 @@ public class RoutePathParameter
     /// 路由错误体提醒
     /// </summary>
     public string ErrorMessage { get; set; } = null!;
+}
+
+public class RoutingMeta
+{
+    /// <summary>
+    /// 是否为基础布局
+    /// </summary>
+    public bool IsBaseLayout { get; set; }
+    /// <summary>
+    /// 布局类型
+    /// </summary>
+    public object? LayoutType { get; set; }
 }
