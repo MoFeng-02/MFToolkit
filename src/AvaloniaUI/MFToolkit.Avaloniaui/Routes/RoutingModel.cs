@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace MFToolkit.Avaloniaui.Routings;
+namespace MFToolkit.Avaloniaui.Routes;
 
 /// <summary>
 /// 路由配置模型（线程安全设计）
@@ -70,6 +70,16 @@ public class RouteCurrentInfo
     /// 其他项
     /// </summary>
     public RoutingMeta? Meta { get; set; }
+    
+    /// <summary>
+    /// 标记当前页面是否在导航堆栈中
+    /// </summary>
+    public bool IsInNavigationStack { get; set; }
+    
+    /// <summary>
+    /// 最后一次访问时间（UTC）
+    /// </summary>
+    public DateTime LastAccessedTime { get; set; } = DateTime.UtcNow;
 }
 
 

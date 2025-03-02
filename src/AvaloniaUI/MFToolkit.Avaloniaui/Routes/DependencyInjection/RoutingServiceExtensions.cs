@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace MFToolkit.Avaloniaui.Routings.DependencyInjection;
+namespace MFToolkit.Avaloniaui.Routes.DependencyInjection;
 
 /// <summary>
 /// 路由DI扩展方法
@@ -9,6 +9,7 @@ public static class RoutingServiceExtensions
 {
     /// <summary>
     /// 注册路由系统到 DI 容器
+    /// <para>说明：若IsTopNavigation为true，则IsKeepAlive强制为True</para>
     /// </summary>
     /// <param name="services">服务集合</param>
     /// <param name="configureRoutes">路由配置委托（若使用委托AddRoute添加路由模型，则此优先级最高）</param>

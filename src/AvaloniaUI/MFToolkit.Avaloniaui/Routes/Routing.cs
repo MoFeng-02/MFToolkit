@@ -1,8 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using MFToolkit.Avaloniaui.Routings.Helpers;
+using MFToolkit.Avaloniaui.Routes.Extensions;
+using MFToolkit.Avaloniaui.Routes.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MFToolkit.Avaloniaui.Routings;
+namespace MFToolkit.Avaloniaui.Routes;
 
 /// <summary>
 /// 路由类
@@ -12,38 +13,39 @@ public sealed class Routing
     /// <summary>
     /// 当前顶级导航ID
     /// </summary>
-    private static Guid ThisTopNavigationId = Guid.Empty;
+    private static Guid _thisTopNavigationId = Guid.Empty;
 
     public static IServiceProvider? ServiceProvider { get; internal set; }
 
     /// <summary>
     /// 当前路由
     /// </summary>
-    private static string? ThisRoute;
+    private static string? _thisRoute;
 
-    public static RouteCurrentInfo? CurrentInfo { get; private set; }
+    private static RouteCurrentInfo? CurrentInfo { get; set; }
+
     /// <summary>
     /// 路由集合的顶级ID
     /// </summary>
     private static readonly ConcurrentDictionary<string, RouteCurrentInfo> TopNavigations = [];
-    /// <summary>
-    /// 保活页面
-    /// </summary>
-    private static readonly ConcurrentDictionary<string, RouteCurrentInfo> KeepAlives = [];
+
     /// <summary>
     /// 路由集合
     /// Guid: RoutingId
     /// List: RouteInfos
     /// </summary>
-    private static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutings = [];
+    private static readonly ConcurrentDictionary<Guid, List<RouteCurrentInfo>> NavigationRoutes = [];
+
     /// <summary>
     /// 新增缓存管理
     /// </summary>
-    private static readonly KeepAliveCache _keepAliveCache = new();
+    private static readonly KeepAliveCache KeepAliveCache = new();
+
     /// <summary>
     /// 分割处理符号
     /// </summary>
-    private static readonly char[] separator = ['/'];
+    private static readonly char[] Separator = ['/'];
+
     /// <summary>
     /// 路由信息
     /// </summary>
@@ -52,7 +54,8 @@ public sealed class Routing
     /// <summary>
     /// 分隔符数组
     /// </summary>
-    private static readonly char[] separatorArray = ['?'];
+    private static readonly char[] SeparatorArray = ['?'];
+
     /// <summary>
     /// 获取路由详情信息
     /// </summary>
@@ -61,6 +64,7 @@ public sealed class Routing
 
     /// <summary>
     /// 注册路由
+    /// <para>说明：若IsTopNavigation为true，则IsKeepAlive强制为True</para>
     /// </summary>
     /// <param name="routings"></param>
     /// <exception cref="Exception"></exception>
@@ -70,26 +74,29 @@ public sealed class Routing
         {
             if (RoutingModels.Any(q => q.Route == item.Route))
                 throw new Exception($"路由已存在: {item.Route}");
+            if (item.IsTopNavigation) item.IsKeepAlive = true;
             RoutingModels.Add(item);
         }
     }
 
     /// <summary>
     /// 注册路由
+    /// <para>说明：若IsTopNavigation为true，则IsKeepAlive强制为True</para>
     /// </summary>
     /// <param name="type">页面</param>
     /// <param name="route">路由</param>
     /// <param name="isTopNavigation">是否顶级菜单页</param>
     /// <param name="isKeepAlive">是否保活页</param>
     /// <param name="priority">页面优先级（排序）</param>
+    /// <param name="meta">Meta</param>
     public static void RegisterRoute(Type type, string? route = null, bool isTopNavigation =
-        false, bool isKeepAlive = false, int priority = 0,RoutingMeta? meta = null)
+        false, bool isKeepAlive = false, int priority = 0, RoutingMeta? meta = null)
     {
         // 如果路由为空，则设置随机路由
         route ??= Guid.NewGuid().ToString();
         if (RoutingModels.Any(q => q.Route == route))
             throw new Exception($"Route already exists: {route}");
-
+        if (isTopNavigation) isKeepAlive = true;
         RoutingModels.Add(new RoutingModel
         {
             Route = route,
@@ -132,22 +139,40 @@ public sealed class Routing
     /// <returns></returns>
     private static Dictionary<string, object?> QueryParameter(string? queryString)
     {
-        // 检查查询字符串是否为空或仅包含空白字符
-        if (string.IsNullOrWhiteSpace(queryString)) return [];
+        var parameters = new Dictionary<string, object?>();
+        if (string.IsNullOrWhiteSpace(queryString)) return parameters;
 
-        // 将查询字符串拆分为键值对数组，并创建字典
-        var queryPairs = queryString.Split('&')
-            .Select(pair => pair.Split('='))
-            .ToDictionary(
-                // 键是已解码的键部分
-                pair => Uri.UnescapeDataString(pair[0]),
-                // 值是已解码的值部分，如果值不存在，则设为 null
-                pair => pair.Length > 1 ? (object)Uri.UnescapeDataString(pair[1]) : default
-            );
+        var querySpan = queryString.AsSpan();
+        while (querySpan.TrySplit('&', out var pairSpan, out querySpan))
+        {
+            if (pairSpan.TrySplit('=', out var keySpan, out var valueSpan))
+            {
+                var key = Uri.UnescapeDataString(keySpan.ToString());
+                var value = valueSpan.IsEmpty ? null : Uri.UnescapeDataString(valueSpan.ToString());
+                parameters[key] = value;
+            }
+        }
 
-        // 返回包含解析后键值对的字典
-        return queryPairs;
+        return parameters;
     }
+    // private static Dictionary<string, object?> QueryParameter(string? queryString)
+    // {
+    //     // 检查查询字符串是否为空或仅包含空白字符
+    //     if (string.IsNullOrWhiteSpace(queryString)) return [];
+    //
+    //     // 将查询字符串拆分为键值对数组，并创建字典
+    //     var queryPairs = queryString.Split('&')
+    //         .Select(pair => pair.Split('='))
+    //         .ToDictionary(
+    //             // 键是已解码的键部分
+    //             pair => Uri.UnescapeDataString(pair[0]),
+    //             // 值是已解码的值部分，如果值不存在，则设为 null
+    //             pair => pair.Length > 1 ? (object)Uri.UnescapeDataString(pair[1]) : default
+    //         );
+    //
+    //     // 返回包含解析后键值对的字典
+    //     return queryPairs;
+    // }
 
     /// <summary>
     /// 路由解析
@@ -159,7 +184,7 @@ public sealed class Routing
         var isOkRoute = true;
         var thisStr = string.Empty;
         RoutePathParameter routePathParameter = new();
-        var parts = path.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+        var parts = path.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
         //var queryParts = parts.Last().Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries);
 
         var result = new List<string>();
@@ -174,7 +199,7 @@ public sealed class Routing
             thisStr = part;
             if (part.Contains('?'))
             {
-                var subParts = part.Split(separatorArray, StringSplitOptions.RemoveEmptyEntries);
+                var subParts = part.Split(SeparatorArray, StringSplitOptions.RemoveEmptyEntries);
                 result.AddRange(subParts.Take(1));
                 if (subParts.Length > 1)
                 {
@@ -201,7 +226,7 @@ public sealed class Routing
     /// <returns></returns>
     internal static bool GetPrevRouting()
     {
-        if (!NavigationRoutings.TryGetValue(ThisTopNavigationId, out var navigations)) return false;
+        if (!NavigationRoutes.TryGetValue(_thisTopNavigationId, out var navigations)) return false;
         return navigations.Count != 0;
     }
 
@@ -221,12 +246,11 @@ public sealed class Routing
             else
                 reRoute = item;
 
-        if (prev != null && NavigationRoutings.TryGetValue(ThisTopNavigationId, out var list))
+        if (prev != null && NavigationRoutes.TryGetValue(_thisTopNavigationId, out var list))
         {
             var prevIndex = -1;
-            for (var i = 0; i < list.Count; i++)
+            foreach (var item in list)
             {
-                var item = list[i];
                 prevIndex++;
                 if (item == prev) break;
             }
@@ -237,6 +261,8 @@ public sealed class Routing
                 var item = list[removeIndex - (i + 1)];
                 if (item != prev)
                 {
+                    // 标记为已移除导航堆栈
+                    item.IsInNavigationStack = false;
                     list.Remove(item);
                 }
                 else break;
@@ -245,7 +271,7 @@ public sealed class Routing
 
         if (string.IsNullOrEmpty(reRoute) && prev != null)
         {
-            ThisRoute = prev.Route;
+            _thisRoute = prev.Route;
             return prev;
         }
 
@@ -273,12 +299,13 @@ public sealed class Routing
             var result = await PrevToAsync(route);
             return result;
         }
+
         // 解析路径和查询参数
         var (path, query) = ParseRoute(route);
         var parameters = QueryParser.Parse(query);
 
         // 检查缓存（新增逻辑）
-        if (_keepAliveCache.TryGetPage(route: path, parameters, out var cachedInfo))
+        if (KeepAliveCache.TryGetPage(route: path, parameters, out var cachedInfo))
         {
             await InvokeReactivateLifecycleAsync(cachedInfo!);
             UpdateNavigationState(cachedInfo!, isThisAction);
@@ -289,7 +316,7 @@ public sealed class Routing
         var routingModel = FindBestMatchRoute(path) ?? throw new Exception($"路由未注册: {path}");
 
         // 创建实例（兼容原有逻辑）
-        var instance = CreatePageInstance(routingModel, ServiceProvider);
+        var instance = CreatePageInstance(routingModel, parameters, ServiceProvider);
         var routeInfo = BuildRouteInfo(routingModel, path, parameters, instance);
         routeInfo.Meta = routingModel.Meta;
         // 生命周期处理（新增异步逻辑）
@@ -301,7 +328,7 @@ public sealed class Routing
         // 缓存处理（新增逻辑）
         if (routeInfo.IsKeepAlive)
         {
-            _keepAliveCache.CachePage(routeInfo);
+            KeepAliveCache.CachePage(routeInfo);
             if (routingModel.IsTopNavigation)
             {
                 TopNavigations.AddOrUpdate(path, routeInfo, (_, _) => routeInfo);
@@ -354,7 +381,7 @@ public sealed class Routing
         if (templateSegments.Length != pathSegments.Length) return false;
 
         // 逐段匹配
-        for (int i = 0; i < templateSegments.Length; i++)
+        for (var i = 0; i < templateSegments.Length; i++)
         {
             // 如果是参数段（如{id}），跳过匹配
             if (templateSegments[i].StartsWith('{') && templateSegments[i].EndsWith('}'))
@@ -364,6 +391,7 @@ public sealed class Routing
             if (!string.Equals(templateSegments[i], pathSegments[i], StringComparison.OrdinalIgnoreCase))
                 return false;
         }
+
         return true;
     }
 
@@ -371,21 +399,28 @@ public sealed class Routing
     /// 创建页面实例
     /// </summary>
     /// <param name="model">路由配置</param>
+    /// <param name="parameters">参数</param>
+    /// <param name="serviceProvider">DI</param>
     /// <returns>页面实例</returns>
-    private static object CreatePageInstance(RoutingModel model, IServiceProvider? serviceProvider = null)
+    private static object CreatePageInstance(RoutingModel model, Dictionary<string, object?>? parameters,
+        IServiceProvider? serviceProvider = null)
     {
-        // 如果是保活页面且已存在实例，复用实例
-        if (model.IsKeepAlive && TopNavigations.TryGetValue(model.Route!, out var existing))
-            return existing.CurrentPage!;
-
-        // DI 模式：通过服务提供者创建实例
-        if (serviceProvider != null)
+        // 1. 如果是顶级导航页，检查 TopNavigations
+        if (model.IsTopNavigation && TopNavigations.TryGetValue(model.Route, out var existing))
         {
-            return ActivatorUtilities.CreateInstance(serviceProvider, model.PageType);
+            return existing.CurrentPage!;
         }
 
-        // 非 DI 模式：直接反射创建实例
-        return Activator.CreateInstance(model.PageType)!;
+        // 2. 尝试从 KeepAliveCache 获取（支持非顶级导航的保活页）
+        if (KeepAliveCache.TryGetPage(model.Route, parameters, out var cachedInstance))
+        {
+            return cachedInstance!.CurrentPage!;
+        }
+
+        // DI 模式：通过服务提供者创建实例
+        return serviceProvider != null
+            ? ActivatorUtilities.CreateInstance(serviceProvider, model.PageType)
+            : Activator.CreateInstance(model.PageType)!;
     }
 
     /// <summary>
@@ -421,7 +456,7 @@ public sealed class Routing
     {
         if (info.CurrentPage is IPageLifecycle lifecycle)
         {
-            await lifecycle.OnActivatedAsync(info.Parameters ?? []);
+            await lifecycle.OnActivatedAsync(info.Parameters);
         }
     }
 
@@ -433,11 +468,14 @@ public sealed class Routing
     {
         if (info.CurrentPage is IPageLifecycle lifecycle)
         {
-            await lifecycle.OnReactivatedAsync(info.Parameters ?? new Dictionary<string, object?>());
+            await lifecycle.OnReactivatedAsync(info.Parameters);
         }
     }
+
     #endregion
+
     #region 原有逻辑适配
+
     /// <summary>
     /// 更新导航状态
     /// </summary>
@@ -447,11 +485,14 @@ public sealed class Routing
     {
         if (isThisAction) return;
 
+        // 新增页面时标记为在导航堆栈中
+        info.IsInNavigationStack = true;
+
         // 保留原有导航栈逻辑
         if (info.IsTopNavigation)
         {
-            ThisTopNavigationId = info.RoutingId;
-            NavigationRoutings.AddOrUpdate(info.RoutingId, [info], (_, list) =>
+            _thisTopNavigationId = info.RoutingId;
+            NavigationRoutes.AddOrUpdate(info.RoutingId, [info], (_, list) =>
             {
                 list.Clear();
                 list.Add(info);
@@ -460,47 +501,49 @@ public sealed class Routing
         }
         else
         {
-            if (NavigationRoutings.TryGetValue(ThisTopNavigationId, out var navigations))
+            if (NavigationRoutes.TryGetValue(_thisTopNavigationId, out var navigations))
             {
                 navigations.Add(info);
             }
             else
             {
-                NavigationRoutings[ThisTopNavigationId] = [info];
+                NavigationRoutes[_thisTopNavigationId] = [info];
             }
         }
 
         CurrentInfo = info;
-        ThisRoute = info.Route;
+        _thisRoute = info.Route;
     }
+
     #endregion
+
     /// <summary>
     /// 获取上一页
     /// </summary>
-    /// <param name="_route">导航路由</param>
+    /// <param name="paramRoute">导航路由</param>
     /// <returns></returns>
-    private static async Task<RouteCurrentInfo?> PrevRoutingAsync(string? _route = null)
+    private static async Task<RouteCurrentInfo?> PrevRoutingAsync(string? paramRoute = null)
     {
         // 首先获取本页是不是属于菜单页
-        var findInfo = RoutingModels.FirstOrDefault(q => q.Route == (_route ?? ThisRoute)) ??
-                       throw new Exception($"此路由不存在：{_route}");
+        var findInfo = RoutingModels.FirstOrDefault(q => q.Route == (paramRoute ?? _thisRoute)) ??
+                       throw new Exception($"此路由不存在：{paramRoute}");
         var isTopNavigation = findInfo.IsTopNavigation;
         if (isTopNavigation)
         {
-            return !TopNavigations.TryGetValue(findInfo.Route!, out var result) ? CurrentInfo : result;
+            return !TopNavigations.TryGetValue(findInfo.Route, out var result) ? CurrentInfo : result;
         }
 
         // 根据当前菜单Id和它的路由来查找当前所在位置
-        if (ThisTopNavigationId == Guid.Empty) throw new Exception("顶级路由ID错误");
+        if (_thisTopNavigationId == Guid.Empty) throw new Exception("顶级路由ID错误");
         // 当前循环所在下标
         var thisIndex = -1;
-        if (!NavigationRoutings.TryGetValue(ThisTopNavigationId, out var navigations))
+        if (!NavigationRoutes.TryGetValue(_thisTopNavigationId, out var navigations))
             return CurrentInfo;
         // 获取自身下标
         foreach (var route in navigations)
         {
             thisIndex++;
-            if (route.Route == ThisRoute) break;
+            if (route.Route == _thisRoute) break;
         }
 
         // 如果自身下标大于0，就代表有上一页，否则就是菜单页
@@ -512,13 +555,13 @@ public sealed class Routing
         }
 
         // 否则返回菜单页面
-        var findTopNavigation = TopNavigations.FirstOrDefault(q => q.Value.RoutingId == ThisTopNavigationId).Value;
-        var prevInfo = findTopNavigation == null ? null : findTopNavigation;
-        if (prevInfo?.CurrentPage is IPageLifecycle lifecycle)
+        var findTopNavigation = TopNavigations.FirstOrDefault(q => q.Value.RoutingId == _thisTopNavigationId).Value;
+        if (findTopNavigation?.CurrentPage is IPageLifecycle lifecycle)
         {
             await lifecycle.OnDeactivatedAsync();
         }
-        return prevInfo;
+
+        return findTopNavigation;
     }
 
     /// <summary>
@@ -527,11 +570,10 @@ public sealed class Routing
     public static void ClearRouting()
     {
         RoutingModels.Clear();
-        NavigationRoutings.Clear();
-        KeepAlives.Clear();
+        NavigationRoutes.Clear();
         TopNavigations.Clear();
         CurrentInfo = null;
-        ThisRoute = null;
-        ThisTopNavigationId = Guid.Empty;
+        _thisRoute = null;
+        _thisTopNavigationId = Guid.Empty;
     }
 }

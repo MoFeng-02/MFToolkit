@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace MFToolkit.Avaloniaui.Routings;
+namespace MFToolkit.Avaloniaui.Routes;
 
 public interface IRouteParser
 {

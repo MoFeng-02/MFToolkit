@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Avaloniaui.Routings;
+﻿namespace MFToolkit.Avaloniaui.Routes;
 
 /// <summary>
 /// 路由段类型枚举

@@ -1,8 +1,8 @@
 ﻿using Avalonia.Controls;
 using MFToolkit.Avaloniaui.BaseExtensions;
-using MFToolkit.Avaloniaui.Routings.Helpers;
+using MFToolkit.Avaloniaui.Routes.Helpers;
 
-namespace MFToolkit.Avaloniaui.Routings;
+namespace MFToolkit.Avaloniaui.Routes;
 
 /// <summary>
 /// 导航服务（适配新版路由系统）

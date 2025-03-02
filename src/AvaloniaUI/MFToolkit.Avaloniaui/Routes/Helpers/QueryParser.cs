@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace MFToolkit.Avaloniaui.Routings.Helpers;
+namespace MFToolkit.Avaloniaui.Routes.Helpers;
 
 /// <summary>
 /// 自定义查询参数解析器（替代QueryHelpers.ParseQuery）
