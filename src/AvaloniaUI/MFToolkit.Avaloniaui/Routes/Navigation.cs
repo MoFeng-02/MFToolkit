@@ -156,7 +156,7 @@ public sealed class Navigation
     }
 
     /// <summary>
-    /// 获取导航历史状态
+    /// 获取导航历史状态-是否有上一页
     /// </summary>
     public static bool GetPrevRouting() => Routing.GetPrevRouting();
 }

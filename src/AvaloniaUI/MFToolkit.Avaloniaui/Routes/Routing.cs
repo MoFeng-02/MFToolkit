@@ -227,7 +227,7 @@ public sealed class Routing
     internal static bool GetPrevRouting()
     {
         if (!NavigationRoutes.TryGetValue(_thisTopNavigationId, out var navigations)) return false;
-        return navigations.Count != 0;
+        return navigations.Count > 1;
     }
 
     /// <summary>
@@ -309,6 +309,12 @@ public sealed class Routing
         {
             await InvokeReactivateLifecycleAsync(cachedInfo!);
             UpdateNavigationState(cachedInfo!, isThisAction);
+            if (cachedInfo!.IsTopNavigation)
+            {
+                // 如果是顶级页，直接返回最后一个页面
+                return NavigationRoutes[_thisTopNavigationId].LastOrDefault();
+            }
+
             return cachedInfo;
         }
 
@@ -412,7 +418,7 @@ public sealed class Routing
         }
 
         // 2. 尝试从 KeepAliveCache 获取（支持非顶级导航的保活页）
-        if (KeepAliveCache.TryGetPage(model.Route, parameters, out var cachedInstance))
+        if (model.IsKeepAlive && KeepAliveCache.TryGetPage(model.Route, parameters, out var cachedInstance))
         {
             return cachedInstance!.CurrentPage!;
         }
@@ -492,12 +498,24 @@ public sealed class Routing
         if (info.IsTopNavigation)
         {
             _thisTopNavigationId = info.RoutingId;
-            NavigationRoutes.AddOrUpdate(info.RoutingId, [info], (_, list) =>
+            // NavigationRoutes.AddOrUpdate(info.RoutingId, [info], (_, list) =>
+            // {
+            //     list.Clear();
+            //     list.Add(info);
+            //     return list;
+            // });
+            // 上面这小段有Bug，下面为修复代码
+            // 获取顶级导航栈
+            if (!NavigationRoutes.TryGetValue(info.RoutingId, out var _))
             {
-                list.Clear();
-                list.Add(info);
-                return list;
-            });
+                // 如果没有的话，就进行注册顶级导航
+                NavigationRoutes.AddOrUpdate(info.RoutingId, [info], (_, list) =>
+                {
+                    list.Clear();
+                    list.Add(info);
+                    return list;
+                });
+            }
         }
         else
         {
