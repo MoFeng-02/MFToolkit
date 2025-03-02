@@ -263,6 +263,8 @@ public sealed class Routing
                 {
                     // 标记为已移除导航堆栈
                     item.IsInNavigationStack = false;
+                    // 触发页面停用生命周期
+                    await InvokeDeactivateLifecycleAsync(item);
                     list.Remove(item);
                 }
                 else break;
@@ -307,6 +309,7 @@ public sealed class Routing
         // 检查缓存（新增逻辑）
         if (KeepAliveCache.TryGetPage(route: path, parameters, out var cachedInfo))
         {
+            if (CurrentInfo != null) await InvokeDeactivateLifecycleAsync(CurrentInfo);
             await InvokeReactivateLifecycleAsync(cachedInfo!);
             UpdateNavigationState(cachedInfo!, isThisAction);
             if (cachedInfo!.IsTopNavigation)
@@ -325,7 +328,9 @@ public sealed class Routing
         var instance = CreatePageInstance(routingModel, parameters, ServiceProvider);
         var routeInfo = BuildRouteInfo(routingModel, path, parameters, instance);
         routeInfo.Meta = routingModel.Meta;
-        // 生命周期处理（新增异步逻辑）
+        // 生命周期处理，停用当前页面触发
+        if (CurrentInfo != null) await InvokeDeactivateLifecycleAsync(CurrentInfo);
+        // 生命周期处理，激活新页面触发
         await InvokeActivateLifecycleAsync(routeInfo);
 
         // 更新导航状态（保留原有逻辑）
@@ -475,6 +480,19 @@ public sealed class Routing
         if (info.CurrentPage is IPageLifecycle lifecycle)
         {
             await lifecycle.OnReactivatedAsync(info.Parameters);
+        }
+    }
+
+    /// <summary>
+    /// 触发页面停用生命周期
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    private static async Task InvokeDeactivateLifecycleAsync(RouteCurrentInfo info)
+    {
+        if (info.CurrentPage is IPageLifecycle lifecycle)
+        {
+            await lifecycle.OnDeactivatedAsync();
         }
     }
 
