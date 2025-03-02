@@ -4,13 +4,14 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>0.1.0-beta</Version>
+		<Version>0.1.1-beta</Version>
 		<Description>通用.Net8及以上程序工具库-WeChat 工具库</Description>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
 		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
