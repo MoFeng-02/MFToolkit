@@ -309,16 +309,11 @@ public sealed class Routing
         // 检查缓存（新增逻辑）
         if (KeepAliveCache.TryGetPage(route: path, parameters, out var cachedInfo))
         {
-            if (CurrentInfo != null) await InvokeDeactivateLifecycleAsync(CurrentInfo);
             await InvokeReactivateLifecycleAsync(cachedInfo!);
             UpdateNavigationState(cachedInfo!, isThisAction);
-            if (cachedInfo!.IsTopNavigation)
-            {
+            return cachedInfo!.IsTopNavigation ?
                 // 如果是顶级页，直接返回最后一个页面
-                return NavigationRoutes[_thisTopNavigationId].LastOrDefault();
-            }
-
-            return cachedInfo;
+                NavigationRoutes[_thisTopNavigationId].LastOrDefault() : cachedInfo;
         }
 
         // 路由匹配（增强逻辑）
@@ -328,8 +323,6 @@ public sealed class Routing
         var instance = CreatePageInstance(routingModel, parameters, ServiceProvider);
         var routeInfo = BuildRouteInfo(routingModel, path, parameters, instance);
         routeInfo.Meta = routingModel.Meta;
-        // 生命周期处理，停用当前页面触发
-        if (CurrentInfo != null) await InvokeDeactivateLifecycleAsync(CurrentInfo);
         // 生命周期处理，激活新页面触发
         await InvokeActivateLifecycleAsync(routeInfo);
 
@@ -488,12 +481,13 @@ public sealed class Routing
     /// </summary>
     /// <param name="info"></param>
     /// <returns></returns>
-    private static async Task InvokeDeactivateLifecycleAsync(RouteCurrentInfo info)
+    private static Task InvokeDeactivateLifecycleAsync(RouteCurrentInfo info)
     {
         if (info.CurrentPage is IPageLifecycle lifecycle)
         {
-            await lifecycle.OnDeactivatedAsync();
+            lifecycle.OnDeactivatedAsync();
         }
+        return Task.CompletedTask;
     }
 
     #endregion

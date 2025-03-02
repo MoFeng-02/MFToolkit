@@ -22,7 +22,7 @@ public interface IPageLifecycle
     Task OnReactivatedAsync(Dictionary<string, object?> parameters);
 
     /// <summary>
-    /// 页面停用时触发
+    /// 页面停用或切换时触发
     /// </summary>
     /// <returns></returns>
     Task OnDeactivatedAsync();
