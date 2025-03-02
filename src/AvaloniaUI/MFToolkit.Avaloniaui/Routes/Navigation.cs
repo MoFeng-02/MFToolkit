@@ -7,10 +7,8 @@ namespace MFToolkit.Avaloniaui.Routes;
 /// <summary>
 /// 导航服务（适配新版路由系统）
 /// </summary>
-public sealed class Navigation
+public partial class Navigation
 {
-    public static object? CurrentPage { get; private set; }
-
     private static Action<object?, RouteCurrentInfo>? NavigationTo { get; set; }
 
     /// <summary>
@@ -54,17 +52,14 @@ public sealed class Navigation
         return await GoToAsync(route, parameters);
     }
 
-
     /// <summary>
     /// 通过页面类型导航
     /// </summary>
-    public static async Task<object?> GoToAsync<TType>(Dictionary<string, object?> parameters = null!)
+    public static async Task<object?> GoToAsync<TPage>(Dictionary<string, object?> parameters = null!)
     {
-        var route = Routing.PageTypeToRoute(typeof(TType)) ?? throw new Exception("未找到对应路由");
+        var route = Routing.PageTypeToRoute(typeof(TPage)) ?? throw new Exception("未找到对应路由");
         return await GoToAsync(route, parameters);
     }
-
-
 
     /// <summary>
     /// 处理导航结果
@@ -81,12 +76,11 @@ public sealed class Navigation
 
         if (page.CurrentPage is IQueryAttributable queryAttributable)
         {
-            queryAttributable.ApplyQueryAttributes(page.Parameters ?? new());
+            queryAttributable.ApplyQueryAttributes(page.Parameters);
         }
 
         // 触发全局导航事件
         NavigationTo?.Invoke(page.CurrentPage, page);
-        CurrentPage = page.CurrentPage;
         return page.CurrentPage;
     }
 
@@ -121,25 +115,27 @@ public sealed class Navigation
                 _ => value
             };
         }
+
         return result;
     }
 
     /// <summary>
     /// 合并路径参数到路由字符串
     /// </summary>
-    private static string MergeRouteParameters(string route, Dictionary<string, object?> parameters)
+    private static string MergeRouteParameters(string route, Dictionary<string, object?>? parameters)
     {
         var (path, query) = SplitRoute(route);
         var existingParams = QueryParser.Parse(query);
-
+        parameters ??= [];
         // 合并参数（路径参数优先）
         var mergedParams = existingParams
-            .Concat(parameters ?? [])
+            .Concat(parameters)
             .ToDictionary(p => p.Key, p => p.Value);
 
         // 构建查询字符串
         var queryString = string.Join("&",
-            mergedParams.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value?.ToString() ?? "")}"));
+            mergedParams.Select(p =>
+                $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value?.ToString() ?? "")}"));
 
         return string.IsNullOrEmpty(queryString) ? path : $"{path}?{queryString}";
     }

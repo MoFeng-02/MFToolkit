@@ -30,8 +30,8 @@ public static class RoutingServiceExtensions
             configureRoutes?.Invoke(routeBuilder);
             services.AddSingleton(routeBuilder.Build());
             routes.Clear();
-            var routings = routeBuilder.Build();
-            Routing.RegisterRoutes([.. routings]);
+            var routingModels = routeBuilder.Build();
+            Routing.RegisterRoutes([.. routingModels]);
             foreach (var route in routeBuilder.Build())
             {
                 services.AddTransient(route.PageType);
@@ -47,6 +47,7 @@ public static class RoutingServiceExtensions
         services.AddSingleton<Routing>();
         return services;
     }
+
     /// <summary>
     /// 注入Routing ServiceProvider
     /// </summary>
@@ -76,9 +77,29 @@ public static class RoutingServiceExtensions
 /// </summary>
 public interface IRouteBuilder
 {
+    /// <summary>
+    /// 新增路由
+    /// </summary>
+    /// <param name="route">路径</param>
+    /// <param name="isTopNavigation">是否顶级路由</param>
+    /// <param name="isKeepAlive">是否保活页（顶级路由强制保活）</param>
+    /// <param name="priority">排序</param>
+    /// <param name="meta">其他项</param>
+    /// <typeparam name="T">页面</typeparam>
+    /// <returns></returns>
     IRouteBuilder AddRoute<T>(string? route = null, bool isTopNavigation = false, bool isKeepAlive = false,
         int priority = 0, RoutingMeta? meta = null);
 
+    /// <summary>
+    /// 新增路由
+    /// </summary>
+    /// <param name="pageType">页面类型</param>
+    /// <param name="route">路径</param>
+    /// <param name="isTopNavigation">是否顶级路由</param>
+    /// <param name="isKeepAlive">是否保活页（顶级路由强制保活）</param>
+    /// <param name="priority">排序</param>
+    /// <param name="meta">其他项</param>
+    /// <returns></returns>
     IRouteBuilder AddRoute(Type pageType, string? route = null, bool isTopNavigation = false, bool isKeepAlive = false,
         int priority = 0, RoutingMeta? meta = null);
 }

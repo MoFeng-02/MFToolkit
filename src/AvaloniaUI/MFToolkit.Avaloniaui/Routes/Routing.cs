@@ -15,6 +15,9 @@ public sealed class Routing
     /// </summary>
     private static Guid _thisTopNavigationId = Guid.Empty;
 
+    /// <summary>
+    /// DI 服务提供
+    /// </summary>
     public static IServiceProvider? ServiceProvider { get; internal set; }
 
     /// <summary>
@@ -294,6 +297,8 @@ public sealed class Routing
     {
         if (string.IsNullOrWhiteSpace(route)) return CurrentInfo;
         if (RoutingModels.Count == 0) throw new Exception("未注册路由");
+        // 返回根页面
+        if (route == "//") return await PopToRootAsync();
         // 如果需要返回上一页的话
         var queryIndex = route.IndexOf('.');
         if (queryIndex == 0)
@@ -311,9 +316,11 @@ public sealed class Routing
         {
             await InvokeReactivateLifecycleAsync(cachedInfo!);
             UpdateNavigationState(cachedInfo!, isThisAction);
-            return cachedInfo!.IsTopNavigation ?
+            return cachedInfo!.IsTopNavigation
+                ?
                 // 如果是顶级页，直接返回最后一个页面
-                NavigationRoutes[_thisTopNavigationId].LastOrDefault() : cachedInfo;
+                NavigationRoutes[_thisTopNavigationId].LastOrDefault()
+                : cachedInfo;
         }
 
         // 路由匹配（增强逻辑）
@@ -341,6 +348,183 @@ public sealed class Routing
 
         return routeInfo;
     }
+
+    #region Replace
+
+    /// <summary>
+    /// 替换当前页面（不保留历史记录）
+    /// </summary>
+    /// <param name="route">目标路由（支持路径参数和查询参数）</param>
+    /// <returns>路由信息对象</returns>
+    /// <exception cref="Exception">路由未注册或初始化失败</exception>
+    internal static async Task<RouteCurrentInfo?> ReplaceAsync(string route)
+    {
+        if (string.IsNullOrWhiteSpace(route)) return CurrentInfo;
+        if (RoutingModels.Count == 0) throw new Exception("未注册路由");
+
+        // 解析路径和查询参数
+        var (path, query) = ParseRoute(route);
+        var parameters = QueryParser.Parse(query);
+
+        // 检查缓存（新增逻辑）
+        if (KeepAliveCache.TryGetPage(route: path, parameters, out var cachedInfo))
+        {
+            await InvokeReactivateLifecycleAsync(cachedInfo!);
+            ReplaceNavigationState(cachedInfo!);
+            return cachedInfo!.IsTopNavigation
+                ?
+                // 如果是顶级页，直接返回最后一个页面
+                NavigationRoutes[_thisTopNavigationId].LastOrDefault()
+                : cachedInfo;
+        }
+
+        // 路由匹配（增强逻辑）
+        var routingModel = FindBestMatchRoute(path) ?? throw new Exception($"路由未注册: {path}");
+
+        // 创建实例（兼容原有逻辑）
+        var instance = CreatePageInstance(routingModel, parameters, ServiceProvider);
+        var routeInfo = BuildRouteInfo(routingModel, path, parameters, instance);
+        routeInfo.Meta = routingModel.Meta;
+
+        // 生命周期处理，激活新页面触发
+        await InvokeActivateLifecycleAsync(routeInfo);
+
+        // 替换导航状态（不保留历史记录）
+        ReplaceNavigationState(routeInfo);
+
+        // 缓存处理（新增逻辑）
+        if (routeInfo.IsKeepAlive)
+        {
+            KeepAliveCache.CachePage(routeInfo);
+            if (routingModel.IsTopNavigation)
+            {
+                TopNavigations.AddOrUpdate(path, routeInfo, (_, _) => routeInfo);
+            }
+        }
+
+        return routeInfo;
+    }
+
+    /// <summary>
+    /// 替换导航状态（不保留历史记录）
+    /// </summary>
+    /// <param name="info">当前路由信息</param>
+    private static void ReplaceNavigationState(RouteCurrentInfo info)
+    {
+        // 更新当前路由状态
+        CurrentInfo = info;
+        _thisRoute = info.Route;
+
+        // 如果是顶级导航页，替换整个导航栈
+        if (info.IsTopNavigation)
+        {
+            _thisTopNavigationId = info.RoutingId;
+            NavigationRoutes.AddOrUpdate(
+                info.RoutingId,
+                _ => [info],
+                (_, existing) =>
+                {
+                    foreach (var routeCurrentInfo in existing)
+                    {
+                        routeCurrentInfo.IsInNavigationStack = false;
+                    }
+
+                    existing.Clear();
+                    existing.Add(info);
+                    return existing;
+                }
+            );
+        }
+        else
+        {
+            // 如果是子导航页，替换当前导航栈的最后一个页面
+            if (NavigationRoutes.TryGetValue(_thisTopNavigationId, out var navigations))
+            {
+                if (navigations.Count > 0)
+                {
+                    // 触发旧页面的停用生命周期
+                    var lastPage = navigations.Last();
+                    if (lastPage.CurrentPage is IPageLifecycle lifecycle)
+                    {
+                        lastPage.IsInNavigationStack = false;
+                        lifecycle.OnDeactivatedAsync();
+                    }
+
+                    // 替换最后一个页面
+                    navigations[^1] = info;
+                }
+                else
+                {
+                    navigations.Add(info);
+                }
+            }
+            else
+            {
+                NavigationRoutes[_thisTopNavigationId] = [info];
+            }
+        }
+    }
+
+    #endregion
+
+    #region PopToRoot
+
+    /// <summary>
+    /// 返回到导航栈的根页面（通常是顶级导航页），并清空所有子页面
+    /// </summary>
+    /// <returns>根页面的路由信息对象</returns>
+    private static async Task<RouteCurrentInfo?> PopToRootAsync()
+    {
+        // 获取当前顶级导航ID
+        if (_thisTopNavigationId == Guid.Empty)
+        {
+            throw new InvalidOperationException("当前没有有效的顶级导航栈");
+        }
+
+        // 获取当前顶级导航栈
+        if (!NavigationRoutes.TryGetValue(_thisTopNavigationId, out var navigations) || navigations.Count == 0)
+        {
+            throw new InvalidOperationException("导航栈为空或无效");
+        }
+
+        // 获取根页面（通常是导航栈的第一个页面）
+        var rootPage = navigations.FirstOrDefault();
+        if (rootPage == null)
+        {
+            throw new InvalidOperationException("导航栈中没有有效的根页面");
+        }
+
+        // 触发所有子页面的停用生命周期
+        for (var i = 1; i < navigations.Count; i++)
+        {
+            var page = navigations[i];
+            page.IsInNavigationStack = false;
+            if (page.CurrentPage is IPageLifecycle lifecycle)
+            {
+                await lifecycle.OnDeactivatedAsync();
+            }
+        }
+
+        rootPage.IsInNavigationStack = true;
+        
+        // 清空导航栈，只保留根页面
+        navigations.Clear();
+        navigations.Add(rootPage);
+
+        // 更新当前路由状态
+        CurrentInfo = rootPage;
+        _thisRoute = rootPage.Route;
+
+        // 触发根页面的重新激活生命周期
+        if (rootPage.CurrentPage is IPageLifecycle rootLifecycle)
+        {
+            await rootLifecycle.OnReactivatedAsync(rootPage.Parameters);
+        }
+
+        return rootPage;
+    }
+
+    #endregion
 
     #region 新增辅助方法
 
@@ -487,6 +671,7 @@ public sealed class Routing
         {
             lifecycle.OnDeactivatedAsync();
         }
+
         return Task.CompletedTask;
     }
 
@@ -517,17 +702,15 @@ public sealed class Routing
             //     return list;
             // });
             // 上面这小段有Bug，下面为修复代码
-            // 获取顶级导航栈
-            if (!NavigationRoutes.TryGetValue(info.RoutingId, out var _))
-            {
-                // 如果没有的话，就进行注册顶级导航
-                NavigationRoutes.AddOrUpdate(info.RoutingId, [info], (_, list) =>
+            NavigationRoutes.AddOrUpdate(
+                info.RoutingId,
+                _ => [info],
+                (_, existing) =>
                 {
-                    list.Clear();
-                    list.Add(info);
-                    return list;
-                });
-            }
+                    var res = existing.Count == 0 ? [info] : existing;
+                    return res;
+                }
+            );
         }
         else
         {
