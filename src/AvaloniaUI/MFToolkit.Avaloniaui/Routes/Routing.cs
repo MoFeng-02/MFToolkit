@@ -506,7 +506,7 @@ public sealed class Routing
         }
 
         rootPage.IsInNavigationStack = true;
-        
+
         // 清空导航栈，只保留根页面
         navigations.Clear();
         navigations.Add(rootPage);
@@ -733,9 +733,9 @@ public sealed class Routing
     /// <summary>
     /// 获取上一页
     /// </summary>
-    /// <param name="paramRoute">导航路由</param>
-    /// <returns></returns>
-    private static async Task<RouteCurrentInfo?> PrevRoutingAsync(string? paramRoute = null)
+    /// <param name="paramRoute">指定导航路由</param>
+    /// <returns>返回上一页的信息，若指定导航路由则获取指定导航路由的上一个，若此页已经是顶级路由，且找不到指定路由就返回当前空</returns>
+    private static Task<RouteCurrentInfo?> PrevRoutingAsync(string? paramRoute = null)
     {
         // 首先获取本页是不是属于菜单页
         var findInfo = RoutingModels.FirstOrDefault(q => q.Route == (paramRoute ?? _thisRoute)) ??
@@ -743,7 +743,8 @@ public sealed class Routing
         var isTopNavigation = findInfo.IsTopNavigation;
         if (isTopNavigation)
         {
-            return !TopNavigations.TryGetValue(findInfo.Route, out var result) ? CurrentInfo : result;
+            var res = !TopNavigations.TryGetValue(findInfo.Route, out var result) ? null : result;
+            return Task.FromResult(res);
         }
 
         // 根据当前菜单Id和它的路由来查找当前所在位置
@@ -751,7 +752,7 @@ public sealed class Routing
         // 当前循环所在下标
         var thisIndex = -1;
         if (!NavigationRoutes.TryGetValue(_thisTopNavigationId, out var navigations))
-            return CurrentInfo;
+            return Task.FromResult(CurrentInfo);
         // 获取自身下标
         foreach (var route in navigations)
         {
@@ -764,17 +765,13 @@ public sealed class Routing
         {
             // 获取上一页
             var findPrev = navigations[thisIndex - 1];
-            return findPrev;
+            return Task.FromResult<RouteCurrentInfo?>(findPrev);
         }
 
         // 否则返回菜单页面
         var findTopNavigation = TopNavigations.FirstOrDefault(q => q.Value.RoutingId == _thisTopNavigationId).Value;
-        if (findTopNavigation?.CurrentPage is IPageLifecycle lifecycle)
-        {
-            await lifecycle.OnDeactivatedAsync();
-        }
 
-        return findTopNavigation;
+        return Task.FromResult<RouteCurrentInfo?>(findTopNavigation);
     }
 
     /// <summary>
@@ -782,7 +779,6 @@ public sealed class Routing
     /// </summary>
     public static void ClearRouting()
     {
-        RoutingModels.Clear();
         NavigationRoutes.Clear();
         TopNavigations.Clear();
         CurrentInfo = null;
