@@ -6,9 +6,16 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace MFToolkit.AutoGenerator;
 
+/// <summary>
+/// 自动注入生成器
+/// </summary>
 [Generator]
 public class AutoInjectGenerator : IIncrementalGenerator
 {
+    /// <summary>
+    /// 初始化生成器
+    /// </summary>
+    /// <param name="context"></param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // 输出调试信息
@@ -95,20 +102,40 @@ public class AutoInjectGenerator : IIncrementalGenerator
         return null;
     }
 
+    //private static string? GetServiceKey(AttributeData attribute)
+    //{
+    //    if (attribute.ConstructorArguments.Length > 1 &&
+    //        attribute.ConstructorArguments[1].Value is string key)
+    //    {
+    //        return key;
+    //    }
+    //    return null;
+    //}
+
     private static string? GetServiceKey(AttributeData attribute)
     {
-        if (attribute.ConstructorArguments.Length > 1 &&
-            attribute.ConstructorArguments[1].Value is string key)
+        if (attribute.ConstructorArguments.Length > 0 &&
+            attribute.ConstructorArguments[0].Value is string key)
         {
             return key;
         }
         return null;
     }
 
+    //private static Lifetime GetLifetime(AttributeData attribute)
+    //{
+    //    if (attribute.ConstructorArguments.Length > 2 &&
+    //        attribute.ConstructorArguments[2].Value is int lifetime)
+    //    {
+    //        return (Lifetime)lifetime;
+    //    }
+    //    return Lifetime.Transient;
+    //}
+
     private static Lifetime GetLifetime(AttributeData attribute)
     {
-        if (attribute.ConstructorArguments.Length > 2 &&
-            attribute.ConstructorArguments[2].Value is int lifetime)
+        if (attribute.ConstructorArguments.Length > 1 &&
+            attribute.ConstructorArguments[1].Value is int lifetime)
         {
             return (Lifetime)lifetime;
         }
@@ -126,7 +153,7 @@ public static class AutoInjectExtensions
     [CompilerGenerated]
     public static IServiceCollection AddAutoInjectServices(this IServiceCollection services)
     {{
-        {BuildRegistrationCode(registrations)}
+        {BuildRegistrationCode(registrations).Replace("\n", "\n               ")}
         return services;
     }}
 }}";
@@ -151,11 +178,17 @@ public static class AutoInjectExtensions
                 _ => "AddTransient"
             };
 
+            var keyMethod = reg.Lifetime switch
+            {
+                Lifetime.Singleton => "AddKeyedSingleton",
+                Lifetime.Scoped => "AddKeyedScoped",
+                _ => "AddKeyedTransient"
+            };
+
             if (!string.IsNullOrEmpty(reg.ServiceKey))
             {
-                method = $"AddKeyed{method}";
                 sb.AppendLine(
-                    $@"services.{method}<{serviceType}>(""{reg.ServiceKey}"", typeof({implementationType}));");
+                    $@"services.{keyMethod}<{serviceType}>(""{reg.ServiceKey}"", typeof({implementationType}));");
             }
             else if (isGeneric)
             {

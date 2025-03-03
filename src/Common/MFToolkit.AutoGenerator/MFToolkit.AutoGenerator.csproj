@@ -7,7 +7,21 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
+		<Authors>莫枫</Authors>
+		<Version>0.1.2-beta</Version>
+		<Description>通用.Net8及以上程序工具库</Description>
+		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
+		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
+		<Protobuf Include="Socket\Grpc\Protos\communication.proto" GrpcServices="Both" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" PrivateAssets="all" />
