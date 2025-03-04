@@ -23,7 +23,7 @@ public class AutoInjectAttribute : Attribute
     /// <summary>
     /// 默认自动注入
     /// </summary>
-    /// <param name="lifetime"></param>
+    /// <param name="lifetime">生命周期</param>
     public AutoInjectAttribute(Lifetime lifetime = Lifetime.Transient)
     {
         ServiceType = null;
@@ -31,10 +31,21 @@ public class AutoInjectAttribute : Attribute
         Lifetime = lifetime;
     }
     /// <summary>
+    /// 默认自动注入
+    /// </summary>
+    /// <param name="serviceType">服务类型</param>
+    /// <param name="lifetime">生命周期</param>
+    public AutoInjectAttribute(Type serviceType, Lifetime lifetime = Lifetime.Transient)
+    {
+        ServiceType = serviceType;
+        Key = null;
+        Lifetime = lifetime;
+    }
+    /// <summary>
     /// Key自动注入
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="lifetime"></param>
+    /// <param name="key">Key</param>
+    /// <param name="lifetime">生命周期</param>
     public AutoInjectAttribute(string key, Lifetime lifetime = Lifetime.Transient)
     {
         ServiceType = null;
@@ -44,9 +55,9 @@ public class AutoInjectAttribute : Attribute
     /// <summary>
     /// 类型自动注入
     /// </summary>
-    /// <param name="serviceType"></param>
-    /// <param name="key"></param>
-    /// <param name="lifetime"></param>
+    /// <param name="serviceType">服务类型</param>
+    /// <param name="key">Key</param>
+    /// <param name="lifetime">生命周期</param>
     public AutoInjectAttribute(Type serviceType, string? key = null, Lifetime lifetime = Lifetime.Transient)
     {
         ServiceType = serviceType;
@@ -57,15 +68,22 @@ public class AutoInjectAttribute : Attribute
 /// <summary>
 /// 泛型注入特性
 /// </summary>
-/// <typeparam name="TService"></typeparam>
+/// <typeparam name="TService">服务类型</typeparam>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public sealed class AutoInjectAttribute<TService> : AutoInjectAttribute
 {
     /// <summary>
     /// 泛型默认自动注入
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="lifetime"></param>
+    /// <param name="lifetime">生命周期</param>
+    public AutoInjectAttribute(Lifetime lifetime = Lifetime.Transient) : base(typeof(TService), lifetime)
+    {
+    }
+    /// <summary>
+    /// 泛型默认自动注入
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <param name="lifetime">生命周期</param>
     public AutoInjectAttribute(string? key = null, Lifetime lifetime = Lifetime.Transient) : base(typeof(TService), key, lifetime)
     {
     }
