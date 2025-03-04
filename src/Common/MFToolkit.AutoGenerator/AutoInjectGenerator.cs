@@ -70,7 +70,7 @@ public class AutoInjectGenerator : IIncrementalGenerator
 
     private static ServiceRegistration? ParseAttribute(INamedTypeSymbol classSymbol, AttributeData attribute)
     {
-        var serviceType = GetServiceType(attribute);
+        var serviceType = GetServiceType(attribute) ?? classSymbol; // 默认为实现类型
         var serviceKey = GetServiceKey(attribute);
         var lifetime = GetLifetime(attribute);
 
@@ -152,10 +152,15 @@ public class AutoInjectGenerator : IIncrementalGenerator
 
     private static Lifetime GetLifetime(AttributeData attribute)
     {
-        if (attribute.ConstructorArguments.Length > 1 &&
-            attribute.ConstructorArguments[1].Value is int lifetime)
+        if (attribute.ConstructorArguments.Length > 0)
         {
-            return (Lifetime)lifetime;
+            for (int i = 0; i < attribute.ConstructorArguments.Length; i++)
+            {
+                if (attribute.ConstructorArguments[i].Value is int lifetime)
+                {
+                    return (Lifetime)lifetime;
+                }
+            }
         }
         return Lifetime.Transient;
     }
