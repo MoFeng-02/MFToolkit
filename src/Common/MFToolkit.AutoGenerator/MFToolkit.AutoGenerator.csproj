@@ -10,7 +10,7 @@
 
 		<!-- NuGet Metadata -->
 		<Authors>莫枫</Authors>
-		<Version>0.1.8-beta</Version>
+		<Version>1.0.0</Version>
 		<Description>通用.Net8及以上程序工具库</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -19,14 +19,15 @@
 
 		<!-- 必须的打包配置 -->
 		<IncludeBuildOutput>false</IncludeBuildOutput>
-		<DevelopmentDependency>true</DevelopmentDependency>
+		<!--<DevelopmentDependency>true</DevelopmentDependency>-->
+
+		<!-- 新增：.snupkg -->
+		<!--<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>-->
 
 		<!-- 新增：生成调试符号 -->
 		<DebugType>portable</DebugType>
 		<DebugSymbols>true</DebugSymbols>
-		<EmbedAllSources>true</EmbedAllSources>
-
-		<!-- 嵌入源码到PDB文件 -->
 		<EmbedAllSources>true</EmbedAllSources>
 	</PropertyGroup>
 
