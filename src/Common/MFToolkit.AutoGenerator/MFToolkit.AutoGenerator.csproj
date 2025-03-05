@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>netstandard2.1</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 		<IsRoslynComponent>true</IsRoslynComponent>
@@ -10,8 +10,8 @@
 
 		<!-- NuGet Metadata -->
 		<Authors>莫枫</Authors>
-		<Version>1.0.0</Version>
-		<Description>通用.Net8及以上程序工具库</Description>
+		<Version>1.0.1</Version>
+		<Description>通用.Net9及以上程序工具库</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>

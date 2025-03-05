@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.AutoGenerator;
+﻿namespace MFToolkit.AutoAttribute.DependencyInjection;
 
 /// <summary>
 /// 生命周期

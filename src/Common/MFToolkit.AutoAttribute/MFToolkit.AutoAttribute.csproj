@@ -5,8 +5,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Authors>莫枫</Authors>
-		<Version>1.0.0</Version>
-		<Description>通用.Net8及以上程序工具库</Description>
+		<Version>1.0.1</Version>
+		<Description>通用.Net9及以上程序工具库</Description>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
 		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->

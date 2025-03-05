@@ -1,4 +1,4 @@
-﻿using MFToolkit.AutoAttribute;
+﻿using MFToolkit.AutoAttribute.DependencyInjection;
 
 namespace GeneratorDemo;
 

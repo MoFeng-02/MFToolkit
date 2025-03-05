@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.AutoAttribute;
+﻿namespace MFToolkit.AutoAttribute.DependencyInjection;
 
 
 /// <summary>
