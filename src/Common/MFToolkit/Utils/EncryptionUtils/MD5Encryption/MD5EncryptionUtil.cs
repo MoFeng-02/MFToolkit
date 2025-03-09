@@ -3,6 +3,9 @@ using System.Text;
 
 namespace MFToolkit.Utils.EncryptionUtils.MD5Encryption;
 
+/// <summary>
+/// MD5 加密工具类
+/// </summary>
 public partial class MD5EncryptionUtil
 {
     /// <summary>

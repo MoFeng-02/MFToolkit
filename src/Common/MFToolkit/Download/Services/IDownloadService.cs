@@ -1,6 +1,10 @@
 ﻿using MFToolkit.Download.Models;
 
 namespace MFToolkit.Download.Services;
+
+/// <summary>
+/// 下载服务接口
+/// </summary>
 public interface IDownloadService
 {
     /// <summary>
@@ -10,13 +14,9 @@ public interface IDownloadService
     bool AutoRedownload { get; set; }
     /// <summary>
     /// 下载进度
+    /// <para>0: 当前下载大小，1: 总大小</para>
     /// </summary>
     Action<long, long>? DownloadProgress { get; set; }
-    /// <summary>
-    /// 启动下载
-    /// </summary>
-    /// <returns></returns>
-    //void StartDownload();
     /// <summary>
     /// 暂停下载
     /// </summary>
@@ -28,6 +28,12 @@ public interface IDownloadService
     /// <returns></returns>
     Task ResumeDownloadAsync();
     /// <summary>
+    /// 开始下载
+    /// </summary>
+    /// <param name="downloadModel">下载模型</param>
+    /// <returns></returns>
+    Task StartDownloadAsync(DownloadModel? downloadModel = null);
+    /// <summary>
     /// 停止下载（删除已下载的数据）
     /// </summary>
     /// <returns></returns>
@@ -36,10 +42,16 @@ public interface IDownloadService
     /// 下载文件
     /// </summary>
     /// <param name="downloadModel">下载模型</param>
-    /// <param name="token">用于继续下载还是暂停的操作</param>
     /// <returns></returns>
-    //Task DownloadAsync(DownloadModel downloadModel, CancellationToken token);
     Task<DownloadResult?> DownloadAsync(DownloadModel downloadModel);
+
+    /// <summary>
+    /// 下载文件
+    /// </summary>
+    /// <param name="url">下载地址</param>
+    /// <param name="savePath">保存位置</param>
+    /// <returns></returns>
+    Task<DownloadResult?> DownloadAsync(string url, string savePath);
     /// <summary>
     /// 下载状态
     /// <para>bool: 是否处于下载中</para>

@@ -2,6 +2,10 @@
 using System.Text;
 
 namespace MFToolkit.Utils.EncryptionUtils.AESEncryption;
+
+/// <summary>
+/// AES 加密工具类
+/// </summary>
 public class AesEncryptionUtil
 {
     private static readonly int[] ValidSymmetricKeySizesInBytes = { 16, 24, 32 };

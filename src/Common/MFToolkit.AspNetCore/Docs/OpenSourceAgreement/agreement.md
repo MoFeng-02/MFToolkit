@@ -9,7 +9,6 @@
     6. Microsoft.Net.Http.Headers
     7. QRCoder
     8. SqlSugarCore
-    9. Ulid
 
 ## Apache-2.0协议：
     1. NPOI

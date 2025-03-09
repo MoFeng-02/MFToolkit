@@ -1,5 +1,8 @@
 ﻿namespace MFToolkit.Utils.EncryptionUtils.SMEncryption;
 
+/// <summary>
+/// SM3加密算法
+/// </summary>
 public abstract class GeneralDigest
 {
     private const int BYTE_LENGTH = 64;
@@ -23,6 +26,10 @@ public abstract class GeneralDigest
         byteCount = t.byteCount;
     }
 
+    /// <summary>
+    /// Updates the message digest with a byte.
+    /// </summary>
+    /// <param name="input"></param>
     public void Update(byte input)
     {
         xBuf[xBufOff++] = input;
@@ -36,6 +43,12 @@ public abstract class GeneralDigest
         byteCount++;
     }
 
+    /// <summary>
+    /// Update the message digest with a block of bytes.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <param name="inOff"></param>
+    /// <param name="length"></param>
     public void BlockUpdate(
         byte[] input,
         int inOff,
@@ -75,6 +88,9 @@ public abstract class GeneralDigest
         }
     }
 
+    /// <summary>
+    /// Close the digest, producing the final digest value. The doFinal
+    /// </summary>
     public void Finish()
     {
         long bitLength = (byteCount << 3);
@@ -89,6 +105,9 @@ public abstract class GeneralDigest
         ProcessBlock();
     }
 
+    /// <summary>
+    /// reset the chaining variables
+    /// </summary>
     public virtual void Reset()
     {
         byteCount = 0;
@@ -96,6 +115,10 @@ public abstract class GeneralDigest
         Array.Clear(xBuf, 0, xBuf.Length);
     }
 
+    /// <summary>
+    /// Returns the size, in bytes, of the digest produced by this message digest.
+    /// </summary>
+    /// <returns></returns>
     public int GetByteLength()
     {
         return BYTE_LENGTH;
@@ -104,11 +127,27 @@ public abstract class GeneralDigest
     internal abstract void ProcessWord(byte[] input, int inOff);
     internal abstract void ProcessLength(long bitLength);
     internal abstract void ProcessBlock();
+    /// <summary>
+    /// Returns the algorithm name
+    /// </summary>
     public abstract string AlgorithmName { get; }
+    /// <summary>
+    /// Returns the size of the digest in bytes
+    /// </summary>
+    /// <returns></returns>
     public abstract int GetDigestSize();
+    /// <summary>
+    /// Return the size of the internal buffer the digest applies it's processing to.
+    /// </summary>
+    /// <param name="output"></param>
+    /// <param name="outOff"></param>
+    /// <returns></returns>
     public abstract int DoFinal(byte[] output, int outOff);
 }
 
+/// <summary>
+/// Support class for SM3Digest.
+/// </summary>
 public class SupportClass
 {
     /// <summary>
@@ -164,8 +203,14 @@ public class SupportClass
 
 }
 
+/// <summary>
+/// SM3Digest
+/// </summary>
 public class SM3Digest : GeneralDigest
 {
+    /// <summary>
+    /// Gets the algorithm name
+    /// </summary>
     public override string AlgorithmName
     {
         get
@@ -174,6 +219,10 @@ public class SM3Digest : GeneralDigest
         }
 
     }
+    /// <summary>
+    /// Gets the digest size
+    /// </summary>
+    /// <returns></returns>
     public override int GetDigestSize()
     {
         return DIGEST_LENGTH;
@@ -194,11 +243,18 @@ public class SM3Digest : GeneralDigest
     private int T_00_15 = 0x79cc4519;
     private int T_16_63 = 0x7a879d8a;
 
+    /// <summary>
+    /// SM3Digest
+    /// </summary>
     public SM3Digest()
     {
         Reset();
     }
 
+    /// <summary>
+    /// SM3Digest
+    /// </summary>
+    /// <param name="t"></param>
     public SM3Digest(SM3Digest t) : base(t)
     {
 
@@ -208,6 +264,9 @@ public class SM3Digest : GeneralDigest
         Array.Copy(t.v, 0, v, 0, t.v.Length);
     }
 
+    /// <summary>
+    /// SM3Digest
+    /// </summary>
     public override void Reset()
     {
         base.Reset();
@@ -311,7 +370,12 @@ public class SM3Digest : GeneralDigest
         X[14] = (int)(SupportClass.URShift(bitLength, 32));
         X[15] = (int)(bitLength & unchecked((int)0xffffffff));
     }
-
+    /// <summary>
+    /// IntToBigEndian
+    /// </summary>
+    /// <param name="n"></param>
+    /// <param name="bs"></param>
+    /// <param name="off"></param>
     public static void IntToBigEndian(int n, byte[] bs, int off)
     {
         bs[off] = (byte)(SupportClass.URShift(n, 24));
@@ -319,7 +383,12 @@ public class SM3Digest : GeneralDigest
         bs[++off] = (byte)(SupportClass.URShift(n, 8));
         bs[++off] = (byte)(n);
     }
-
+    /// <summary>
+    /// DoFinal
+    /// </summary>
+    /// <param name="out_Renamed"></param>
+    /// <param name="outOff"></param>
+    /// <returns></returns>
     public override int DoFinal(byte[] out_Renamed, int outOff)
     {
         Finish();
@@ -388,5 +457,8 @@ public class SM3Digest : GeneralDigest
 /// </summary>
 public sealed class SM3EncryptionUtil
 {
+    /// <summary>
+    /// SM3加密
+    /// </summary>
     public static readonly SM3Digest Default = new();
 }

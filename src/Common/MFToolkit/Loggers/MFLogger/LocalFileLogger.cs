@@ -5,6 +5,9 @@ using MFToolkit.Loggers.MFLogger.Configurations;
 using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.Loggers.MFLogger;
+/// <summary>
+/// 本地文件日志记录器
+/// </summary>
 public class LocalFileLogger : ILogger
 {
     /// <summary>
@@ -16,6 +19,11 @@ public class LocalFileLogger : ILogger
     private string _name;
     private readonly Func<LoggerConfiguration> _getCurrentConfig;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="getCurrentConfig"></param>
     public LocalFileLogger(string name, Func<LoggerConfiguration> getCurrentConfig)
     {
         _name = name;
@@ -23,7 +31,18 @@ public class LocalFileLogger : ILogger
         writeTask ??= Task.Run(StartWriteTaskAsync);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TState"></typeparam>
+    /// <param name="state"></param>
+    /// <returns></returns>
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull => default!;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <returns></returns>
     public bool IsEnabled(LogLevel logLevel)
     {
         return _getCurrentConfig().LogLevels.Contains(logLevel);
@@ -61,6 +80,7 @@ public class LocalFileLogger : ILogger
     /// <param name="content"></param>
     /// <param name="logLevel"></param>
     /// <param name="dateTime"></param>
+    /// <param name="exception"></param>
     /// <returns></returns>
     private string FormatterContent(string content, LogLevel logLevel, DateTime? dateTime = null, Exception? exception = null)
     {

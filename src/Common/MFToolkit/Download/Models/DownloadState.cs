@@ -45,6 +45,18 @@ public enum DownloadState
     /// </summary>
     DownloadingError,
     /// <summary>
+    /// 网络错误
+    /// </summary>
+    NetworkError,
+    /// <summary>
+    /// 文件被锁定
+    /// </summary>
+    FileLocked,
+    /// <summary>
+    /// 访问被拒绝
+    /// </summary>
+    AccessDenied,
+    /// <summary>
     /// 其他错误
     /// </summary>
     OtherError

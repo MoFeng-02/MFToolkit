@@ -6,6 +6,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
 
 namespace MFToolkit.Loggers.MFLogger.Extensions.DependencyInjection;
+
+/// <summary>
+/// 拓展官方Logging，实现本地存储
+/// </summary>
 public static class LoggingBuilderExtensions
 {
     private static readonly Action<LoggerConfiguration> defaultConfig = (options) =>

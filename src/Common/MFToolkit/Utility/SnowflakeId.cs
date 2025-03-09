@@ -139,6 +139,9 @@ public class SnowflakeId
     }
 
 }
+/// <summary>
+/// 雪花算法ID生成器
+/// </summary>
 public class SnowflakeIdGenerator
 {
 #if NET8_0

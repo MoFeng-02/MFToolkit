@@ -91,7 +91,7 @@ public static class GlobalInjects
             })
             // #endif
             ;
-        services.AddSingleton<HttpClientFactoryService>();
+        //services.AddSingleton<HttpClientFactoryService>();
 
         #endregion
 
@@ -129,17 +129,34 @@ public static class GlobalInjects
     }
 }
 
+/// <summary>
+/// HttpClient 请求配置
+/// </summary>
 public class HttpRequestConfiguration
 {
+    /// <summary>
+    /// 构造函数
+    /// </summary>
     public HttpRequestConfiguration()
     {
     }
 
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="requestUri"></param>
     public HttpRequestConfiguration(string requestUri)
     {
         BaseRequestUri = requestUri;
     }
 
-    public string BaseRequestUri { get; set; }
-    public Func<string> RequestTokenFunc { get; set; }
+    /// <summary>
+    /// 基础请求地址
+    /// </summary>
+    public string? BaseRequestUri { get; set; }
+
+    /// <summary>
+    /// 请求Token委托
+    /// </summary>
+    public Func<string>? RequestTokenFunc { get; set; }
 }

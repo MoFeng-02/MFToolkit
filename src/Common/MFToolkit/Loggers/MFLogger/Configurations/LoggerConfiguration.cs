@@ -2,6 +2,10 @@
 using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.Loggers.MFLogger.Configurations;
+
+/// <summary>
+/// 日志配置
+/// </summary>
 public sealed class LoggerConfiguration
 {
     /// <summary>

@@ -118,6 +118,8 @@ public static class Finance
     /// 计算内部收益率（Internal Rate of Return, IRR）使用二分法查找近似解。
     /// </summary>
     /// <param name="cashFlows">现金流数组，其中第一个元素是初始投资（通常为负数）</param>
+    /// <param name="guess"></param>
+    /// <param name="precision"></param>
     /// <returns>内部收益率</returns>
     public static double CalculateInternalRateOfReturn(double[] cashFlows, double guess = 0.1, double precision = 1e-6)
     {
@@ -301,7 +303,7 @@ public static class Finance
     /// <summary>
     /// 标准正态分布逆累积分布函数（用于VaR计算等）。
     /// </summary>
-    /// <param name="p">概率（0<p<1）</param>
+    /// <param name="p">概率（0{p{1）</param>
     /// <returns>Z分数</returns>
     private static double NormalInverse(double p)
     {

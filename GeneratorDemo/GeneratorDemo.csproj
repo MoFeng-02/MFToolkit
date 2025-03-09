@@ -13,13 +13,31 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\src\Common\MFToolkit.AutoAttribute\MFToolkit.AutoAttribute.csproj" />
-		<PackageReference Include="MFToolkit.AutoGenerator" Version="0.1.7-beta">
+		<ProjectReference Include="..\src\Common\MFToolkit.AutoGenerator\MFToolkit.AutoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\src\Common\MFToolkit\MFToolkit.csproj" />
+		<ProjectReference Include="..\src\SqlEntityCore\MFToolkit.SqlSugarCore.Extensions\MFToolkit.SqlSugarCore.Extensions.csproj" />
+		<!--<PackageReference Include="MFToolkit.AutoGenerator" Version="0.1.7-beta">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		</PackageReference>-->
 		<!-- 依赖注入包 -->
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="AppLang.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AppLang.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="AppLang.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>AppLang.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

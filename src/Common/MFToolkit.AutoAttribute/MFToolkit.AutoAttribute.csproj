@@ -20,4 +20,8 @@
 		<Protobuf Include="Socket\Grpc\Protos\communication.proto" GrpcServices="Both" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="I18N\" />
+	</ItemGroup>
+
 </Project>

@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/Demo/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
+    <Project Path="DemoDesktop.Desktop/DemoDesktop.Desktop.csproj" />
+    <Project Path="DemoDesktop/DemoDesktop.csproj" />
     <Project Path="GeneratorDemo/GeneratorDemo.csproj" Id="3616b1ca-8b7e-45ac-ac56-2ff58dffaaae" />
   </Folder>
   <Folder Name="/src/" />
@@ -30,5 +32,8 @@
   <Folder Name="/src/MAUI/" Id="881be2a5-6ef8-7e6d-dbda-6b31df6fd088">
     <Project Path="src/MAUI/MFToolkit.Maui.Material/MFToolkit.Maui.Material.csproj" />
     <Project Path="src/MAUI/MFToolkit.Maui/MFToolkit.Maui.csproj" />
+  </Folder>
+  <Folder Name="/src/SqlEntityCore/" Id="21e11661-98b9-4d66-a4b3-4a2660e06109">
+    <Project Path="src/SqlEntityCore/MFToolkit.SqlSugarCore.Extensions/MFToolkit.SqlSugarCore.Extensions.csproj" />
   </Folder>
 </Solution>

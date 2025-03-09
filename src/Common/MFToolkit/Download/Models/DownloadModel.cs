@@ -1,6 +1,4 @@
-﻿using SqlSugar;
-
-namespace MFToolkit.Download.Models;
+﻿namespace MFToolkit.Download.Models;
 /// <summary>
 /// 文件保存模型
 /// </summary>
@@ -9,20 +7,19 @@ public sealed class DownloadModel
     /// <summary>
     /// 下载Key
     /// </summary>
-    [SugarColumn(IsPrimaryKey = true)]
     public string Key { get; set; } = Guid.NewGuid().ToString();
     /// <summary>
     /// 文件保存路径
     /// </summary>
-    public string FileSavePath { get; set; } = null!;
+    public required string FileSavePath { get; set; }
     /// <summary>
     /// 文件下载地址
     /// </summary>
-    public string DownloadUrl { get; set; } = null!;
+    public required string DownloadUrl { get; set; }
     /// <summary>
     /// 下载缓冲区(default: 2M)
     /// </summary>
-    public int WirteSize { get; set; } = 1024 * 1024 * 2;
+    public int WriteSize { get; set; } = 1024 * 1024 * 2;
     /// <summary>
     /// 当前已经下载了多少了
     /// </summary>

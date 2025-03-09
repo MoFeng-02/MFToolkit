@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<IsRoslynComponent>true</IsRoslynComponent>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+
+		<!-- NuGet Metadata -->
+		<Authors>莫枫</Authors>
+		<Version>1.0.0</Version>
+		<Description>通用.Net8及以上程序工具库</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Converter\" />
+		<Folder Include="Extensions\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SqlSugarCore" Version="5.1.4.182" />
+	</ItemGroup>
+
+</Project>

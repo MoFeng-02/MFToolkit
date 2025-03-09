@@ -5,8 +5,14 @@ namespace MFToolkit.Utility;
 /// <summary>
 /// 比较常用的验证类（通义千问生成）
 /// </summary>
-public static class Validator
+public static partial class Validator
 {
+    /// <summary>
+    /// 电子邮件地址正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*@((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$", RegexOptions.IgnoreCase)]
+    internal static partial Regex EmailRegex();
     /// <summary>
     /// 验证是否为有效的电子邮件地址。
     /// </summary>
@@ -17,9 +23,7 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(email))
             return false;
 
-        // 更严格的电子邮件正则表达式
-        return Regex.IsMatch(email, @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
-            + "@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$", RegexOptions.IgnoreCase);
+        return EmailRegex().IsMatch(email);
     }
 
     /// <summary>
@@ -51,6 +55,12 @@ public static class Validator
     }
 
     /// <summary>
+    /// 身份证号码正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{17}[\dX]|\d{15}$")]
+    internal static partial Regex IDCardRegex();
+    /// <summary>
     /// 验证是否为有效的中国大陆身份证号。
     /// </summary>
     /// <param name="idCard">待验证的身份证号码字符串。</param>
@@ -60,9 +70,16 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(idCard))
             return false;
 
-        // 15位或18位身份证号，最后一位可能是X
-        return Regex.IsMatch(idCard, @"^\d{17}[\dX]|\d{15}$");
+        return IDCardRegex().IsMatch(idCard);
     }
+
+
+    /// <summary>
+    /// IPV4 Regex Pattern 编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")]
+    internal static partial Regex IPV4Regex();
 
     /// <summary>
     /// 验证是否为有效的IPv4地址。
@@ -75,9 +92,15 @@ public static class Validator
             return false;
 
         // IPv4 地址格式
-        return Regex.IsMatch(ipAddress, @"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+        return IPV4Regex().IsMatch(ipAddress);
     }
 
+    /// <summary>
+    /// IPV6 Regex Pattern 编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]+|::(ffff(:0{1,4})?:)?((25[0-5]|(2[0-4]|1?[0-9])?[0-9])\.){3}(25[0-5]|(2[0-4]|1?[0-9])?[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1?[0-9])?[0-9])\.){3}(25[0-5]|(2[0-4]|1?[0-9])?[0-9]))$", RegexOptions.IgnoreCase)]
+    internal static partial Regex IPv6Regex();
     /// <summary>
     /// 验证是否为有效的IPv6地址。
     /// </summary>
@@ -88,8 +111,7 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(ipAddress))
             return false;
 
-        // IPv6 地址格式
-        return Regex.IsMatch(ipAddress, @"^((?=.*::)(?!.*::.+::)(::)?([\dA-F]{1,4}:(:|\b)|){5}|([\dA-F]{1,4}:){6})((([\dA-F]{1,4}((?!\3)::|:\b|$))|(?!\2\3)){2}|(*\3))(?<=\/\d+$)?", RegexOptions.IgnoreCase);
+        return IPv6Regex().IsMatch(ipAddress);
     }
 
     /// <summary>
@@ -107,6 +129,12 @@ public static class Validator
     }
 
     /// <summary>
+    /// 验证时间格式（HH:mm:ss）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$")]
+    internal static partial Regex PasswordRegex();
+    /// <summary>
     /// 验证密码强度（至少8个字符，包含大小写字母、数字和特殊字符）。
     /// </summary>
     /// <param name="password">待验证的密码字符串。</param>
@@ -116,10 +144,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(password))
             return false;
 
-        // 密码长度至少为8，并且包含字母、数字和特殊字符
-        return Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$");
+        return PasswordRegex().IsMatch(password);
     }
 
+    /// <summary>
+    /// 验证MAC地址正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")]
+    internal static partial Regex MacAddressRegex();
     /// <summary>
     /// 验证MAC地址。
     /// </summary>
@@ -130,8 +163,7 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(macAddress))
             return false;
 
-        // MAC地址格式：XX:XX:XX:XX:XX:XX 或 XX-XX-XX-XX-XX-XX
-        return Regex.IsMatch(macAddress, @"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+        return MacAddressRegex().IsMatch(macAddress);
     }
 
     /// <summary>
@@ -149,6 +181,12 @@ public static class Validator
     }
 
     /// <summary>
+    /// 域名正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^(?!-)[A-Za-z\d\-]{1,63}(?<!-)\.((?!-)[A-Za-z\d\-]{1,63}(?<!-)\.)+[A-Za-z]{2,}$")]
+    internal static partial Regex DomainRegex();
+    /// <summary>
     /// 验证域名（简单的域名格式验证）。
     /// </summary>
     /// <param name="domain">待验证的域名字符串。</param>
@@ -158,12 +196,11 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(domain))
             return false;
 
-        // 域名正则表达式
-        return Regex.IsMatch(domain, @"^(?!-)[A-Za-z\d\-]{1,63}(?<!-)\.((?!-)[A-Za-z\d\-]{1,63}(?<!-)\.)+[A-Za-z]{2,}$");
+        return DomainRegex().IsMatch(domain);
     }
 
     /// <summary>
-    /// 验证URL。
+    /// 验证URL
     /// </summary>
     /// <param name="url">待验证的URL字符串。</param>
     /// <returns>如果URL格式正确返回true，否则返回false。</returns>
@@ -178,6 +215,31 @@ public static class Validator
     }
 
     /// <summary>
+    /// URL正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$", RegexOptions.IgnoreCase)]
+    internal static partial Regex UrlRegex();
+    /// <summary>
+    /// 验证URL 正则验证。
+    /// </summary>
+    /// <param name="url">待验证的URL字符串。</param>
+    /// <returns>如果URL格式正确返回true，否则返回false。</returns>
+    public static bool IsValidUrlRegex(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            return false;
+
+        return UrlRegex().IsMatch(url);
+    }
+
+    /// <summary>
+    /// 验证邮政编码正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{6}$")]
+    internal static partial Regex PostalCodeRegex();
+    /// <summary>
     /// 验证邮政编码（以中国为例）。
     /// </summary>
     /// <param name="postalCode">待验证的邮政编码字符串。</param>
@@ -187,10 +249,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(postalCode))
             return false;
 
-        // 中国邮政编码为六位数字
-        return Regex.IsMatch(postalCode, @"^\d{6}$");
+        return PostalCodeRegex().IsMatch(postalCode);
     }
 
+    /// <summary>
+    /// 验证纯数字字符串正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d+$")]
+    internal static partial Regex NumericStringRegex();
     /// <summary>
     /// 验证纯数字字符串。
     /// </summary>
@@ -201,9 +268,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(numericString))
             return false;
 
-        return Regex.IsMatch(numericString, @"^\d+$");
+        return NumericStringRegex().IsMatch(numericString);
     }
 
+    /// <summary>
+    /// 验证十六进制颜色代码正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^#[A-Fa-f0-9]{6}$|^#[A-Fa-f0-9]{3}$")]
+    internal static partial Regex HexColorCodeRegex();
     /// <summary>
     /// 验证十六进制颜色代码（#开头，后跟6位或3位的十六进制数）。
     /// </summary>
@@ -214,23 +287,27 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(hexColor))
             return false;
 
-        // 匹配六位或三位的十六进制颜色代码
-        return Regex.IsMatch(hexColor, @"^#[A-Fa-f0-9]{6}$|^#[A-Fa-f0-9]{3}$");
+        return HexColorCodeRegex().IsMatch(hexColor);
     }
 
-    /// <summary>
-    /// 验证车牌号（以中国为例）。
-    /// </summary>
-    /// <param name="licensePlate">待验证的车牌号码字符串。</param>
-    /// <returns>如果车牌号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidVehicleLicensePlate(string licensePlate)
-    {
-        if (string.IsNullOrWhiteSpace(licensePlate))
-            return false;
+    ///// <summary>
+    ///// 验证车牌号正则表达式编译器生成的正则表达式。
+    ///// </summary>
+    ///// <returns></returns>
+    //[GeneratedRegex(@"^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵青藏川宁琼使领]{1}[A-Z]{1}[A-Z0-9]{5}$")]
+    //internal static partial Regex VehicleLicensePlateRegex();
+    ///// <summary>
+    ///// 验证车牌号（以中国为例）。
+    ///// </summary>
+    ///// <param name="licensePlate">待验证的车牌号码字符串。</param>
+    ///// <returns>如果车牌号码格式正确返回true，否则返回false。</returns>
+    //public static bool IsValidVehicleLicensePlate(string licensePlate)
+    //{
+    //    if (string.IsNullOrWhiteSpace(licensePlate))
+    //        return false;
 
-        // 匹配中国大陆车牌号格式
-        return Regex.IsMatch(licensePlate, @"^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵青藏川宁琼使领]{1}[A-Z]{1}[A-Z0-9]{5}$");
-    }
+    //    return VehicleLicensePlateRegex().IsMatch(licensePlate);
+    //}
 
     /// <summary>
     /// 验证文件路径（简单验证，确保路径中不包含非法字符）。
@@ -252,6 +329,9 @@ public static class Validator
 
         return true;
     }
+
+    [GeneratedRegex(@"^[a-zA-Z0-9_]+$")]
+    internal static partial Regex SocialMediaUsernameRegex();
     /// <summary>
     /// 验证社交媒体用户名（以字母数字和下划线组成的用户名）。
     /// </summary>
@@ -262,10 +342,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(username))
             return false;
 
-        // 用户名可以由字母、数字和下划线组成
-        return Regex.IsMatch(username, @"^[a-zA-Z0-9_]+$");
+        return SocialMediaUsernameRegex().IsMatch(username);
     }
 
+    /// <summary>
+    /// 验证银行账户号码正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{6,20}$")]
+    internal static partial Regex BankAccountNumberRegex();
     /// <summary>
     /// 验证银行账户号码（简单的长度和字符检查，具体规则可能因地区而异）。
     /// </summary>
@@ -276,10 +361,29 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(accountNumber))
             return false;
 
-        // 简单的银行账号验证，只允许数字且长度在6到20之间
-        return Regex.IsMatch(accountNumber, @"^\d{6,20}$");
+        return BankAccountNumberRegex().IsMatch(accountNumber);
     }
 
+    /// <summary>
+    /// 验证ISBN号码正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{9}[0-9X]$", RegexOptions.IgnoreCase)]
+    internal static partial Regex ISBN10Regex();
+
+    /// <summary>
+    /// 验证ISBN号码正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{13}$")]
+    internal static partial Regex ISBN13Regex();
+
+    /// <summary>
+    /// 清理ISBN号码正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"[^\dX]")]
+    private static partial Regex CleanIsbnRegex();
     /// <summary>
     /// 验证ISBN号（10位或13位）。
     /// </summary>
@@ -290,14 +394,16 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(isbn))
             return false;
 
-        // 去除所有非数字和X字符
-        string cleanIsbn = Regex.Replace(isbn, @"[^\dX]", "");
-
-        // ISBN-10 或 ISBN-13
-        return Regex.IsMatch(cleanIsbn, @"^\d{9}[0-9X]$", RegexOptions.IgnoreCase) || // ISBN-10
-               Regex.IsMatch(cleanIsbn, @"^\d{13}$"); // ISBN-13
+        string cleanIsbn = CleanIsbnRegex().Replace(isbn, "");
+        return ISBN10Regex().IsMatch(cleanIsbn) || ISBN13Regex().IsMatch(cleanIsbn);
     }
 
+    /// <summary>
+    /// 验证美国社会安全号码（SSN）正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{3}-\d{2}-\d{4}$")]
+    internal static partial Regex SSNRegex();
     /// <summary>
     /// 验证美国社会安全号码（SSN）。
     /// </summary>
@@ -308,10 +414,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(ssn))
             return false;
 
-        // SSN 格式：XXX-XX-XXXX
-        return Regex.IsMatch(ssn, @"^\d{3}-\d{2}-\d{4}$");
+        return SSNRegex().IsMatch(ssn);
     }
 
+    /// <summary>
+    /// 验证EAN码（8位）正则表达式编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{13}$")]
+    internal static partial Regex EAN13Regex();
     /// <summary>
     /// 验证EAN码（13位）。
     /// </summary>
@@ -322,10 +433,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(eanCode))
             return false;
 
-        // EAN-13 格式：13位纯数字
-        return Regex.IsMatch(eanCode, @"^\d{13}$");
+        return EAN13Regex().IsMatch(eanCode);
     }
 
+    /// <summary>
+    /// 验证是否为有效的国际电话号码（包括国家代码）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\+\d{1,3}-\d+$")]
+    internal static partial Regex InternationalPhoneNumberRegex();
     /// <summary>
     /// 验证是否为有效的国际电话号码（包括国家代码）。
     /// </summary>
@@ -336,10 +452,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(phoneNumber))
             return false;
 
-        // 国际电话号码，以+开头，后跟国家代码和电话号码
-        return Regex.IsMatch(phoneNumber, @"^\+\d{1,3}-\d+$");
+        return InternationalPhoneNumberRegex().IsMatch(phoneNumber);
     }
 
+    /// <summary>
+    /// 验证是否为有效的中国手机号码（包括虚拟运营商）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^1[3456789]\d{9}$")]
+    internal static partial Regex ChinaMobilePhoneNumberRegex();
     /// <summary>
     /// 验证是否为有效的中国手机号码（包括虚拟运营商）。
     /// </summary>
@@ -350,10 +471,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(phoneNumber))
             return false;
 
-        // 匹配中国大陆手机号码，以1开头后跟10位数字，包含虚拟运营商号段
-        return Regex.IsMatch(phoneNumber, @"^1[3456789]\d{9}$");
+        return ChinaMobilePhoneNumberRegex().IsMatch(phoneNumber);
     }
 
+    /// <summary>
+    /// 验证是否为有效的中国固定电话号码（带区号）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^(0\d{2,3}-)?\d{7,8}(-\d{1,4})?$")]
+    internal static partial Regex ChinaLandlineNumberRegex();
     /// <summary>
     /// 验证是否为有效的中国固定电话号码（带区号）。
     /// </summary>
@@ -364,10 +490,23 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(landlineNumber))
             return false;
 
-        // 包含区号和分机号的固定电话格式
-        return Regex.IsMatch(landlineNumber, @"^(0\d{2,3}-)?\d{7,8}(-\d{1,4})?$");
+        return ChinaLandlineNumberRegex().IsMatch(landlineNumber);
     }
 
+
+
+    /// <summary>
+    /// 验证是否为有效的中国车牌号
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵青藏川宁琼使领]{1}[A-Z]{1}[A-Z0-9]{5}$")]
+    internal static partial Regex VehicleLicensePlateRegex();
+    /// <summary>
+    /// 验证是否为有效的中国车牌号（包括新能源车牌）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵青藏川宁琼使领]{1}[A-Z]{1}[D|F][A-Z0-9]{5}$")]
+    internal static partial Regex NewEnergyLicencePlateRegex();
     /// <summary>
     /// 验证是否为有效的中国车牌号（包括新能源车牌）。
     /// </summary>
@@ -379,8 +518,8 @@ public static class Validator
             return false;
 
         // 匹配中国大陆车牌号格式，包括新能源车牌
-        return Regex.IsMatch(licensePlate, @"^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵青藏川宁琼使领]{1}[A-Z]{1}[A-Z0-9]{5}$") ||
-               Regex.IsMatch(licensePlate, @"^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵青藏川宁琼]{1}[A-Z]{1}[D|F][A-Z0-9]{5}$"); // 新能源车牌
+        return VehicleLicensePlateRegex().IsMatch(licensePlate) ||
+               NewEnergyLicencePlateRegex().IsMatch(licensePlate); // 新能源车牌
     }
 
     /// <summary>
@@ -429,6 +568,12 @@ public static class Validator
     /// <summary>
     /// 验证是否为有效的HTML标签。
     /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"<([a-z]+)[^>]*>.*?</\1>")]
+    internal static partial Regex HtmlTagRegex();
+    /// <summary>
+    /// 验证是否为有效的HTML标签。
+    /// </summary>
     /// <param name="htmlTag">待验证的HTML标签字符串。</param>
     /// <returns>如果HTML标签格式正确返回true，否则返回false。</returns>
     public static bool IsValidHtmlTag(string htmlTag)
@@ -437,8 +582,15 @@ public static class Validator
             return false;
 
         // HTML标签格式：<tag>...</tag>
-        return Regex.IsMatch(htmlTag, @"<([a-z]+)[^>]*>.*?</\1>");
+        return HtmlTagRegex().IsMatch(htmlTag);
     }
+
+    /// <summary>
+    /// 验证是否为有效的UUID v4。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", RegexOptions.IgnoreCase)]
+    internal static partial Regex UuidV4Regex();
     /// <summary>
     /// 验证是否为有效的UUID v4。
     /// </summary>
@@ -449,10 +601,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(guid))
             return false;
 
-        // UUID v4 版本的正则表达式
-        return Regex.IsMatch(guid, @"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", RegexOptions.IgnoreCase);
+        return UuidV4Regex().IsMatch(guid);
     }
 
+    /// <summary>
+    /// 验证是否为有效的Base64编码字符串。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$")]
+    internal static partial Regex Base64Regex();
     /// <summary>
     /// 验证是否为有效的Base64编码字符串。
     /// </summary>
@@ -463,17 +620,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(base64String))
             return false;
 
-        try
-        {
-            Convert.FromBase64String(base64String);
-            return true;
-        }
-        catch (FormatException)
-        {
-            return false;
-        }
+        return Base64Regex().IsMatch(base64String);
     }
 
+    /// <summary>
+    /// 验证是否为有效的EAN-8条形码。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{8}$")]
+    internal static partial Regex EAN8Regex();
     /// <summary>
     /// 验证是否为有效的EAN-8条形码。
     /// </summary>
@@ -484,10 +639,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(eanCode))
             return false;
 
-        // EAN-8 格式：8位纯数字
-        return Regex.IsMatch(eanCode, @"^\d{8}$");
+        return EAN8Regex().IsMatch(eanCode);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{12}$")]
+    internal static partial Regex UPCARegex();
     /// <summary>
     /// 验证是否为有效的UPC-A条形码。
     /// </summary>
@@ -498,10 +658,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(upcCode))
             return false;
 
-        // UPC-A 格式：12位纯数字
-        return Regex.IsMatch(upcCode, @"^\d{12}$");
+        return UPCARegex().IsMatch(upcCode);
     }
 
+    /// <summary>
+    /// 验证是否有效的美国车牌号 编译器生成的正则表达式。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[A-Z]\d{5}[A-Z]$", RegexOptions.IgnoreCase)]
+    internal static partial Regex USLicensePlateRegex();
     /// <summary>
     /// 验证是否为有效的美国车牌号（以加利福尼亚州为例）。
     /// </summary>
@@ -512,8 +677,7 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(licensePlate))
             return false;
 
-        // 加利福尼亚州车牌格式：1个字母，然后5个数字，最后1个字母
-        return Regex.IsMatch(licensePlate, @"^[A-Z]\d{5}[A-Z]$", RegexOptions.IgnoreCase);
+        return USLicensePlateRegex().IsMatch(licensePlate);
     }
 
     /// <summary>
@@ -541,6 +705,12 @@ public static class Validator
     /// <summary>
     /// 验证是否为有效的信用卡安全码（CVV/CVC）。
     /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{3,4}$")]
+    internal static partial Regex CreditCardSecurityCodeRegex();
+    /// <summary>
+    /// 验证是否为有效的信用卡安全码（CVV/CVC）。
+    /// </summary>
     /// <param name="cvv">待验证的安全码字符串。</param>
     /// <returns>如果安全码格式正确返回true，否则返回false。</returns>
     public static bool IsValidCreditCardSecurityCode(string cvv)
@@ -548,10 +718,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(cvv))
             return false;
 
-        // CVV/CVC 通常是3或4位数字
-        return Regex.IsMatch(cvv, @"^\d{3,4}$");
+        return CreditCardSecurityCodeRegex().IsMatch(cvv);
     }
 
+    /// <summary>
+    /// 验证是否为有效的IMEI号码（国际移动设备识别码）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{15}$")]
+    internal static partial Regex IMEIRegex();
     /// <summary>
     /// 验证是否为有效的IMEI号码（国际移动设备识别码）。
     /// </summary>
@@ -562,10 +737,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(imei))
             return false;
 
-        // IMEI 号码通常是15位数字
-        return Regex.IsMatch(imei, @"^\d{15}$");
+        return IMEIRegex().IsMatch(imei);
     }
 
+    /// <summary>
+    /// 验证是否为有效的IMEISV号码（IMEI软件版本）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{16}$")]
+    internal static partial Regex IMEISVRegex();
     /// <summary>
     /// 验证是否为有效的IMEISV号码（IMEI软件版本）。
     /// </summary>
@@ -576,10 +756,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(imeisv))
             return false;
 
-        // IMEISV 号码通常是16位数字
-        return Regex.IsMatch(imeisv, @"^\d{16}$");
+        return IMEISVRegex().IsMatch(imeisv);
     }
 
+    /// <summary>
+    /// 验证是否为有效的ICCID号码（集成电路卡识别码）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^\d{19,20}$")]
+    internal static partial Regex ICCIDRegex();
     /// <summary>
     /// 验证是否为有效的ICCID号码（集成电路卡识别码）。
     /// </summary>
@@ -590,12 +775,18 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(iccid))
             return false;
 
-        // ICCID 号码通常是19或20位数字
-        return Regex.IsMatch(iccid, @"^\d{19,20}$");
+        return ICCIDRegex().IsMatch(iccid);
     }
 
     /// <summary>
     /// 验证是否为有效的MAC地址（包括带有空格分隔的格式）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^([0-9A-Fa-f]{2}[\s:-]){5}([0-9A-Fa-f]{2})$")]
+    internal static partial Regex MacAddressWithSpacesRegex();
+    /// <summary>
+    /// 验证是否为有效的MAC地址（包括带有空格分隔的格式）。
+    /// <para>MAC地址格式：XX XX XX XX XX XX 或 XX:XX:XX:XX:XX:XX 或 XX-XX-XX-XX-XX-XX</para>
     /// </summary>
     /// <param name="macAddress">待验证的MAC地址字符串。</param>
     /// <returns>如果MAC地址格式正确返回true，否则返回false。</returns>
@@ -604,10 +795,15 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(macAddress))
             return false;
 
-        // MAC地址格式：XX XX XX XX XX XX 或 XX:XX:XX:XX:XX:XX 或 XX-XX-XX-XX-XX-XX
-        return Regex.IsMatch(macAddress, @"^([0-9A-Fa-f]{2}[\s:-]){5}([0-9A-Fa-f]{2})$");
+        return MacAddressWithSpacesRegex().IsMatch(macAddress);
     }
 
+    /// <summary>
+    /// 验证是否位有效的IPV6前缀（/64或/128）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^([\da-fA-F]{1,4}:){3}(:[\da-fA-F]{0,4}){1,4}::\/(64|128)$")]
+    internal static partial Regex IPv6PrefixRegex();
     /// <summary>
     /// 验证是否为有效的IPv6前缀（/64或/128）。
     /// </summary>
@@ -618,9 +814,9 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(ipv6Prefix))
             return false;
 
-        // IPv6 前缀格式：XXXX:XXXX:XXXX:XXXX::/64 或 XXXX:XXXX:XXXX:XXXX::/128
-        return Regex.IsMatch(ipv6Prefix, @"^([\da-fA-F]{1,4}:){3}(:[\da-fA-F]{0,4}){1,4}::\/(64|128)$");
+        return IPv6PrefixRegex().IsMatch(ipv6Prefix);
     }
+
     /// <summary>
     /// 验证是否为有效的IBAN（国际银行账户号码）。
     /// </summary>
@@ -632,7 +828,7 @@ public static class Validator
             return false;
 
         // IBAN格式检查（简化版）
-        string rearranged = iban.ToUpper().Substring(4) + iban.Substring(0, 4);
+        string rearranged = string.Concat(iban.ToUpper().AsSpan(4), iban.AsSpan(0, 4));
         string numericIban = "";
 
         foreach (char c in rearranged)
@@ -650,6 +846,32 @@ public static class Validator
     }
 
     /// <summary>
+    /// 验证是否为有效的IBAN（国际银行账户号码）。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$")]
+    internal static partial Regex IBANRegex();
+
+    /// <summary>
+    /// 验证是否为有效的IBAN（国际银行账户号码）。
+    /// </summary>
+    /// <param name="iban"></param>
+    /// <returns></returns>
+    public static bool IsValidIBANRegex(string iban)
+    {
+        if (string.IsNullOrWhiteSpace(iban))
+            return false;
+
+        return IBANRegex().IsMatch(iban);
+    }
+
+    /// <summary>
+    /// 验证是否为有效的SWIFT/BIC代码。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[A-Z]{6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3})?$")]
+    internal static partial Regex SwiftBicCodeRegex();
+    /// <summary>
     /// 验证是否为有效的SWIFT/BIC代码。
     /// </summary>
     /// <param name="swiftCode">待验证的SWIFT/BIC代码字符串。</param>
@@ -659,8 +881,7 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(swiftCode))
             return false;
 
-        // SWIFT/BIC代码通常是8或11个字符，由字母和数字组成
-        return Regex.IsMatch(swiftCode, @"^[A-Z]{6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3})?$");
+        return SwiftBicCodeRegex().IsMatch(swiftCode);
     }
 
     /// <summary>
@@ -688,6 +909,12 @@ public static class Validator
     /// <summary>
     /// 验证是否为有效的PEM编码字符串。
     /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^-+BEGIN [A-Z ]+-+\r?\n(?:[A-Za-z0-9+/=]+\r?\n)+-+END [A-Z ]+-+$", RegexOptions.Multiline)]
+    internal static partial Regex PemEncodedStringRegex();
+    /// <summary>
+    /// 验证是否为有效的PEM编码字符串。
+    /// </summary>
     /// <param name="pemString">待验证的PEM编码字符串。</param>
     /// <returns>如果PEM编码字符串格式正确返回true，否则返回false。</returns>
     public static bool IsValidPemEncodedString(string pemString)
@@ -695,8 +922,7 @@ public static class Validator
         if (string.IsNullOrWhiteSpace(pemString))
             return false;
 
-        // PEM编码通常以"-----BEGIN..."开头并以"-----END..."结尾
-        return Regex.IsMatch(pemString, @"^-+BEGIN [A-Z ]+-+\r?\n(?:[A-Za-z0-9+/=]+\r?\n)+-+END [A-Z ]+-+$", RegexOptions.Multiline);
+        return PemEncodedStringRegex().IsMatch(pemString);
     }
 
     /// <summary>
@@ -827,6 +1053,25 @@ public static class Validator
     }
 
     /// <summary>
+    /// 验证是否为有效的JWTToken。
+    /// </summary>
+    /// <returns></returns>
+    [GeneratedRegex(@"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$")]
+    internal static partial Regex JwtTokenRegex();
+    /// <summary>
+    /// 验证是否为有效的JSON Web Token (JWT)。
+    /// </summary>
+    /// <param name="jwtToken">待验证的JWT字符串。</param>
+    /// <returns>如果JWT格式正确返回true，否则返回false。</returns>
+    public static bool IsValidJwtTokenRegex(string jwtToken)
+    {
+        if (string.IsNullOrWhiteSpace(jwtToken))
+            return false;
+
+        return JwtTokenRegex().IsMatch(jwtToken);
+    }
+
+    /// <summary>
     /// 将Base64 URL编码转换为标准Base64编码。
     /// </summary>
     /// <param name="base64UrlEncoded">Base64 URL编码字符串。</param>
@@ -834,7 +1079,7 @@ public static class Validator
     private static string Base64UrlDecode(string base64UrlEncoded)
     {
         string padded = base64UrlEncoded.Length % 4 == 0
-            ? base64UrlEncoded : base64UrlEncoded + "====".Substring(base64UrlEncoded.Length % 4);
+            ? base64UrlEncoded : string.Concat(base64UrlEncoded, "====".AsSpan(base64UrlEncoded.Length % 4));
         return padded.Replace('-', '+').Replace('_', '/');
     }
 
@@ -862,4 +1107,5 @@ public static class Validator
             return false;
         }
     }
+
 }

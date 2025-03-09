@@ -1,7 +1,8 @@
 ﻿#nullable disable
-using MFToolkit;
-
 namespace MFToolkit.Download.Models;
+/// <summary>
+/// 下载结果
+/// </summary>
 public sealed class DownloadResult
 {
     /// <summary>

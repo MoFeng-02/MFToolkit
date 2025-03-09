@@ -13,6 +13,5 @@ namespace MFToolkit.Json.Contexts.AOT;
 [JsonSerializable(typeof(double))]
 [JsonSerializable(typeof(DateTime))]
 [JsonSerializable(typeof(object))]
-[JsonSerializable(typeof(Ulid))]
 [JsonSerializable(typeof(ApiResult))]
 public partial class JsonContextDefaultAot : JsonSerializerContext;
