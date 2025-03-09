@@ -24,3 +24,4 @@ Go to the description page:[skip](./docs/Index.md)
 
 ## 更新日志
     2025/3/3 提供第一版自动生成器，用于依赖注入
+    2025/3/9 提供了实体操作拓展类 SqlSugarExtension，实际为从MFToolkit通用库迁出，只在需要的时候自行引入
