@@ -84,7 +84,7 @@ public sealed class AutoInjectAttribute<TService> : AutoInjectAttribute
     /// </summary>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoInjectAttribute(string? key = null, Lifetime lifetime = Lifetime.Transient) : base(typeof(TService), key, lifetime)
+    public AutoInjectAttribute(string key, Lifetime lifetime = Lifetime.Transient) : base(typeof(TService), key, lifetime)
     {
     }
 }
