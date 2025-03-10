@@ -4,6 +4,7 @@ using MFToolkit.App.Extensions.DependencyInjection;
 using MFToolkit.Http;
 using MFToolkit.Http.Extensions.DependencyInjection;
 using MFToolkit.Http.HttpClientFactorys;
+using MFToolkit.Utility;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.DependencyInjection;
@@ -31,11 +32,9 @@ public static class GlobalInjects
     /// </para>
     /// </summary>
     /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>
-    /// <param name="loggerOptions">日志配置</param>
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
-        //Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
         return new ServiceCollection().AddInjectServices(httpRequestConfiguration,
@@ -53,12 +52,10 @@ public static class GlobalInjects
     /// </summary>
     /// <param name="services">服务集合</param>
     /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>
-    /// <param name="loggerOptions">日志配置</param>
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection AddInjectServices(this IServiceCollection services,
         HttpRequestConfiguration? httpRequestConfiguration = null,
-        //Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!)
     {
         if (_isInjectExist) return services;
@@ -76,9 +73,9 @@ public static class GlobalInjects
 
         services.AddHttpClientService(options =>
         {
-            options.BaseAddress = httpRequestConfiguration == null
+            options.BaseAddress = httpRequestConfiguration == null || !Validator.IsValidUrl(httpRequestConfiguration.BaseRequestUri)
                 ? null
-                : new(httpRequestConfiguration.BaseRequestUri);
+                : new(httpRequestConfiguration.BaseRequestUri!);
             if (httpRequestConfiguration?.RequestTokenFunc != null)
                 options.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", httpRequestConfiguration?.RequestTokenFunc());

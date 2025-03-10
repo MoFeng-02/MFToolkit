@@ -1,5 +1,8 @@
 ﻿#nullable disable
 namespace MFToolkit.AspNetCore.Authentication.JwtAuthorization.Model;
+/// <summary>
+/// 响应Token
+/// </summary>
 public sealed class ReponseToken
 {
     /// <summary>

@@ -3,6 +3,10 @@ using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Model;
 using MFToolkit.AspNetCore.Authentication.JwtAuthorization.Utils;
 
 namespace MFToolkit.AspNetCore.Authentication.JwtAuthorization.Extensions;
+
+/// <summary>
+/// JWT工具类扩展
+/// </summary>
 public static class JwtUtilExtension
 {
     /// <summary>

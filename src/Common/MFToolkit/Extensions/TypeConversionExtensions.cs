@@ -1,6 +1,16 @@
 ﻿namespace MFToolkit.Extensions;
+
+/// <summary>
+/// 类型转换扩展
+/// </summary>
 public static class TypeConversionExtension
 {
+    /// <summary>
+    /// 转换为指定类型
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public static T ConvertTo<T>(this object value)
     {
         return (T)Convert.ChangeType(value, typeof(T));

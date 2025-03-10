@@ -10,6 +10,9 @@ namespace MFToolkit.App;
 /// </summary>
 public partial class MFApp
 {
+    /// <summary>
+    /// 服务集合
+    /// </summary>
     public static IServiceCollection? ServiceCollection;
     /// <summary>
     /// 可以用这个获取创建范围作用域实例
@@ -75,7 +78,7 @@ public partial class MFApp
     /// <param name="message">异常信息</param>
     /// <param name="code">状态码</param>
     /// <returns></returns>
-    /// <exception cref="OhException.ApplicationError" />
+    /// <exception cref="OhException" />
     public static object GetService(Type serviceType, string message, int code = 500)
     {
         return GetService(serviceType) ?? throw OhException.ApplicationError(message, code);
@@ -87,7 +90,7 @@ public partial class MFApp
     /// <param name="message">异常信息</param>
     /// <param name="code">状态码</param>
     /// <returns></returns>
-    /// <exception cref="OhException.ApplicationError" />
+    /// <exception cref="OhException" />
     public static T GetService<T>(string message, int code = 500) where T : notnull
     {
         return GetService<T>() ?? throw OhException.ApplicationError(message, code);
@@ -105,12 +108,10 @@ public partial class MFApp
     /// <code>GlobalInjects.InjectServices();</code>
     /// </para>
     /// </summary>
-    /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>\
-    /// <param name="loggerOptions">日志配置</param>
+    /// <param name="httpRequestConfiguration">HttpClient 请求基本地址</param>
     /// <param name="serviceOptions">额外自己要注入的配置</param>
     /// <returns></returns>
     public static IServiceCollection InjectServices(HttpRequestConfiguration? httpRequestConfiguration = null,
-        //Action<LoggerConfiguration>? loggerOptions = null,
         Action<IServiceCollection> serviceOptions = null!) =>
         GlobalInjects.InjectServices(httpRequestConfiguration, serviceOptions);
 

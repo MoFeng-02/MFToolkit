@@ -16,12 +16,21 @@ namespace MFToolkit.AspNetCore.Middlewares;
 public class GlobalExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<GlobalExceptionHandlerMiddleware> _logger;
+    private readonly ILogger<GlobalExceptionHandlerMiddleware>? _logger;
 
     /// <summary>
     /// 构造函数，初始化下一个中间件。
     /// </summary>
     /// <param name="next">下一个中间件的委托。</param>
+    public GlobalExceptionHandlerMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+    /// <summary>
+    /// 构造函数，初始化下一个中间件。
+    /// </summary>
+    /// <param name="next">下一个中间件的委托。</param>
+    /// <param name="logger">日志</param>
     public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
     {
         _next = next;
@@ -44,7 +53,7 @@ public class GlobalExceptionHandlerMiddleware
         {
             // 捕获并处理未处理的异常
             await HandleExceptionAsync(httpContext, ex);
-            _logger.LogError(ex, ex.Message);
+            _logger?.LogError(ex, ex.Message);
         }
     }
 
@@ -88,7 +97,7 @@ public class GlobalExceptionHandlerMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "全局异常反馈错误");
+            _logger?.LogError(ex, "全局异常反馈错误");
         }
     }
     private static (int, string) GetExceptionDetails(Exception exception)

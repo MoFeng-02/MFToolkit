@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.AspNetCore.Extensions;
+
+/// <summary>
+/// HttpContext 扩展
+/// </summary>
 public static class HttpContextExtensions
 {
     /// <summary>

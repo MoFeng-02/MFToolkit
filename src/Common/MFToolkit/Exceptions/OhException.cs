@@ -194,6 +194,7 @@ public static class OhException
     /// 应用程序错误 - 指应用程序内部出现的问题，通常需要开发者介入解决
     /// </summary>
     /// <param name="message">异常消息</param>
+    /// <param name="innerException">引起当前异常的异常，或者null引用</param>
     /// <param name="code">自定义状态码</param>
     public static MFCommonException ApplicationError(string message, Exception innerException, int code = 500)
     {

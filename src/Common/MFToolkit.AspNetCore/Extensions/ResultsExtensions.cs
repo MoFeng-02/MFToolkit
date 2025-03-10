@@ -3,6 +3,10 @@ using MFToolkit.AspNetCore.Extensions.ResultExttensions;
 using Microsoft.AspNetCore.Http;
 
 namespace MFToolkit.AspNetCore.Extensions;
+
+/// <summary>
+/// Results 返回结果扩展
+/// </summary>
 public static class ResultsExtensions
 {
     /// <summary>

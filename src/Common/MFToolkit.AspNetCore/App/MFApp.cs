@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 namespace MFToolkit.AspNetCore.App;
+/// <summary>
+/// APP 拓展通用工具类
+/// </summary>
 public class MFApp : MFToolkit.App.MFApp
 {
     /// <summary>

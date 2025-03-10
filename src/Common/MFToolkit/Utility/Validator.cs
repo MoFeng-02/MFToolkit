@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace MFToolkit.Utility;
 /// <summary>
-/// 比较常用的验证类（通义千问生成）
+/// 比较常用的验证类（通义千问生成，部分由DeepSeek生成）
 /// </summary>
 public static partial class Validator
 {
@@ -18,7 +18,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="email">待验证的电子邮件字符串。</param>
     /// <returns>如果电子邮件格式正确返回true，否则返回false。</returns>
-    public static bool IsValidEmail(string email)
+    public static bool IsValidEmail(string? email)
     {
         if (string.IsNullOrWhiteSpace(email))
             return false;
@@ -31,7 +31,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="cardNumber">待验证的信用卡号码字符串。</param>
     /// <returns>如果信用卡号码有效返回true，否则返回false。</returns>
-    public static bool IsValidCreditCardNumber(string cardNumber)
+    public static bool IsValidCreditCardNumber(string? cardNumber)
     {
         if (string.IsNullOrWhiteSpace(cardNumber) || !Regex.IsMatch(cardNumber, @"^\d+$"))
             return false;
@@ -65,7 +65,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="idCard">待验证的身份证号码字符串。</param>
     /// <returns>如果身份证号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidIDCard(string idCard)
+    public static bool IsValidIDCard(string? idCard)
     {
         if (string.IsNullOrWhiteSpace(idCard))
             return false;
@@ -86,7 +86,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="ipAddress">待验证的IP地址字符串。</param>
     /// <returns>如果IP地址格式正确返回true，否则返回false。</returns>
-    public static bool IsValidIPv4Address(string ipAddress)
+    public static bool IsValidIPv4Address(string? ipAddress)
     {
         if (string.IsNullOrWhiteSpace(ipAddress))
             return false;
@@ -106,7 +106,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="ipAddress">待验证的IP地址字符串。</param>
     /// <returns>如果IP地址格式正确返回true，否则返回false。</returns>
-    public static bool IsValidIPv6Address(string ipAddress)
+    public static bool IsValidIPv6Address(string? ipAddress)
     {
         if (string.IsNullOrWhiteSpace(ipAddress))
             return false;
@@ -119,7 +119,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="date">待验证的日期字符串。</param>
     /// <returns>如果日期格式正确返回true，否则返回false。</returns>
-    public static bool IsValidDate(string date)
+    public static bool IsValidDate(string? date)
     {
         if (string.IsNullOrWhiteSpace(date))
             return false;
@@ -139,7 +139,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="password">待验证的密码字符串。</param>
     /// <returns>如果密码符合要求返回true，否则返回false。</returns>
-    public static bool IsValidPassword(string password)
+    public static bool IsValidPassword(string? password)
     {
         if (string.IsNullOrWhiteSpace(password))
             return false;
@@ -158,7 +158,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="macAddress">待验证的MAC地址字符串。</param>
     /// <returns>如果MAC地址格式正确返回true，否则返回false。</returns>
-    public static bool IsValidMacAddress(string macAddress)
+    public static bool IsValidMacAddress(string? macAddress)
     {
         if (string.IsNullOrWhiteSpace(macAddress))
             return false;
@@ -171,7 +171,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="guid">待验证的GUID字符串。</param>
     /// <returns>如果GUID格式正确返回true，否则返回false。</returns>
-    public static bool IsValidGuid(string guid)
+    public static bool IsValidGuid(string? guid)
     {
         if (string.IsNullOrWhiteSpace(guid))
             return false;
@@ -191,7 +191,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="domain">待验证的域名字符串。</param>
     /// <returns>如果域名格式正确返回true，否则返回false。</returns>
-    public static bool IsValidDomain(string domain)
+    public static bool IsValidDomain(string? domain)
     {
         if (string.IsNullOrWhiteSpace(domain))
             return false;
@@ -202,9 +202,9 @@ public static partial class Validator
     /// <summary>
     /// 验证URL
     /// </summary>
-    /// <param name="url">待验证的URL字符串。</param>
+    /// <param name="url">待验证的URL字符串。开头必须http或https</param>
     /// <returns>如果URL格式正确返回true，否则返回false。</returns>
-    public static bool IsValidUrl(string url)
+    public static bool IsValidUrl(string? url)
     {
         if (string.IsNullOrWhiteSpace(url))
             return false;
@@ -225,7 +225,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="url">待验证的URL字符串。</param>
     /// <returns>如果URL格式正确返回true，否则返回false。</returns>
-    public static bool IsValidUrlRegex(string url)
+    public static bool IsValidUrlRegex(string? url)
     {
         if (string.IsNullOrWhiteSpace(url))
             return false;
@@ -244,7 +244,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="postalCode">待验证的邮政编码字符串。</param>
     /// <returns>如果邮政编码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidPostalCode(string postalCode)
+    public static bool IsValidPostalCode(string? postalCode)
     {
         if (string.IsNullOrWhiteSpace(postalCode))
             return false;
@@ -263,7 +263,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="numericString">待验证的字符串。</param>
     /// <returns>如果是纯数字字符串返回true，否则返回false。</returns>
-    public static bool IsNumericString(string numericString)
+    public static bool IsNumericString(string? numericString)
     {
         if (string.IsNullOrWhiteSpace(numericString))
             return false;
@@ -282,7 +282,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="hexColor">待验证的颜色代码字符串。</param>
     /// <returns>如果颜色代码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidHexColorCode(string hexColor)
+    public static bool IsValidHexColorCode(string? hexColor)
     {
         if (string.IsNullOrWhiteSpace(hexColor))
             return false;
@@ -301,7 +301,7 @@ public static partial class Validator
     ///// </summary>
     ///// <param name="licensePlate">待验证的车牌号码字符串。</param>
     ///// <returns>如果车牌号码格式正确返回true，否则返回false。</returns>
-    //public static bool IsValidVehicleLicensePlate(string licensePlate)
+    //public static bool IsValidVehicleLicensePlate(string? licensePlate)
     //{
     //    if (string.IsNullOrWhiteSpace(licensePlate))
     //        return false;
@@ -314,7 +314,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="filePath">待验证的文件路径字符串。</param>
     /// <returns>如果文件路径格式正确返回true，否则返回false。</returns>
-    public static bool IsValidFilePath(string filePath)
+    public static bool IsValidFilePath(string? filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
             return false;
@@ -337,7 +337,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="username">待验证的用户名字符串。</param>
     /// <returns>如果用户名格式正确返回true，否则返回false。</returns>
-    public static bool IsValidSocialMediaUsername(string username)
+    public static bool IsValidSocialMediaUsername(string? username)
     {
         if (string.IsNullOrWhiteSpace(username))
             return false;
@@ -356,7 +356,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="accountNumber">待验证的银行账户号码字符串。</param>
     /// <returns>如果账户号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidBankAccountNumber(string accountNumber)
+    public static bool IsValidBankAccountNumber(string? accountNumber)
     {
         if (string.IsNullOrWhiteSpace(accountNumber))
             return false;
@@ -389,7 +389,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="isbn">待验证的ISBN号码字符串。</param>
     /// <returns>如果ISBN号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidISBN(string isbn)
+    public static bool IsValidISBN(string? isbn)
     {
         if (string.IsNullOrWhiteSpace(isbn))
             return false;
@@ -409,7 +409,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="ssn">待验证的社会安全号码字符串。</param>
     /// <returns>如果SSN格式正确返回true，否则返回false。</returns>
-    public static bool IsValidSSN(string ssn)
+    public static bool IsValidSSN(string? ssn)
     {
         if (string.IsNullOrWhiteSpace(ssn))
             return false;
@@ -428,7 +428,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="eanCode">待验证的EAN码字符串。</param>
     /// <returns>如果EAN码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidEAN13(string eanCode)
+    public static bool IsValidEAN13(string? eanCode)
     {
         if (string.IsNullOrWhiteSpace(eanCode))
             return false;
@@ -447,7 +447,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="phoneNumber">待验证的电话号码字符串。</param>
     /// <returns>如果电话号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidInternationalPhoneNumber(string phoneNumber)
+    public static bool IsValidInternationalPhoneNumber(string? phoneNumber)
     {
         if (string.IsNullOrWhiteSpace(phoneNumber))
             return false;
@@ -466,7 +466,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="phoneNumber">待验证的手机号码字符串。</param>
     /// <returns>如果手机号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidChinaMobilePhoneNumber(string phoneNumber)
+    public static bool IsValidChinaMobilePhoneNumber(string? phoneNumber)
     {
         if (string.IsNullOrWhiteSpace(phoneNumber))
             return false;
@@ -485,7 +485,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="landlineNumber">待验证的固定电话号码字符串。</param>
     /// <returns>如果固定电话号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidChinaLandlineNumber(string landlineNumber)
+    public static bool IsValidChinaLandlineNumber(string? landlineNumber)
     {
         if (string.IsNullOrWhiteSpace(landlineNumber))
             return false;
@@ -512,7 +512,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="licensePlate">待验证的车牌号码字符串。</param>
     /// <returns>如果车牌号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidChinaVehicleLicensePlate(string licensePlate)
+    public static bool IsValidChinaVehicleLicensePlate(string? licensePlate)
     {
         if (string.IsNullOrWhiteSpace(licensePlate))
             return false;
@@ -527,7 +527,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="jsonString">待验证的JSON字符串。</param>
     /// <returns>如果JSON字符串格式正确返回true，否则返回false。</returns>
-    public static bool IsValidJsonString(string jsonString)
+    public static bool IsValidJsonString(string? jsonString)
     {
         if (string.IsNullOrWhiteSpace(jsonString))
             return false;
@@ -548,7 +548,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="xmlString">待验证的XML字符串。</param>
     /// <returns>如果XML字符串格式正确返回true，否则返回false。</returns>
-    public static bool IsValidXmlString(string xmlString)
+    public static bool IsValidXmlString(string? xmlString)
     {
         if (string.IsNullOrWhiteSpace(xmlString))
             return false;
@@ -576,7 +576,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="htmlTag">待验证的HTML标签字符串。</param>
     /// <returns>如果HTML标签格式正确返回true，否则返回false。</returns>
-    public static bool IsValidHtmlTag(string htmlTag)
+    public static bool IsValidHtmlTag(string? htmlTag)
     {
         if (string.IsNullOrWhiteSpace(htmlTag))
             return false;
@@ -596,7 +596,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="guid">待验证的GUID字符串。</param>
     /// <returns>如果GUID是UUID v4格式返回true，否则返回false。</returns>
-    public static bool IsValidUuidV4(string guid)
+    public static bool IsValidUuidV4(string? guid)
     {
         if (string.IsNullOrWhiteSpace(guid))
             return false;
@@ -615,7 +615,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="base64String">待验证的Base64编码字符串。</param>
     /// <returns>如果字符串是有效的Base64编码返回true，否则返回false。</returns>
-    public static bool IsValidBase64String(string base64String)
+    public static bool IsValidBase64String(string? base64String)
     {
         if (string.IsNullOrWhiteSpace(base64String))
             return false;
@@ -634,7 +634,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="eanCode">待验证的EAN-8条形码字符串。</param>
     /// <returns>如果EAN-8条形码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidEAN8(string eanCode)
+    public static bool IsValidEAN8(string? eanCode)
     {
         if (string.IsNullOrWhiteSpace(eanCode))
             return false;
@@ -653,7 +653,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="upcCode">待验证的UPC-A条形码字符串。</param>
     /// <returns>如果UPC-A条形码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidUPCA(string upcCode)
+    public static bool IsValidUPCA(string? upcCode)
     {
         if (string.IsNullOrWhiteSpace(upcCode))
             return false;
@@ -672,7 +672,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="licensePlate">待验证的车牌号码字符串。</param>
     /// <returns>如果车牌号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidUSLicensePlate(string licensePlate)
+    public static bool IsValidUSLicensePlate(string? licensePlate)
     {
         if (string.IsNullOrWhiteSpace(licensePlate))
             return false;
@@ -685,7 +685,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="regexPattern">待验证的正则表达式模式字符串。</param>
     /// <returns>如果正则表达式模式格式正确返回true，否则返回false。</returns>
-    public static bool IsValidRegexPattern(string regexPattern)
+    public static bool IsValidRegexPattern(string? regexPattern)
     {
         if (string.IsNullOrWhiteSpace(regexPattern))
             return false;
@@ -713,7 +713,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="cvv">待验证的安全码字符串。</param>
     /// <returns>如果安全码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidCreditCardSecurityCode(string cvv)
+    public static bool IsValidCreditCardSecurityCode(string? cvv)
     {
         if (string.IsNullOrWhiteSpace(cvv))
             return false;
@@ -732,7 +732,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="imei">待验证的IMEI号码字符串。</param>
     /// <returns>如果IMEI号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidIMEI(string imei)
+    public static bool IsValidIMEI(string? imei)
     {
         if (string.IsNullOrWhiteSpace(imei))
             return false;
@@ -751,7 +751,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="imeisv">待验证的IMEISV号码字符串。</param>
     /// <returns>如果IMEISV号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidIMEISV(string imeisv)
+    public static bool IsValidIMEISV(string? imeisv)
     {
         if (string.IsNullOrWhiteSpace(imeisv))
             return false;
@@ -770,7 +770,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="iccid">待验证的ICCID号码字符串。</param>
     /// <returns>如果ICCID号码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidICCID(string iccid)
+    public static bool IsValidICCID(string? iccid)
     {
         if (string.IsNullOrWhiteSpace(iccid))
             return false;
@@ -790,7 +790,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="macAddress">待验证的MAC地址字符串。</param>
     /// <returns>如果MAC地址格式正确返回true，否则返回false。</returns>
-    public static bool IsValidMacAddressWithSpaces(string macAddress)
+    public static bool IsValidMacAddressWithSpaces(string? macAddress)
     {
         if (string.IsNullOrWhiteSpace(macAddress))
             return false;
@@ -809,7 +809,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="ipv6Prefix">待验证的IPv6前缀字符串。</param>
     /// <returns>如果IPv6前缀格式正确返回true，否则返回false。</returns>
-    public static bool IsValidIPv6Prefix(string ipv6Prefix)
+    public static bool IsValidIPv6Prefix(string? ipv6Prefix)
     {
         if (string.IsNullOrWhiteSpace(ipv6Prefix))
             return false;
@@ -822,7 +822,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="iban">待验证的IBAN字符串。</param>
     /// <returns>如果IBAN格式正确返回true，否则返回false。</returns>
-    public static bool IsValidIBAN(string iban)
+    public static bool IsValidIBAN(string? iban)
     {
         if (string.IsNullOrWhiteSpace(iban))
             return false;
@@ -857,7 +857,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="iban"></param>
     /// <returns></returns>
-    public static bool IsValidIBANRegex(string iban)
+    public static bool IsValidIBANRegex(string? iban)
     {
         if (string.IsNullOrWhiteSpace(iban))
             return false;
@@ -876,7 +876,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="swiftCode">待验证的SWIFT/BIC代码字符串。</param>
     /// <returns>如果SWIFT/BIC代码格式正确返回true，否则返回false。</returns>
-    public static bool IsValidSwiftBicCode(string swiftCode)
+    public static bool IsValidSwiftBicCode(string? swiftCode)
     {
         if (string.IsNullOrWhiteSpace(swiftCode))
             return false;
@@ -889,7 +889,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="asn1String">待验证的ASN.1编码字符串。</param>
     /// <returns>如果ASN.1编码字符串格式正确返回true，否则返回false。</returns>
-    public static bool IsValidAsn1EncodedString(string asn1String)
+    public static bool IsValidAsn1EncodedString(string? asn1String)
     {
         if (string.IsNullOrWhiteSpace(asn1String))
             return false;
@@ -917,7 +917,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="pemString">待验证的PEM编码字符串。</param>
     /// <returns>如果PEM编码字符串格式正确返回true，否则返回false。</returns>
-    public static bool IsValidPemEncodedString(string pemString)
+    public static bool IsValidPemEncodedString(string? pemString)
     {
         if (string.IsNullOrWhiteSpace(pemString))
             return false;
@@ -930,7 +930,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="latexFormula">待验证的LaTeX公式字符串。</param>
     /// <returns>如果LaTeX公式格式正确返回true，否则返回false。</returns>
-    public static bool IsValidLatexFormula(string latexFormula)
+    public static bool IsValidLatexFormula(string? latexFormula)
     {
         if (string.IsNullOrWhiteSpace(latexFormula))
             return false;
@@ -953,7 +953,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="codeSnippet">待验证的代码片段字符串。</param>
     /// <returns>如果代码片段格式正确返回true，否则返回false。</returns>
-    public static bool IsValidCodeSnippet(string codeSnippet)
+    public static bool IsValidCodeSnippet(string? codeSnippet)
     {
         if (string.IsNullOrWhiteSpace(codeSnippet))
             return false;
@@ -976,7 +976,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="qrContent">待验证的二维码内容字符串。</param>
     /// <returns>如果二维码内容格式正确返回true，否则返回false。</returns>
-    public static bool IsValidQrCodeContent(string qrContent)
+    public static bool IsValidQrCodeContent(string? qrContent)
     {
         if (string.IsNullOrWhiteSpace(qrContent))
             return false;
@@ -991,7 +991,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="barcodeResult">待验证的条形码扫描结果字符串。</param>
     /// <returns>如果条形码扫描结果格式正确返回true，否则返回false。</returns>
-    public static bool IsValidBarcodeScanResult(string barcodeResult)
+    public static bool IsValidBarcodeScanResult(string? barcodeResult)
     {
         if (string.IsNullOrWhiteSpace(barcodeResult))
             return false;
@@ -1004,7 +1004,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="xmlSignature">待验证的XML签名字符串。</param>
     /// <returns>如果XML签名格式正确返回true，否则返回false。</returns>
-    public static bool IsValidXmlSignature(string xmlSignature)
+    public static bool IsValidXmlSignature(string? xmlSignature)
     {
         if (string.IsNullOrWhiteSpace(xmlSignature))
             return false;
@@ -1027,7 +1027,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="jwtToken">待验证的JWT字符串。</param>
     /// <returns>如果JWT格式正确返回true，否则返回false。</returns>
-    public static bool IsValidJwtToken(string jwtToken)
+    public static bool IsValidJwtToken(string? jwtToken)
     {
         if (string.IsNullOrWhiteSpace(jwtToken))
             return false;
@@ -1063,7 +1063,7 @@ public static partial class Validator
     /// </summary>
     /// <param name="jwtToken">待验证的JWT字符串。</param>
     /// <returns>如果JWT格式正确返回true，否则返回false。</returns>
-    public static bool IsValidJwtTokenRegex(string jwtToken)
+    public static bool IsValidJwtTokenRegex(string? jwtToken)
     {
         if (string.IsNullOrWhiteSpace(jwtToken))
             return false;
@@ -1076,8 +1076,10 @@ public static partial class Validator
     /// </summary>
     /// <param name="base64UrlEncoded">Base64 URL编码字符串。</param>
     /// <returns>转换后的标准Base64编码字符串。</returns>
-    private static string Base64UrlDecode(string base64UrlEncoded)
+    private static string Base64UrlDecode(string? base64UrlEncoded)
     {
+        if (string.IsNullOrWhiteSpace(base64UrlEncoded))
+            return string.Empty;
         string padded = base64UrlEncoded.Length % 4 == 0
             ? base64UrlEncoded : string.Concat(base64UrlEncoded, "====".AsSpan(base64UrlEncoded.Length % 4));
         return padded.Replace('-', '+').Replace('_', '/');
@@ -1088,19 +1090,17 @@ public static partial class Validator
     /// </summary>
     /// <param name="filePath">待验证的XML文件路径。</param>
     /// <returns>如果文件是有效的XML返回true，否则返回false。</returns>
-    public static bool IsValidXmlFile(string filePath)
+    public static bool IsValidXmlFile(string? filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
             return false;
 
         try
         {
-            using (var fs = File.OpenRead(filePath))
-            {
-                var doc = new System.Xml.XmlDocument();
-                doc.Load(fs);
-                return true;
-            }
+            using var fs = File.OpenRead(filePath);
+            var doc = new System.Xml.XmlDocument();
+            doc.Load(fs);
+            return true;
         }
         catch
         {

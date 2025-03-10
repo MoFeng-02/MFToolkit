@@ -126,6 +126,7 @@ public class JwtUtil
     /// 创建刷新Token
     /// </summary>
     /// <param name="claims"></param>
+    /// <param name="timetamp"></param>
     /// <param name="refreshSeconds"></param>
     /// <param name="configKey"></param>
     /// <returns></returns>

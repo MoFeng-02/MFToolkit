@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.AspNetCore.Authentication.JwtAuthorization.Extensions;
+
+/// <summary>
+/// 授权拓展依赖注入
+/// </summary>
 public static class AuthenticationExtension
 {
     private const string DefaultPolicyName = "jwt";
