@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Authors>莫枫</Authors>
-		<Version>1.0.3</Version>
+		<Version>1.0.5</Version>
 		<Description>通用.Net9及以上程序工具库</Description>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
@@ -17,7 +17,6 @@
 
 	<ItemGroup>
 		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
-		<Protobuf Include="Socket\Grpc\Protos\communication.proto" GrpcServices="Both" />
 	</ItemGroup>
 
 	<ItemGroup>

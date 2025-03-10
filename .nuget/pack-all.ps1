@@ -1,6 +1,6 @@
 # 定义项目路径
 $projects = @(
-    #"../src/Common/MFToolkit",
+    #"../src/Common/MFToolkit"
     #"../src/Common/MFToolkit.AspNetCore",
     "../src/Common/MFToolkit.AutoAttribute"
     #"../src/Common/MFToolkit.AutoGenerator"
