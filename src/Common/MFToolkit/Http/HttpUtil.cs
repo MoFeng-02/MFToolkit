@@ -19,7 +19,7 @@ public sealed class HttpUtil
     /// <summary>
     /// 初始化快捷请求信息HttpRequest
     /// </summary>
-    /// <param name="baseuri">请求基路由</param>
+    /// <param name="uri">请求基路由</param>
     public static void InitRequest(Uri? uri)
     {
         _baseUri = uri;
@@ -118,6 +118,9 @@ public sealed class HttpUtil
     }
 }
 
+/// <summary>
+/// 额外HttpUtil的拓展
+/// </summary>
 public static partial class HttpClientExtensionTwo
 {
     /// <summary>

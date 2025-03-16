@@ -33,7 +33,6 @@ public static class HttpClientServiceExtensions
         {
         };
         var httpClientBuilder = services.AddHttpClient<TClient>(configureClient);
-        services.AddSingleton<HttpClientService, TClient>();
         return httpClientBuilder;
     }
 }

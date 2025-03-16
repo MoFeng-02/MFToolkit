@@ -1,7 +1,7 @@
 ﻿
 using Avalonia.Android;
 using Java.Lang;
-using MFToolkit.Avaloniaui.Routings;
+using MFToolkit.Avaloniaui.Routes;
 using Toast = Android.Widget.Toast;
 
 namespace MFToolkit.Avaloniaui.Android.Override;

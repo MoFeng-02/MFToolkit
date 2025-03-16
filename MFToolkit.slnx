@@ -1,7 +1,5 @@
 <Solution>
   <Folder Name="/Demo/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
-    <Project Path="DemoDesktop.Desktop/DemoDesktop.Desktop.csproj" />
-    <Project Path="DemoDesktop/DemoDesktop.csproj" />
     <Project Path="GeneratorDemo/GeneratorDemo.csproj" Id="3616b1ca-8b7e-45ac-ac56-2ff58dffaaae" />
   </Folder>
   <Folder Name="/src/" />

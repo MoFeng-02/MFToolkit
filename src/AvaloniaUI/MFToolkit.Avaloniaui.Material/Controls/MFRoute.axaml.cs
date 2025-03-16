@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using MFToolkit.Avaloniaui.Routings;
+using MFToolkit.Avaloniaui.Routes;
 
 namespace MFToolkit.Avaloniaui.Material.Controls;
 
@@ -57,6 +57,6 @@ public partial class MFRoute : UserControl
 
     protected override void OnInitialized()
     {
-        CurrentPage ??= Routing.CurrentInfo?.CurrentPage;
+        CurrentPage ??= Routing.DefaultCurrentInfo?.CurrentPage;
     }
 }

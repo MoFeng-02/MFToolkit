@@ -66,6 +66,11 @@ public sealed class Routing
     public static List<RoutingModel> GetRoutingModels() => RoutingModels;
 
     /// <summary>
+    /// 获取当前路由信息
+    /// </summary>
+    public static RouteCurrentInfo? DefaultCurrentInfo => CurrentInfo;
+
+    /// <summary>
     /// 注册路由
     /// <para>说明：若IsTopNavigation为true，则IsKeepAlive强制为True</para>
     /// </summary>

@@ -1,6 +1,9 @@
 ﻿using System.Net.Http.Headers;
 
 namespace MFToolkit.Extensions;
+/// <summary>
+/// HttpClient 拓展
+/// </summary>
 public static class HttpClientExtentsions
 {
     
