@@ -138,13 +138,14 @@ public static class JsonSerializerExtension
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="str"></param>
-    /// <param name="options">配置，这是反射也就是不是AOT模式的时候有效</param>
     /// <param name="defaultValue">如果反序列化失败或者什么的就返回默认值</param>
+    /// <param name="options">配置，这是反射也就是不是AOT模式的时候有效</param>
     /// <param name="context">AOT模式下兼容的处理，自行参考<see cref="JsonContextDefaultAot"/></param>
     /// <returns></returns>
-    public static T? JsonToDeserialize<T>(this string str, JsonSerializerOptions? options = null,
-        T? defaultValue = default, JsonSerializerContext?
-            context = null)
+    public static T? JsonToDeserialize<T>(this string str,
+        T? defaultValue = default,
+        JsonSerializerOptions? options = null,
+        JsonSerializerContext? context = null)
     {
         try
         {
