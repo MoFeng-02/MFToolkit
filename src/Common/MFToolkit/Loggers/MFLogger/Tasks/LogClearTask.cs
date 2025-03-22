@@ -3,8 +3,17 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace MFToolkit.Loggers.MFLogger.Tasks;
+/// <summary>
+/// 日志清理任务
+/// </summary>
+/// <param name="config"></param>
 public class LogClearTask(IOptionsMonitor<LoggerConfiguration> config) : BackgroundService
 {
+    /// <summary>
+    /// 日志清理执行
+    /// </summary>
+    /// <param name="stoppingToken">停止令牌</param>
+    /// <returns></returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -21,6 +30,9 @@ public class LogClearTask(IOptionsMonitor<LoggerConfiguration> config) : Backgro
         }
     }
 }
+/// <summary>
+/// 日志清理
+/// </summary>
 public class LogClear
 {
 
@@ -28,6 +40,7 @@ public class LogClear
     /// 在App中进行手动的清理过期日志，不注册服务
     /// </summary>
     /// <param name="configuration"></param>
+    /// <param name="toPath"></param>
     public static void ClearLogs(LoggerConfiguration configuration, string? toPath = null)
     {
         var deleteTime = DateTime.UtcNow.AddDays(-1 * configuration.SaveDays);

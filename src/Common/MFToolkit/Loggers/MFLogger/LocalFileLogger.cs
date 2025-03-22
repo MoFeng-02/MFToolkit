@@ -13,9 +13,9 @@ public class LocalFileLogger : ILogger
     /// <summary>
     /// 用于线程安全
     /// </summary>
-    private static readonly ConcurrentQueue<WaitWirteInfo> queue = new();
+    private static readonly ConcurrentQueue<WaitWriteInfo> _channel = new();
     private static readonly CancellationTokenSource cancellationTokenSource = new();
-    private static Task writeTask = null!;
+    private static Task? writeTask = null;
     private string _name;
     private readonly Func<LoggerConfiguration> _getCurrentConfig;
 
@@ -47,7 +47,16 @@ public class LocalFileLogger : ILogger
     {
         return _getCurrentConfig().LogLevels.Contains(logLevel);
     }
-
+    /// <summary>
+    /// 日志记录
+    /// </summary>
+    /// <typeparam name="TState"></typeparam>
+    /// <param name="logLevel"></param>
+    /// <param name="eventId"></param>
+    /// <param name="state"></param>
+    /// <param name="exception"></param>
+    /// <param name="formatter"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         if (!IsEnabled(logLevel))
@@ -59,15 +68,15 @@ public class LocalFileLogger : ILogger
         var groupFileInfo = GroupFile(logLevel, config, dateTime, exception);
         var content = formatter.Invoke(state, exception);
         //await FileWriteAsync(config, savePath, FormatterContent(content, logLevel));
-        var waitWirteInfo = new WaitWirteInfo()
+        var waitWriteInfo = new WaitWriteInfo()
         {
             Content = FormatterContent(content, logLevel, dateTime),
             GroupFileInfo = groupFileInfo,
             LogLevel = logLevel,
         };
-        queue.Enqueue(waitWirteInfo);
+        _channel.Enqueue(waitWriteInfo);
     }
-    class WaitWirteInfo
+    class WaitWriteInfo
     {
         public DateTime CreateTime { get; set; } = DateTime.Now;
         public LogLevel LogLevel { get; set; }
@@ -94,7 +103,7 @@ public class LocalFileLogger : ILogger
             {
                 break;
             }
-            if (queue.TryDequeue(out var info))
+            if (_channel.TryDequeue(out var info))
             {
                 var config = _getCurrentConfig() ?? throw new ArgumentNullException("logger config");
                 var group = info.GroupFileInfo ?? GroupFile(info.LogLevel, config);
@@ -106,10 +115,15 @@ public class LocalFileLogger : ILogger
             }
         }
     }
+    /// <summary>
+    /// 停止写入任务
+    /// </summary>
+    /// <returns></returns>
     public static async Task StopWriteTask()
     {
         cancellationTokenSource.Cancel();
-        await writeTask;
+        if (writeTask != null)
+            await writeTask;
     }
     /// <summary>
     /// 返回分组后的路径
@@ -146,20 +160,7 @@ public class LocalFileLogger : ILogger
             Hour = time.ToString("HH")
         };
     }
-    /// <summary>
-    /// 尾部插入斜杠
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <param name="newValue"></param>
-    /// <returns></returns>
-    //private string LastInsertStr(string origin, string newValue)
-    //{
-    //    StringBuilder sb = new();
-    //    var lastStr = origin.Substring(origin.Length - 1, 1);
-    //    if (lastStr != "/" && lastStr != @"\") sb.Append("/" + newValue);
-    //    else sb.Append(newValue);
-    //    return sb.ToString();
-    //}
+
     /// <summary>
     /// 分组后的文件路径和当前区间小时
     /// </summary>
@@ -175,6 +176,7 @@ public class LocalFileLogger : ILogger
     /// <param name="info">保存信息</param>
     /// <param name="content">保存内容</param>
     /// <param name="retry">重新尝试</param>
+    /// <param name="path"></param>
     /// <returns></returns>
     private async Task FileWriteAsync(LoggerConfiguration config, GroupFileInfo info, string content, int retry = 0, string? path = null)
     {
