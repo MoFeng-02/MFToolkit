@@ -29,7 +29,7 @@ public class DownloadService : IDownloadService, IDisposable
     /// MFToolkit/Injects/GlobalInjects.cs下的AddInjectServices方法
     /// </para>
     /// </summary>
-    protected readonly HttpClientService httpClient;
+    protected readonly HttpClient _httpClient;
     //private readonly DownloadHandler? downloadHandler;
     /// <summary>
     /// 暂停信息处理
@@ -61,10 +61,10 @@ public class DownloadService : IDownloadService, IDisposable
     /// <summary>
     /// 下载服务
     /// </summary>
-    /// <param name="httpClientService"></param>
-    public DownloadService(HttpClientService httpClientService)
+    /// <param name="httpClient"></param>
+    public DownloadService(HttpClient httpClient)
     {
-        httpClient = httpClientService;
+        _httpClient = httpClient;
         CancellationToken = CancellationTokenSource.Token;
         //downloadHandler = AppUtil.GetService<DownloadHandler>();
     }
@@ -72,11 +72,11 @@ public class DownloadService : IDownloadService, IDisposable
     /// <summary>
     /// 下载服务
     /// </summary>
-    /// <param name="httpClientService"></param>
+    /// <param name="httpClient"></param>
     /// <param name="logger"></param>
-    public DownloadService(HttpClientService httpClientService, ILogger<DownloadService> logger)
+    public DownloadService(HttpClient httpClient, ILogger<DownloadService> logger)
     {
-        httpClient = httpClientService;
+        _httpClient = httpClient;
         CancellationToken = CancellationTokenSource.Token;
         _logger = logger;
         //downloadHandler = AppUtil.GetService<DownloadHandler>();
@@ -85,11 +85,11 @@ public class DownloadService : IDownloadService, IDisposable
     /// <summary>
     /// 下载服务
     /// </summary>
-    /// <param name="httpClientService"></param>
+    /// <param name="httpClient"></param>
     /// <param name="downloadPauseInfoHandler"></param>
-    public DownloadService(HttpClientService httpClientService, DownloadPauseInfoHandler downloadPauseInfoHandler)
+    public DownloadService(HttpClient httpClient, DownloadPauseInfoHandler downloadPauseInfoHandler)
     {
-        httpClient = httpClientService;
+        _httpClient = httpClient;
         CancellationToken = CancellationTokenSource.Token;
         //downloadHandler = AppUtil.GetService<DownloadHandler>();
         DownloadPauseInfoHandler = downloadPauseInfoHandler;
@@ -98,12 +98,12 @@ public class DownloadService : IDownloadService, IDisposable
     /// <summary>
     /// 下载服务
     /// </summary>
-    /// <param name="httpClientService"></param>
+    /// <param name="httpClient"></param>
     /// <param name="downloadPauseInfoHandler"></param>
     /// <param name="logger"></param>
-    public DownloadService(HttpClientService httpClientService, DownloadPauseInfoHandler downloadPauseInfoHandler, ILogger<DownloadService> logger)
+    public DownloadService(HttpClient httpClient, DownloadPauseInfoHandler downloadPauseInfoHandler, ILogger<DownloadService> logger)
     {
-        httpClient = httpClientService;
+        _httpClient = httpClient;
         CancellationToken = CancellationTokenSource.Token;
         DownloadPauseInfoHandler = downloadPauseInfoHandler;
         _logger = logger;
@@ -114,7 +114,7 @@ public class DownloadService : IDownloadService, IDisposable
     public void Dispose()
     {
         CancellationTokenSource.Dispose();
-        httpClient.Dispose();
+        _httpClient.Dispose();
     }
     /// <summary>
     /// 下载
@@ -242,9 +242,9 @@ public class DownloadService : IDownloadService, IDisposable
         _logger?.LogInformation("初始化下载：{DownloadUrl}", currentDownloadModel.DownloadUrl);
         DownloadStateAction?.Invoke(false, DownloadState.Init, null);
         // 更新偏移量
-        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(currentDownloadModel.YetSize, null);
+        _httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(currentDownloadModel.YetSize, null);
         // 读取请求报头
-        using var response = await httpClient.GetAsync(currentDownloadModel.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, CancellationToken);
+        using var response = await _httpClient.GetAsync(currentDownloadModel.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, CancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {

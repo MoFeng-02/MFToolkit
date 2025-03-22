@@ -16,7 +16,7 @@ public static class DownloadInjectExtensions
     /// <returns></returns>
     public static IServiceCollection AddDownloadService(this IServiceCollection services)
     {
-        services.AddTransient<IDownloadService, DownloadService>();
+        services.AddHttpClient<IDownloadService, DownloadService>();
         return services;
     }
     /// <summary>
@@ -28,7 +28,7 @@ public static class DownloadInjectExtensions
     /// <returns></returns>
     public static IServiceCollection AddDownloadService<T>(this IServiceCollection services) where T : class, IDownloadService
     {
-        services.AddTransient<IDownloadService, T>();
+        services.AddHttpClient<IDownloadService, T>();
         return services;
     }
     /// <summary>
