@@ -19,7 +19,6 @@ public static class RoutingServiceExtensions
         Action<IRouteBuilder>? configureRoutes = null)
     {
         // 1. 注册路由核心服务
-        services.AddSingleton<IRouteParser, DefaultRouteParser>();
         services.AddSingleton<KeepAliveCache>();
 
         // 2. 配置路由集合

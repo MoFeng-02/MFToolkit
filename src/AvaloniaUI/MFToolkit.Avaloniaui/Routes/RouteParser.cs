@@ -2,14 +2,18 @@
 
 namespace MFToolkit.Avaloniaui.Routes;
 
-public interface IRouteParser
+/// <summary>
+/// 默认解析，支持/{param}
+/// </summary>
+public class RouteParser
 {
-    bool TryParse(string route, out ImmutableArray<RouteSegment> segments);
-}
-
-public class DefaultRouteParser : IRouteParser
-{
-    public bool TryParse(string route, out ImmutableArray<RouteSegment> segments)
+    /// <summary>
+    /// 解析路由
+    /// </summary>
+    /// <param name="route"></param>
+    /// <param name="segments"></param>
+    /// <returns></returns>
+    public static bool TryParse(string route, out ImmutableArray<RouteSegment> segments)
     {
         var builder = ImmutableArray.CreateBuilder<RouteSegment>();
         var parts = route.Split('/', StringSplitOptions.RemoveEmptyEntries);

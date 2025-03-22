@@ -14,6 +14,6 @@
   </Design.DataContext>
 	<StackPanel>
 		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Text="{}" />
+		<Button Click="Button_Click" Content="跳转" />
 	</StackPanel>
 </UserControl>

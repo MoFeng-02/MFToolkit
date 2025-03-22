@@ -328,12 +328,22 @@ public sealed class Routing
                 : cachedInfo;
         }
 
-        // 路由匹配（增强逻辑）
-        var routingModel = FindBestMatchRoute(path) ?? throw new Exception($"路由未注册: {path}");
+        // 路由匹配（使用修改后的方法）
+        var routingModel = FindBestMatchRoute(path, out var pathParameters) ?? throw new Exception($"路由未注册: {path}");
 
+        // 合并路径参数和查询参数
+        var mergedParameters = new Dictionary<string, object?>(pathParameters);
+        if (parameters.Count != 0)
+        {
+            foreach (var kvp in parameters)
+            {
+                mergedParameters[kvp.Key] = kvp.Value;
+            }
+        }
+        
         // 创建实例（兼容原有逻辑）
-        var instance = CreatePageInstance(routingModel, parameters, ServiceProvider);
-        var routeInfo = BuildRouteInfo(routingModel, path, parameters, instance);
+        var instance = CreatePageInstance(routingModel, mergedParameters, ServiceProvider);
+        var routeInfo = BuildRouteInfo(routingModel, path, mergedParameters, instance);
         routeInfo.Meta = routingModel.Meta;
         // 生命周期处理，激活新页面触发
         await InvokeActivateLifecycleAsync(routeInfo);
@@ -384,11 +394,22 @@ public sealed class Routing
         }
 
         // 路由匹配（增强逻辑）
-        var routingModel = FindBestMatchRoute(path) ?? throw new Exception($"路由未注册: {path}");
+        // 路由匹配（使用修改后的方法）
+        var routingModel = FindBestMatchRoute(path, out var pathParameters) ?? throw new Exception($"路由未注册: {path}");
 
+        // 合并路径参数和查询参数
+        var mergedParameters = new Dictionary<string, object?>(pathParameters);
+        if (parameters.Count != 0)
+        {
+            foreach (var kvp in parameters)
+            {
+                mergedParameters[kvp.Key] = kvp.Value;
+            }
+        }
+        
         // 创建实例（兼容原有逻辑）
-        var instance = CreatePageInstance(routingModel, parameters, ServiceProvider);
-        var routeInfo = BuildRouteInfo(routingModel, path, parameters, instance);
+        var instance = CreatePageInstance(routingModel, mergedParameters, ServiceProvider);
+        var routeInfo = BuildRouteInfo(routingModel, path, mergedParameters, instance);
         routeInfo.Meta = routingModel.Meta;
 
         // 生命周期处理，激活新页面触发
@@ -551,41 +572,62 @@ public sealed class Routing
     /// </summary>
     /// <param name="path">请求路径</param>
     /// <returns>匹配的路由配置，未找到返回null</returns>
-    private static RoutingModel? FindBestMatchRoute(string path)
+    private static RoutingModel? FindBestMatchRoute(string path, out Dictionary<string, object?> pathParameters)
     {
+        pathParameters = new Dictionary<string, object?>();
         var pathSegments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-        return RoutingModels
-            .OrderByDescending(r => r.Priority) // 按优先级降序
-            .FirstOrDefault(r => IsRouteMatch(r.Route, pathSegments));
+        // 遍历所有路由配置，找到第一个匹配项
+        foreach (var routingModel in RoutingModels.OrderByDescending(r => r.Priority))
+        {
+            var (isMatch, parameters) = IsRouteMatch(routingModel.Route, pathSegments);
+            if (isMatch)
+            {
+                pathParameters = parameters;
+                return routingModel;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
-    /// 判断路由模板是否匹配请求路径
+    /// 判断路由模板是否匹配请求路径，并返回路径参数
     /// </summary>
     /// <param name="routeTemplate">路由模板</param>
     /// <param name="pathSegments">请求路径分段</param>
-    /// <returns>是否匹配</returns>
-    private static bool IsRouteMatch(string routeTemplate, string[] pathSegments)
+    /// <returns>是否匹配 + 路径参数字典</returns>
+    private static (bool IsMatch, Dictionary<string, object?> Parameters) IsRouteMatch(
+        string routeTemplate, 
+        string[] pathSegments)
     {
+        var parameters = new Dictionary<string, object?>();
         var templateSegments = routeTemplate.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
         // 分段数量必须一致
-        if (templateSegments.Length != pathSegments.Length) return false;
+        if (templateSegments.Length != pathSegments.Length) 
+            return (false, parameters);
 
         // 逐段匹配
         for (var i = 0; i < templateSegments.Length; i++)
         {
-            // 如果是参数段（如{id}），跳过匹配
-            if (templateSegments[i].StartsWith('{') && templateSegments[i].EndsWith('}'))
+            var templateSegment = templateSegments[i];
+            var pathSegment = pathSegments[i];
+
+            // 如果是参数段（如 {id}）
+            if (templateSegment.StartsWith('{') && templateSegment.EndsWith('}'))
+            {
+                var paramName = templateSegment[1..^1];
+                parameters[paramName] = pathSegment;
                 continue;
+            }
 
             // 静态段必须完全匹配（忽略大小写）
-            if (!string.Equals(templateSegments[i], pathSegments[i], StringComparison.OrdinalIgnoreCase))
-                return false;
+            if (!string.Equals(templateSegment, pathSegment, StringComparison.OrdinalIgnoreCase))
+                return (false, parameters);
         }
 
-        return true;
+        return (true, parameters);
     }
 
     /// <summary>
@@ -743,7 +785,7 @@ public sealed class Routing
     private static Task<RouteCurrentInfo?> PrevRoutingAsync(string? paramRoute = null)
     {
         // 首先获取本页是不是属于菜单页
-        var findInfo = RoutingModels.FirstOrDefault(q => q.Route == (paramRoute ?? _thisRoute)) ??
+        var findInfo = NavigationRoutes[_thisTopNavigationId].FirstOrDefault(q => q.Route == (paramRoute ?? _thisRoute)) ??
                        throw new Exception($"此路由不存在：{paramRoute}");
         var isTopNavigation = findInfo.IsTopNavigation;
         if (isTopNavigation)

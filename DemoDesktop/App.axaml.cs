@@ -4,6 +4,8 @@ using Avalonia.Markup.Xaml;
 
 using DemoDesktop.ViewModels;
 using DemoDesktop.Views;
+using MFToolkit.Avaloniaui.Routes.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DemoDesktop;
 
@@ -16,6 +18,11 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        ServiceCollection services = new();
+        services.AddRouting(o =>
+        {
+            o.AddRoute<DemoPage>("download/{version}/{versionType}");
+        });
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
