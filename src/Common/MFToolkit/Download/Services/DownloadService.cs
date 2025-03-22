@@ -24,10 +24,7 @@ public class DownloadService : IDownloadService, IDisposable
     /// </summary>
     protected virtual DownloadModel currentDownloadModel { get; set; } = null!;
     /// <summary>
-    /// 关于本字段，如遇到未注册，请注册，参考：
-    /// <para>
-    /// MFToolkit/Injects/GlobalInjects.cs下的AddInjectServices方法
-    /// </para>
+    /// HttpClient
     /// </summary>
     protected readonly HttpClient _httpClient;
     //private readonly DownloadHandler? downloadHandler;
@@ -59,54 +56,20 @@ public class DownloadService : IDownloadService, IDisposable
     public Action<long, long>? DownloadProgress { get; set; }
 
     /// <summary>
-    /// 下载服务
-    /// </summary>
-    /// <param name="httpClient"></param>
-    public DownloadService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-        CancellationToken = CancellationTokenSource.Token;
-        //downloadHandler = AppUtil.GetService<DownloadHandler>();
-    }
-
-    /// <summary>
-    /// 下载服务
-    /// </summary>
-    /// <param name="httpClient"></param>
-    /// <param name="logger"></param>
-    public DownloadService(HttpClient httpClient, ILogger<DownloadService> logger)
-    {
-        _httpClient = httpClient;
-        CancellationToken = CancellationTokenSource.Token;
-        _logger = logger;
-        //downloadHandler = AppUtil.GetService<DownloadHandler>();
-    }
-
-    /// <summary>
-    /// 下载服务
-    /// </summary>
-    /// <param name="httpClient"></param>
-    /// <param name="downloadPauseInfoHandler"></param>
-    public DownloadService(HttpClient httpClient, DownloadPauseInfoHandler downloadPauseInfoHandler)
-    {
-        _httpClient = httpClient;
-        CancellationToken = CancellationTokenSource.Token;
-        //downloadHandler = AppUtil.GetService<DownloadHandler>();
-        DownloadPauseInfoHandler = downloadPauseInfoHandler;
-    }
-
-    /// <summary>
-    /// 下载服务
+    /// 构造函数
     /// </summary>
     /// <param name="httpClient"></param>
     /// <param name="downloadPauseInfoHandler"></param>
     /// <param name="logger"></param>
-    public DownloadService(HttpClient httpClient, DownloadPauseInfoHandler downloadPauseInfoHandler, ILogger<DownloadService> logger)
+    public DownloadService(
+        HttpClient httpClient,
+        DownloadPauseInfoHandler? downloadPauseInfoHandler = null,
+        ILogger<DownloadService>? logger = null)
     {
         _httpClient = httpClient;
-        CancellationToken = CancellationTokenSource.Token;
         DownloadPauseInfoHandler = downloadPauseInfoHandler;
         _logger = logger;
+        CancellationToken = CancellationTokenSource.Token;
     }
     /// <summary>
     /// 释放资源
