@@ -1,10 +1,10 @@
 # 定义项目路径
 $projects = @(
-    "../src/Common/MFToolkit",
-    "../src/Common/MFToolkit.AspNetCore",
+    "../src/Common/MFToolkit"
+    #"../src/Common/MFToolkit.AspNetCore",
     #"../src/Common/MFToolkit.AutoAttribute"
     #"../src/Common/MFToolkit.AutoGenerator"
-    "../src/AvaloniaUI/MFToolkit.Avaloniaui"
+    #"../src/AvaloniaUI/MFToolkit.Avaloniaui"
     #1"../src/Applet/WeChat/MFToolkit.WeChat",
     #1"../src/Applet/Integration/MFToolkit.Integration.Applet",
    # "../src/SqlEntityCore/MFToolkit.SqlSugarCore.Extensions"

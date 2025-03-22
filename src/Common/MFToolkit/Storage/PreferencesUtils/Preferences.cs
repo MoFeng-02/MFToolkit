@@ -3,6 +3,8 @@ using MFToolkit.Utils.EncryptionUtils.AESEncryption;
 using Mapster;
 using MFToolkit.Json.Extensions;
 
+#pragma warning disable CS1591 // 缺少对公共可见类型或成员的 XML 注释
+
 namespace MFToolkit.Storage.PreferencesUtils;
 
 /// <summary>
@@ -128,7 +130,7 @@ public class Preferences : IPreferences
 
     #region 提供存储和查找功能
 
-    private ConcurrentDictionary<string, List<PreferencesModel>> preferencesData;
+    private ConcurrentDictionary<string, List<PreferencesModel>> preferencesData = [];
 
     /// <summary>
     /// 保存文件夹
@@ -138,12 +140,6 @@ public class Preferences : IPreferences
     private const string defaultFileName = "default";
     private string suffix = ".dat";
 
-    private class PreferencesModel
-    {
-        public string Key { get; init; } = null!;
-        public object? Value { get; init; }
-        public string? SharedName { get; init; }
-    }
 
     private Preferences(string directoryPath = null!)
     {
@@ -181,7 +177,7 @@ public class Preferences : IPreferences
                 : file.Name + suffix));
             if (string.IsNullOrWhiteSpace(encryptedData)) continue;
             string decryptedData = AesEncryptionUtil.Decrypt(encryptedData, _encryptionKey);
-            var value = decryptedData.JsonToDeserialize<List<PreferencesModel>>();
+            var value = decryptedData.JsonToDeserialize<List<PreferencesModel>>(context: PreferencesJsonAotContext.Default);
             var sharedName = value?.FirstOrDefault()?.SharedName;
             if (string.IsNullOrWhiteSpace(sharedName)) return;
             preferencesData.TryAdd(sharedName, value);
@@ -200,7 +196,7 @@ public class Preferences : IPreferences
             }
 
             var path = Path.Combine(directoryPath, sharedName + suffix);
-            var jsonData = value.ValueToJson();
+            var jsonData = value.ValueToJson(context: PreferencesJsonAotContext.Default);
             var encryptedData = AesEncryptionUtil.Encrypt(jsonData, _encryptionKey);
             File.WriteAllText(path, encryptedData);
         }
@@ -211,4 +207,10 @@ public class Preferences : IPreferences
     }
 
     #endregion
+}
+public class PreferencesModel
+{
+    public string Key { get; init; } = null!;
+    public object? Value { get; init; }
+    public string? SharedName { get; init; }
 }
