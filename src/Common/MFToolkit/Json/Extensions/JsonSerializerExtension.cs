@@ -171,15 +171,15 @@ public static class JsonSerializerExtension
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="str"></param>
-    /// <param name="options"></param>
     /// <param name="defaultValue"></param>
+    /// <param name="options"></param>
     /// <param name="context"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static async ValueTask<T?> JsonToDeserializeAsync<T>(
      this string str,
-     JsonSerializerOptions? options = null,
      T? defaultValue = default,
+     JsonSerializerOptions? options = null,
      JsonSerializerContext? context = null,
      CancellationToken cancellationToken = default)
     {
@@ -239,13 +239,14 @@ public static class JsonSerializerExtension
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="bytes">原字节数组</param>
-    /// <param name="options">配置，这是反射也就是不是AOT模式的时候有效</param>
     /// <param name="defaultValue">如果反序列化失败 返回默认值</param>
+    /// <param name="options">配置，这是反射也就是不是AOT模式的时候有效</param>
     /// <param name="context">AOT模式下兼容的处理，自行参考<see cref="JsonContextDefaultAot"/></param>
     /// <returns></returns>
-    public static T? Utf8ByteArrayToDeserialize<T>(this byte[] bytes, JsonSerializerOptions? options = null,
-        T? defaultValue = default, JsonSerializerContext?
-            context = null)
+    public static T? Utf8ByteArrayToDeserialize<T>(this byte[] bytes,
+        T? defaultValue = default,
+        JsonSerializerOptions? options = null,
+        JsonSerializerContext? context = null)
     {
         try
         {
@@ -268,7 +269,7 @@ public static class JsonSerializerExtension
             return defaultValue ?? default;
         }
     }
-    
+
     /// <summary>
     /// 自定义异常类型
     /// </summary>
