@@ -7,6 +7,46 @@ namespace MFToolkit.Utility;
 /// </summary>
 public static partial class Validator
 {
+
+    /// <summary>
+    /// 验证文件夹名称是否合法
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static bool IsValidFolderName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+
+        var invalidChars = Path.GetInvalidPathChars();
+        foreach (char c in invalidChars)
+        {
+            if (name.Contains(c))
+                return false;
+        }
+
+        return true;
+    }
+    /// <summary>
+    /// 验证文件名称是否合法
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static bool IsValidFileName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+
+        var invalidChars = Path.GetInvalidFileNameChars();
+        foreach (char c in invalidChars)
+        {
+            if (name.Contains(c))
+                return false;
+        }
+
+        return true;
+    }
+
     /// <summary>
     /// 电子邮件地址正则表达式编译器生成的正则表达式。
     /// </summary>
