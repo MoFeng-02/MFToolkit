@@ -107,9 +107,8 @@ public sealed class AutoInjectAttribute<TService> : AutoInjectAttribute
 /// }
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public sealed class AutoInjectNamespaceAttribute(string? nameSpace = null, string? authServiceName = "AddAutoInjectServices") : Attribute
+public sealed class AutoInjectNamespaceAttribute(string nameSpace, string? authServiceName = "AddAutoInjectServices") : Attribute
 {
-
     /// <summary>
     /// 命名空间
     /// </summary>
