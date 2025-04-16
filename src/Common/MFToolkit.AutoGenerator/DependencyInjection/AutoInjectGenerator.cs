@@ -41,14 +41,14 @@ public class AutoInjectGenerator : IIncrementalGenerator
         var registrations = new List<ServiceRegistration>();
         var attributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectAttribute`1");
         var nonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectAttribute");
-        var nameSpaceAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectNamespaceAttribute");
+        var nameSpaceAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectServiceNameAttribute");
 
+        string? serviceName = null;
         foreach (var classDecl in classes.Distinct())
         {
             var model = compilation.GetSemanticModel(classDecl.SyntaxTree);
-            var classSymbol = model.GetDeclaredSymbol(classDecl) as INamedTypeSymbol;
 
-            if (classSymbol == null || classSymbol.IsAbstract || classSymbol.IsStatic) continue;
+            if (model.GetDeclaredSymbol(classDecl) is not INamedTypeSymbol classSymbol || classSymbol.IsAbstract || classSymbol.IsStatic) continue;
 
             var attributes = classSymbol.GetAttributes()
                 .Where(a => a.AttributeClass != null &&
@@ -61,19 +61,18 @@ public class AutoInjectGenerator : IIncrementalGenerator
                     a.AttributeClass.Equals(nameSpaceAttributeSymbol, SymbolEqualityComparer.Default))
                 .FirstOrDefault();
 
-            string? nameSpace = null;
-            string? serviceName = null;
             if (namespaceAttributes != null)
             {
-                // 获取命名空间属性和服务注入名称
-                nameSpace = namespaceAttributes.ConstructorArguments[0].Value?.ToString();
-                // 获取服务注入名称
-                serviceName = namespaceAttributes.ConstructorArguments[1].Value?.ToString();
+                if (classSymbol.ContainingNamespace.ToDisplayString().Contains(AssemblyName))
+                {
+                    // 获取命名空间属性和服务注入名称
+                    serviceName = namespaceAttributes.ConstructorArguments[0].Value?.ToString();
+                }
             }
 
             foreach (var attribute in attributes)
             {
-                var registration = ParseAttribute(classSymbol, attribute, AssemblyName ?? nameSpace, serviceName);
+                var registration = ParseAttribute(classSymbol, attribute, AssemblyName);
                 if (registration != null)
                 {
                     registrations.Add(registration);
@@ -81,7 +80,7 @@ public class AutoInjectGenerator : IIncrementalGenerator
             }
         }
 
-        GenerateSource(context, registrations);
+        GenerateSource(context, registrations, serviceName);
     }
 
     //private static ServiceRegistration? ParseAttribute(INamedTypeSymbol classSymbol, AttributeData attribute)
@@ -113,7 +112,7 @@ public class AutoInjectGenerator : IIncrementalGenerator
     //    );
     //}
 
-    private ServiceRegistration? ParseAttribute(INamedTypeSymbol classSymbol, AttributeData attribute, string? nameSpace, string? serviceName)
+    private ServiceRegistration? ParseAttribute(INamedTypeSymbol classSymbol, AttributeData attribute, string? nameSpace)
     {
         // 优先从泛型属性中获取服务类型
         ITypeSymbol? serviceType = null;
@@ -236,7 +235,8 @@ public class AutoInjectGenerator : IIncrementalGenerator
 
     private void GenerateSource(
     SourceProductionContext context,
-    IEnumerable<ServiceRegistration> registrations
+    IEnumerable<ServiceRegistration> registrations,
+    string? serviceName
 )
     {
         // 按目标命名空间分组
@@ -258,7 +258,7 @@ using global::System.Runtime.CompilerServices;
 
 namespace {targetNamespace}
 {{
-    public static class AutoInjectExtensions
+    public static partial class AutoInjectExtensions
     {{
 
         /// <summary>
@@ -267,7 +267,7 @@ namespace {targetNamespace}
         /// <param name=""services"">服务注入</param>
         /// <returns>本类中所注入的服务</returns>
         [CompilerGenerated]
-        public static IServiceCollection {registrationsInGroup.FirstOrDefault().ServiceName ?? "AddAutoInjectServices"}(this IServiceCollection services)
+        public static IServiceCollection {serviceName ?? "AddAutoInjectServices"}(this IServiceCollection services)
         {{
 
             {BuildRegistrationCode(registrationsInGroup).Replace("\n", "\n            ")}
@@ -396,8 +396,7 @@ namespace {targetNamespace}
         INamedTypeSymbol implementationType,
         string? serviceKey,
         Lifetime lifetime,
-        string targetNamespace,
-        string? serviceName = null // 新增属性
+        string targetNamespace
     )
     {
         public ITypeSymbol ServiceType { get; set; } = serviceType;
@@ -405,6 +404,5 @@ namespace {targetNamespace}
         public string? ServiceKey { get; set; } = serviceKey;
         public Lifetime Lifetime { get; set; } = lifetime;
         public string TargetNamespace { get; } = targetNamespace; // 新增属性
-        public string? ServiceName { get; set; } = serviceName; // 新增属性
     }
 }

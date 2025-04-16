@@ -10,7 +10,7 @@
 
 		<!-- NuGet Metadata -->
 		<Authors>莫枫</Authors>
-		<Version>1.0.7</Version>
+		<Version>1.0.8</Version>
 		<Description>通用.Net9及以上程序工具库</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -32,11 +32,19 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="bin\**" />
+	  <EmbeddedResource Remove="bin\**" />
+	  <None Remove="bin\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<!-- 自动包含README -->
 		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
+		<None Remove="bin\Debug\netstandard2.0\\MFToolkit.AutoGenerator.dll" />
 
 		<!-- 修改：包含DLL和PDB文件 -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Remove="bin\Debug\netstandard2.0\\MFToolkit.AutoGenerator.pdb" />
 		<None Include="$(OutputPath)\$(AssemblyName).pdb" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
