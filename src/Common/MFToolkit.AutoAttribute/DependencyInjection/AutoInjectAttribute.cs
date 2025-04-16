@@ -88,3 +88,35 @@ public sealed class AutoInjectAttribute<TService> : AutoInjectAttribute
     {
     }
 }
+
+/// <summary>
+/// 命名空间自动注入特性，让AutoInjectAttribute引用类库支持自定义命名空间，以及Service的{ServiceName}名称，默认是AddAutoInjectServices，全不提供则默认
+/// <para>
+/// 只需要在任意类上添加AutoInjectNamespaceAttribute特性，即可注册当前类库全局命名空间和服务名称，解决默认命名空间以及算法命名空间冲突问题。
+/// </para>
+/// </summary>
+/// <param name="nameSpace"></param>
+/// <param name="authServiceName">默认名称是AddAutoInjectServices</param>
+/// <remarks>
+/// 示例：
+/// [AutoInjectNamespace("Demo01.Services", "AddDemo01Services")]
+/// [AutoInject{IService}]
+/// public class Service : IService
+/// {
+/// 
+/// }
+/// </remarks>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public sealed class AutoInjectNamespaceAttribute(string? nameSpace = null, string? authServiceName = "AddAutoInjectServices") : Attribute
+{
+
+    /// <summary>
+    /// 命名空间
+    /// </summary>
+    public string? NameSpace { get; } = nameSpace;
+
+    /// <summary>
+    /// 服务名称
+    /// </summary>
+    public string? AuthServiceName { get; } = authServiceName;
+}
