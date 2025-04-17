@@ -58,7 +58,7 @@ public class AutoInjectAttribute : Attribute
     /// <param name="serviceType">服务类型</param>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoInjectAttribute(Type serviceType, string? key = null, Lifetime lifetime = Lifetime.Transient)
+    public AutoInjectAttribute(Type serviceType, string? key, Lifetime lifetime = Lifetime.Transient)
     {
         ServiceType = serviceType;
         Key = key;
@@ -88,6 +88,7 @@ public sealed class AutoInjectAttribute<TService> : AutoInjectAttribute
     {
     }
 }
+
 
 /// <summary>
 /// 自定义服务名称，让AutoInjectAttribute引用类库支持自定义服务名称，默认是AddAutoInjectServices，全不提供则默认

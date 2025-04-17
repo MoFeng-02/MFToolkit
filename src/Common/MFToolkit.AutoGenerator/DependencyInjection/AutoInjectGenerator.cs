@@ -343,54 +343,6 @@ namespace {targetNamespace}
         return str + ";";
     }
 
-    private static string BuildRegistrationCode1(IEnumerable<ServiceRegistration> registrations)
-    {
-        var sb = new StringBuilder();
-
-        foreach (var reg in registrations)
-        {
-            var serviceType = reg.ServiceType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            var implementationType = reg.ImplementationType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            var isGeneric = reg.ServiceType is INamedTypeSymbol { IsGenericType: true };
-
-            var method = reg.Lifetime switch
-            {
-                Lifetime.Singleton => "AddSingleton",
-                Lifetime.Scoped => "AddScoped",
-                _ => "AddTransient"
-            };
-
-            var keyMethod = reg.Lifetime switch
-            {
-                Lifetime.Singleton => "AddKeyedSingleton",
-                Lifetime.Scoped => "AddKeyedScoped",
-                _ => "AddKeyedTransient"
-            };
-
-            if (!string.IsNullOrEmpty(reg.ServiceKey))
-            {
-                if (!string.IsNullOrWhiteSpace(implementationType) && serviceType != implementationType)
-                    sb.AppendLine($@"services.{keyMethod}<{serviceType}, {implementationType}>(""{reg.ServiceKey}"");");
-                else
-                    sb.AppendLine($@"services.{keyMethod}<{serviceType}>(""{reg.ServiceKey}"");");
-            }
-            else if (isGeneric)
-            {
-                sb.AppendLine($@"services.{method}(typeof({serviceType}), typeof({implementationType}));");
-            }
-            else if (serviceType != implementationType)
-            {
-                sb.AppendLine($@"services.{method}<{serviceType}, {implementationType}>();");
-            }
-            else
-            {
-                sb.AppendLine($@"services.{method}<{serviceType}>();");
-            }
-        }
-
-        return sb.ToString();
-    }
-
     private class ServiceRegistration(
         ITypeSymbol serviceType,
         INamedTypeSymbol implementationType,
