@@ -18,12 +18,4 @@ public class BasicPayload
     /// 接收方
     /// </summary>
     public string Audience { get; set; }
-    /// <summary>
-    /// 是否启用jti？
-    /// <para>
-    /// <seealso cref="jti-tips.txt"/>
-    /// </para>
-    /// <para>暂未完成，或许你可以先注册</para>
-    /// </summary>
-    //public bool IsStartRegistered { get; set; }
 }

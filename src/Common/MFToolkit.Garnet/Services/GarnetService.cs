@@ -47,7 +47,7 @@ public class GarnetService : IGarnetService
 
     public async Task<long> KeyDeleteAsync(params string[] keys)
     {
-        return await _db.KeyDeleteAsync(keys.Select(k => (RedisKey)k).ToArray());
+        return await _db.KeyDeleteAsync([.. keys.Select(k => (RedisKey)k)]);
     }
 
     public async Task<bool> KeyExistsAsync(string key)
@@ -80,7 +80,7 @@ public class GarnetService : IGarnetService
     public async Task<List<string>> ListRangeAsync(string key, long start, long stop)
     {
         var redisValues = await _db.ListRangeAsync(key, start, stop);
-        return redisValues.Select(rv => rv.ToString()).ToList();
+        return [.. redisValues.Select(rv => rv.ToString())];
     }
 
     // 集合操作
@@ -111,13 +111,13 @@ public class GarnetService : IGarnetService
     public async Task<List<string>> SortedSetRangeByRankAsync(string key, long start, long stop)
     {
         var redisValues = await _db.SortedSetRangeByRankAsync(key, start, stop);
-        return redisValues.Select(rv => rv.ToString()).ToList();
+        return [.. redisValues.Select(rv => rv.ToString())];
     }
 
     public async Task<long?> SortedSetRankAsync(string key, string member)
     {
         var rank = await _db.SortedSetRankAsync(key, member);
-        return rank.HasValue ? (long?)rank.Value : null;
+        return rank.HasValue ? rank.Value : null;
     }
 
     // 发布/订阅操作

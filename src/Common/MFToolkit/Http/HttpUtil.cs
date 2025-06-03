@@ -30,9 +30,9 @@ public sealed class HttpUtil
     /// 获取强类型HTTPClient
     /// </summary>
     /// <returns></returns>
-    public static HttpClientService GetHttpClientService()
+    public static TService GetHttpClientService<TService>() where TService : notnull
     {
-        return MFApp.GetService<HttpClientService>() ?? throw new(
+        return MFApp.GetService<TService>() ?? throw new(
             "未注册HttpClientService，参考链接：https://learn.microsoft.com/zh-cn/dotnet/core/extensions/httpclient-factory#typed-clients");
     }
 
@@ -190,20 +190,5 @@ public static partial class HttpClientExtensionTwo
         httpClient.DefaultRequestHeaders.Authorization =
             string.IsNullOrEmpty(parameter) ? new(scheme) : new(scheme, parameter);
         return httpClient;
-    }
-
-    /// <summary>
-    /// 设置用户的登录凭证
-    /// </summary>
-    /// <param name="httpClientService"></param>
-    /// <param name="scheme"></param>
-    /// <param name="parameter"></param>
-    /// <returns></returns>
-    public static HttpClientService SetAuthorization(this HttpClientService httpClientService, string scheme = "Bearer",
-        string? parameter = null)
-    {
-        httpClientService.DefaultRequestHeaders.Authorization =
-            string.IsNullOrEmpty(parameter) ? new(scheme) : new(scheme, parameter);
-        return httpClientService;
     }
 }

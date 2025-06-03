@@ -18,6 +18,7 @@ public static class AuthenticationExtension
     /// 注册JWT配置
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="configAction"></param>
     /// <param name="policyName">策略名称，默认jwt</param>
     /// <param name="corsOptions">跨域配置</param>
     /// <returns></returns>
@@ -27,13 +28,11 @@ public static class AuthenticationExtension
         configAction.Invoke(config);
         JsonWebTokenConfig.SetJsonWebTokenConfig(config);
         service.AddAuthentication().AddJwtBearer();
-        service.AddAuthorization(options =>
-        {
-            options.AddPolicy(policyName, policy =>
+        service.AddAuthorizationBuilder()
+            .AddPolicy(policyName, policy =>
             {
                 policy.Requirements.Add(new JwtAuthorizationHandler());
             });
-        });
         if (corsOptions != null)
         {
             service.AddCors(corsOptions);
@@ -46,6 +45,7 @@ public static class AuthenticationExtension
     /// 注册JWT配置
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="configAction"></param>
     /// <param name="policyName">策略名称，默认jwt</param>
     /// <param name="corsOptions">跨域配置</param>
     /// <returns></returns>
@@ -59,13 +59,11 @@ public static class AuthenticationExtension
         JsonWebTokenConfig config = new();
         configAction.Invoke(config);
         JsonWebTokenConfig.SetJsonWebTokenConfig(config);
-        service.AddAuthorization(options =>
-        {
-            options.AddPolicy(policyName, policy =>
+        service.AddAuthorizationBuilder()
+            .AddPolicy(policyName, policy =>
             {
                 policy.Requirements.Add(handler);
             });
-        });
 
         if (corsOptions != null)
         {
@@ -80,6 +78,7 @@ public static class AuthenticationExtension
     /// 注册JWT配置
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="configs">JWT密钥字典集</param>
     /// <param name="policyName">策略名称，默认jwt</param>
     /// <param name="corsOptions">跨域配置</param>
     /// <returns></returns>
@@ -87,13 +86,11 @@ public static class AuthenticationExtension
     {
         JsonWebTokenConfig.SetJsonWebTokenConfig(configs);
         service.AddAuthentication().AddJwtBearer();
-        service.AddAuthorization(options =>
-        {
-            options.AddPolicy(policyName, policy =>
+        service.AddAuthorizationBuilder()
+            .AddPolicy(policyName, policy =>
             {
                 policy.Requirements.Add(new JwtAuthorizationHandler());
             });
-        });
         if (corsOptions != null)
         {
             service.AddCors(corsOptions);
@@ -106,6 +103,7 @@ public static class AuthenticationExtension
     /// 注册JWT配置
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="configs">JWT密钥字典集</param>
     /// <param name="policyName">策略名称，默认jwt</param>
     /// <param name="corsOptions">跨域配置</param>
     /// <returns></returns>
@@ -115,13 +113,11 @@ public static class AuthenticationExtension
         if (handler is not IAuthorizationRequirement r) return service;
         JsonWebTokenConfig.SetJsonWebTokenConfig(configs);
         service.AddAuthentication().AddJwtBearer();
-        service.AddAuthorization(options =>
-        {
-            options.AddPolicy(policyName, policy =>
+        service.AddAuthorizationBuilder()
+            .AddPolicy(policyName, policy =>
             {
                 policy.Requirements.Add(handler);
             });
-        });
 
         if (corsOptions != null)
         {
@@ -141,6 +137,21 @@ public static class AuthenticationExtension
     {
         if (_useCorsPolicyName == null) return app;
         app.UseCors(_useCorsPolicyName);
+        return app;
+    }
+
+    /// <summary>
+    /// 注入Jwt的跨域Cors
+    /// <para>参考：https://learn.microsoft.com/zh-cn/aspnet/core/security/cors?view=aspnetcore-8.0#cors-with-named-policy-and-middleware</para>
+    /// <para>如果是最小API，则在Map前面注入，如果是其他则参考上面链接</para>
+    /// </summary>
+    /// <param name="app"></param>
+    /// <param name="configurePolicy"></param>
+    /// <returns></returns>
+    public static WebApplication UseJwtAuthorizationCorss(this WebApplication app, Action<CorsPolicyBuilder> configurePolicy)
+    {
+        ArgumentNullException.ThrowIfNull(configurePolicy);
+        app.UseCors(configurePolicy);
         return app;
     }
 

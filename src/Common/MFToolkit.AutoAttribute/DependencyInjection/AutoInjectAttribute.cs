@@ -70,7 +70,7 @@ public class AutoInjectAttribute : Attribute
 /// </summary>
 /// <typeparam name="TService">服务类型</typeparam>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public sealed class AutoInjectAttribute<TService> : AutoInjectAttribute
+public class AutoInjectAttribute<TService> : AutoInjectAttribute
 {
     /// <summary>
     /// 泛型默认自动注入

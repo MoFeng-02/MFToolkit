@@ -1,10 +1,6 @@
-﻿using System.Net.Http.Headers;
-using MFToolkit.App;
+﻿using MFToolkit.App;
 using MFToolkit.App.Extensions.DependencyInjection;
 using MFToolkit.Http;
-using MFToolkit.Http.Extensions.DependencyInjection;
-using MFToolkit.Http.HttpClientFactorys;
-using MFToolkit.Utility;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.DependencyInjection;
@@ -69,28 +65,28 @@ public static class GlobalInjects
         _isInjectExist = true;
         services ??= new ServiceCollection();
 
-        #region HTTP Clent
+        //#region HTTP Clent
 
-        services.AddHttpClientService(options =>
-        {
-            options.BaseAddress = httpRequestConfiguration == null || !Validator.IsValidUrl(httpRequestConfiguration.BaseRequestUri)
-                ? null
-                : new(httpRequestConfiguration.BaseRequestUri!);
-            if (httpRequestConfiguration?.RequestTokenFunc != null)
-                options.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", httpRequestConfiguration?.RequestTokenFunc());
-        })
-            // 暂时先注释
-            // #if DEBUG
-            .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
-            {
-                ServerCertificateCustomValidationCallback = delegate { return true; }
-            })
-            // #endif
-            ;
-        //services.AddSingleton<HttpClientFactoryService>();
+        //services.AddHttpClientService(options =>
+        //{
+        //    options.BaseAddress = httpRequestConfiguration == null || !Validator.IsValidUrl(httpRequestConfiguration.BaseRequestUri)
+        //        ? null
+        //        : new(httpRequestConfiguration.BaseRequestUri!);
+        //    if (httpRequestConfiguration?.RequestTokenFunc != null)
+        //        options.DefaultRequestHeaders.Authorization =
+        //            new AuthenticationHeaderValue("Bearer", httpRequestConfiguration.RequestTokenFunc());
+        //})
+        //    // 暂时先注释
+        //    // #if DEBUG
+        //    .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
+        //    {
+        //        ServerCertificateCustomValidationCallback = delegate { return true; }
+        //    })
+        //    // #endif
+        //    ;
+        ////services.AddSingleton<HttpClientFactoryService>();
 
-        #endregion
+        //#endregion
 
         #region GRPC 配置
 
@@ -121,7 +117,18 @@ public static class GlobalInjects
         //services.AddDownloadService().AddDownloadPauseInfoHandler();
         //services.AddDownloadService<DownloadHandler>();
 
-        services.AddMFAppService();
+        services.AddInjectMFAppService();
+        return services;
+    }
+
+    /// <summary>
+    /// 注入MFApp的ServiceProvider，建议在所有服务注册完成后调用
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceProvider MFAppServiceProvider(this IServiceProvider services)
+    {
+        MFApp.ServiceProvider = services;
         return services;
     }
 }

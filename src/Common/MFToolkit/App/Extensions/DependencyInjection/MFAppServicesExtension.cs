@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace MFToolkit.App.Extensions.DependencyInjection;
+/// <inheritdoc/>
 public static class MFAppServicesExtension
 {
     /// <summary>
@@ -8,11 +9,10 @@ public static class MFAppServicesExtension
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMFAppService(this IServiceCollection services)
+    public static IServiceCollection AddInjectMFAppService(this IServiceCollection services)
     {
         #region 配置获取
         MFApp.ServiceCollection = services;
-        MFApp.ServiceProvider = services.BuildServiceProvider();
         #endregion
         return services;
     }
@@ -21,7 +21,7 @@ public static class MFAppServicesExtension
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection ReloadMFAppService(this IServiceCollection services)
+    public static IServiceCollection ReloadMFAppServiceProvider(this IServiceCollection services)
     {
         MFApp.ServiceProvider = services.BuildServiceProvider();
         return services;
