@@ -18,8 +18,6 @@ public class AutoInjectGenerator : IIncrementalGenerator
     /// <param name="context"></param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // 输出调试信息
-        System.Diagnostics.Debug.WriteLine("AutoInjectGenerator initialized!");
         var provider = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => s is ClassDeclarationSyntax,
@@ -44,12 +42,6 @@ public class AutoInjectGenerator : IIncrementalGenerator
         var tryAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoTryInjectAttribute`1");
         var tryNonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoTryInjectAttribute");
         var nameSpaceAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectServiceNameAttribute");
-        // 在 Execute 方法中添加
-        if (tryNonGenericAttributeSymbol == null)
-        {
-            context.AddSource("Debug.g.cs",
-                "// ERROR: AutoTryInjectAttribute symbol not found");
-        }
         string? serviceName = null;
         foreach (var classDecl in classes.Distinct())
         {

@@ -96,7 +96,7 @@ public class AutoInjectAttribute<TService> : AutoInjectAttribute
 /// 只需要在任意类上添加AutoInjectNamespaceAttribute特性，即可注册服务名称。
 /// </para>
 /// </summary>
-/// <param name="authServiceName">默认名称是AddAutoInjectServices</param>
+/// <param name="autoServiceName">默认名称是AddAutoInjectServices</param>
 /// <remarks>
 /// 示例：
 /// [AutoInjectNamespace("AddDemo01Services")]
@@ -106,12 +106,12 @@ public class AutoInjectAttribute<TService> : AutoInjectAttribute
 /// 
 /// }
 /// </remarks>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public sealed class AutoInjectServiceNameAttribute(string authServiceName = "AddAutoInjectServices") : Attribute
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public sealed class AutoInjectServiceNameAttribute(string autoServiceName = "AddAutoInjectServices") : Attribute
 {
 
     /// <summary>
     /// 服务名称
     /// </summary>
-    public string AuthServiceName { get; } = authServiceName;
+    public string AutoServiceName { get; } = autoServiceName;
 }
