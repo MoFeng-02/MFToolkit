@@ -1,19 +1,35 @@
 ﻿using System.Net.Mime;
 using System.Text.Json.Serialization;
+using MFToolkit.App;
 using MFToolkit.AspNetCore.Extensions.ResultExttensions.Models;
 using MFToolkit.Json.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Extensions.Options;
 
-namespace MFToolkit.AspNetCore.Extensions.ResultExttensions;
+namespace MFToolkit.AspNetCore.Extensions.ResultExtemsions;
 /// <summary>
 /// 通用结果返回
 /// <para>支持AOT</para>
 /// </summary>
 public class CommonResult<T> : IResult
 {
+    /// <summary>
+    /// 获取或设置操作的结果。
+    /// </summary>
     public T Result { get; set; }
+    /// <summary>
+    /// 获取或设置与响应相关联的 HTTP 状态码。
+    /// </summary>
     public int StatusCode { get; set; } = 200;
     JsonSerializerContext? Context { get; set; }
+
+    /// <summary>
+    /// 初始化 <see cref="CommonResult{T}"/> 类的新实例，表示具有关联状态码和可选 JSON 序列化上下文的结果。
+    /// </summary>
+    /// <param name="result">要封装的类型为 <typeparamref name="T"/> 的结果对象。</param>
+    /// <param name="statusCode">与结果关联的 HTTP 状态码。默认为 200。</param>
+    /// <param name="context">用于结果 JSON 序列化的可选 <see cref="JsonSerializerContext"/>。可以为 <see langword="null"/>。</param>
     public CommonResult(T result, int statusCode = 200, JsonSerializerContext? context = null)
     {
         Result = result;
@@ -33,6 +49,11 @@ public class CommonResult<T> : IResult
         205,    //Reset Content（重置内容）
         206,    //Partial Content（部分内容）
     ];
+    /// <summary>
+    /// 执行操作并将结果写入 HTTP 响应中。/// </summary>
+    /// <remarks>此方法将响应内容类型设置为 JSON，并将操作的结果写入 HTTP 响应中。响应状态码由 <c>StatusCode</c> 属性决定。如果结果无法序列化为 JSON 格式，则会写入默认模型。</remarks>
+    /// <param name="httpContext">代表当前 HTTP 请求和响应的 <see cref="HttpContext"/> 对象。</param>
+    /// <returns>表示异步操作的 <see cref="Task"/> 对象。</returns>
     public async Task ExecuteAsync(HttpContext httpContext)
     {
         httpContext.Response.ContentType = MediaTypeNames.Application.Json;
@@ -43,7 +64,7 @@ public class CommonResult<T> : IResult
             StatusCode = StatusCode,
             IsSuccess = SuccessCodes.Contains(StatusCode)
         };
-        var result = model.ValueToJson(context: Context);
+        var result = model.ValueToJson();
         httpContext.Response.StatusCode = StatusCode;
         if (result == null)
         {

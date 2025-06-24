@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using MFToolkit.App;
 using MFToolkit.Exceptions;
@@ -71,11 +72,11 @@ public sealed class HttpUtil
     /// 设置JSON Body
     /// </summary>
     /// <param name="body"></param>
-    /// <param name="context">如果是AOT的情况下手动提供Json序列化上下文</param>
+    /// <param name="options">如果是AOT的情况下手动提供Json序列化配置</param>
     /// <returns></returns>
-    public static HttpContent SetBodyAsJson<T>(T body, JsonSerializerContext? context = null) where T : notnull
+    public static HttpContent SetBodyAsJson<T>(T body, JsonSerializerOptions? options = null) where T : notnull
     {
-        var httpContent = new StringContent(body.ValueToJson(context: context)!,
+        var httpContent = new StringContent(body.ValueToJson(options)!,
             new MediaTypeHeaderValue("application/json"));
         return httpContent;
     }
@@ -156,7 +157,7 @@ public static partial class HttpClientExtensionTwo
     {
         if (!response.IsSuccessStatusCode) return null;
         var str = await response.Content.ReadAsStringAsync();
-        var result = str.JsonToDeserialize<ApiResult>();
+        var result = await str.JsonToValueAsync<ApiResult>();
         return result;
     }
 
@@ -165,15 +166,15 @@ public static partial class HttpClientExtensionTwo
     /// </summary>
     /// <typeparam name="T">返回规范值Data的类型</typeparam>
     /// <param name="response">请求响应体</param>
-    /// <param name="context">如果是AOT的情况下手动提供Json序列化上下文</param>
+    /// <param name="options">如果是AOT的情况下手动提供Json序列化上下文</param>
     /// <returns></returns>
     public static async Task<ApiResult<T>?> ReadAsFormattingAsync<T>(this HttpResponseMessage response,
-        JsonSerializerContext? context = null) where T :
+        JsonSerializerOptions? options = null) where T :
         class
     {
         if (!response.IsSuccessStatusCode) return null;
         var str = await response.Content.ReadAsStringAsync();
-        var result = str.JsonToDeserialize<ApiResult<T>>(context: context);
+        var result = await str.JsonToValueAsync<ApiResult<T>>(options: options);
         return result;
     }
 

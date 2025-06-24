@@ -177,10 +177,10 @@ public class Preferences : IPreferences
                 : file.Name + suffix));
             if (string.IsNullOrWhiteSpace(encryptedData)) continue;
             string decryptedData = AesEncryptionUtil.Decrypt(encryptedData, _encryptionKey);
-            var value = decryptedData.JsonToDeserialize<List<PreferencesModel>>(context: PreferencesJsonAotContext.Default);
+            var value = decryptedData.JsonToValue<List<PreferencesModel>>();
             var sharedName = value?.FirstOrDefault()?.SharedName;
             if (string.IsNullOrWhiteSpace(sharedName)) return;
-            preferencesData.TryAdd(sharedName, value);
+            preferencesData.TryAdd(sharedName, value ?? []);
         }
     }
 
@@ -196,8 +196,8 @@ public class Preferences : IPreferences
             }
 
             var path = Path.Combine(directoryPath, sharedName + suffix);
-            var jsonData = value.ValueToJson(context: PreferencesJsonAotContext.Default);
-            var encryptedData = AesEncryptionUtil.Encrypt(jsonData, _encryptionKey);
+            var jsonData = value.ValueToJson();
+            var encryptedData = AesEncryptionUtil.Encrypt(jsonData ?? string.Empty, _encryptionKey);
             File.WriteAllText(path, encryptedData);
         }
         catch (Exception e)

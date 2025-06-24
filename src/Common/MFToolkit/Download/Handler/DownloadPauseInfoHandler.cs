@@ -72,7 +72,7 @@ public class DownloadPauseInfoHandler
             var json = await File.ReadAllTextAsync(filePath);
 
             // 使用AOT上下文反序列化
-            var model = await json.JsonToDeserializeAsync<DownloadModel>(context: DownloadPauseInfoHandlerContext.Default);
+            var model = await json.JsonToValueAsync<DownloadModel>(options: DownloadPauseInfoHandlerContext.Default.Options);
 
             // 启用加密时进行解密处理
             if (model != null && IsStartEncryption)

@@ -3,11 +3,12 @@ using System.Net.Mime;
 using System.Text.Json;
 using MFToolkit.AspNetCore.Extensions.ResultExttensions.Models;
 using MFToolkit.Exceptions;
-using MFToolkit.Json.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace MFToolkit.AspNetCore.Middlewares;
 /// <summary>
@@ -17,24 +18,21 @@ public class GlobalExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionHandlerMiddleware>? _logger;
+    private readonly IOptions<JsonOptions>? _jsonOptions;
 
     /// <summary>
     /// 构造函数，初始化下一个中间件。
     /// </summary>
     /// <param name="next">下一个中间件的委托。</param>
-    public GlobalExceptionHandlerMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-    /// <summary>
-    /// 构造函数，初始化下一个中间件。
-    /// </summary>
-    /// <param name="next">下一个中间件的委托。</param>
     /// <param name="logger">日志</param>
-    public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
+    /// <param name="jsonOptions">Aot Json Options</param>
+    public GlobalExceptionHandlerMiddleware(RequestDelegate next,
+        ILogger<GlobalExceptionHandlerMiddleware>? logger,
+        IOptions<JsonOptions>? jsonOptions)
     {
         _next = next;
         _logger = logger;
+        _jsonOptions = jsonOptions;
     }
 
     /// <summary>
@@ -89,7 +87,7 @@ public class GlobalExceptionHandlerMiddleware
 
 
             // 将 CommonErrorModel 序列化为 JSON 字符串
-            var errorJson = JsonSerializer.Serialize(commonErrorModel, JsonSerializerExtension.DefaultJsonSerializerOptions);
+            var errorJson = JsonSerializer.Serialize(commonErrorModel, _jsonOptions?.Value.SerializerOptions);
 
             // 将 JSON 字符串写入响应体
             await httpContext.Response.WriteAsync(errorJson);

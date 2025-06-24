@@ -41,8 +41,6 @@ public class JwtAuthorizationHandler : IAuthorizationHandler, IAuthorizationRequ
             context.Fail();
             return;
         }
-        // 获取jwt配置key
-        var configKey = httpContext?.Request.Headers[JsonWebTokenConfig.JwtConfigKey].ToString() ?? null;
 
         if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
         {
@@ -51,7 +49,7 @@ public class JwtAuthorizationHandler : IAuthorizationHandler, IAuthorizationRequ
                 // 获取 token 的值
                 var token = authorization["Bearer ".Length..].Trim();
                 // 验证 token 的有效性，并获取用户的身份和声明
-                var principal = JwtUtil.GetPrincipalFromToken(token, configKey);
+                var principal = JwtUtil.GetPrincipalFromToken(token);
                 var claims = principal.Claims;
                 // 判断是否满足 JWTHandler 的需求
                 if (context.Requirements.Contains(this))

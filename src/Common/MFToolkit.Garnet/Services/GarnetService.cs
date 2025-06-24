@@ -167,7 +167,7 @@ public class GarnetService : IGarnetService
 
     public async Task<RedisValue> HashGetAsync(string key, string field)
     {
-        return (await _db.HashGetAsync(key, field)).ToString();
+        return await _db.HashGetAsync(key, field);
     }
 
     public async Task<Dictionary<string, string>> HashGetAllAsync(string key)
@@ -179,6 +179,11 @@ public class GarnetService : IGarnetService
     public async Task<bool> HashExistsAsync(string key, string field)
     {
         return await _db.HashExistsAsync(key, field);
+    }
+
+    public Task<bool> HashDeleteAsync(string key, RedisValue field)
+    {
+        return _db.HashDeleteAsync(key, field);
     }
 
     // 锁机制
@@ -212,5 +217,4 @@ public class GarnetService : IGarnetService
     {
         _redis?.Dispose();
     }
-
 }

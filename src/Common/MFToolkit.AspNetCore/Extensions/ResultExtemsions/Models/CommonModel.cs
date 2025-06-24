@@ -29,9 +29,11 @@ public class CommonModel
 /// <typeparam name="T"></typeparam>
 public class CommonModel<T> : CommonModel
 {
+    /// <inheritdoc/>
     public CommonModel()
     {
     }
+    /// <inheritdoc/>
     public CommonModel(T data)
     {
         Data = data;
@@ -42,6 +44,9 @@ public class CommonModel<T> : CommonModel
     /// </summary>
     public T Data { get; set; }
 }
+/// <summary>
+/// 错误模型
+/// </summary>
 public class ErrorModel
 {
 
@@ -59,13 +64,27 @@ public class ErrorModel
 /// </summary>
 public class CommonErrorModel<T> : CommonModel
 {
+    /// <inheritdoc/>
     public CommonErrorModel() { }
+    /// <inheritdoc/>
     public CommonErrorModel(T error)
     {
         Error = error;
     }
+    /// <summary>
+    /// 错误信息实体泛型
+    /// </summary>
     public T Error { get; set; }
 }
-//[JsonSerializable(typeof(CommonModel))]
-//[JsonSerializable(typeof(CommonModel<>))]
-//public partial class JsonCommonResultAotContext : JsonSerializerContext;
+
+/// <summary>
+/// 通用返回 JSON 序列化上下文
+/// </summary>
+[JsonSerializable(typeof(CommonModel))]
+[JsonSerializable(typeof(CommonModel<ErrorModel>))]
+[JsonSerializable(typeof(CommonErrorModel<ErrorModel>))]
+[JsonSerializable(typeof(ErrorModel))]
+public partial class JsonCommonResultAotContext : JsonSerializerContext
+{
+
+}

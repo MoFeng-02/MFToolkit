@@ -13,13 +13,13 @@
 		<ProjectReference Include="..\src\AvaloniaUI\MFToolkit.Avaloniaui\MFToolkit.Avaloniaui.csproj" />
 		<ProjectReference Include="..\src\Common\MFToolkit.AutoAttribute\MFToolkit.AutoAttribute.csproj" />
 		<ProjectReference Include="..\src\Common\MFToolkit.AutoGenerator\MFToolkit.AutoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
+		<PackageReference Include="Avalonia" Version="11.2.6" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.6" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.6" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="11.2.6" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

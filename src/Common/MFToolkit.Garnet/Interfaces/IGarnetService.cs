@@ -140,6 +140,14 @@ public interface IGarnetService : IDisposable
     /// </summary>
     Task<bool> HashExistsAsync(string key, string field);
 
+    /// <summary>
+    /// 删除哈希表中的字段。
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    Task<bool> HashDeleteAsync(string key, RedisValue field);
+
     // 锁机制
 
     /// <summary>
