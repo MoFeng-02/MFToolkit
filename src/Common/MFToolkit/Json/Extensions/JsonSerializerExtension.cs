@@ -1,7 +1,9 @@
 ﻿using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using MFToolkit.Loggers.MFLogger.Utils;
 
 namespace MFToolkit.Json.Extensions;
 
@@ -40,11 +42,12 @@ public static class JsonSerializerExtension
 
         try
         {
-            options ??= _defaultJsonSerializerOptions;
+            ValidateOptionsForAot(options ??= _defaultJsonSerializerOptions);
             return JsonSerializer.Serialize(value, options);
         }
         catch (Exception ex) when (ex is JsonException or NotSupportedException)
         {
+            LoggerUtil.LogError($"Json格式化序列错误：{ex.Message}");
             return null;
         }
     }
@@ -64,7 +67,7 @@ public static class JsonSerializerExtension
     {
         if (value is null) return null;
 
-        options ??= _defaultJsonSerializerOptions;
+        ValidateOptionsForAot(options ??= _defaultJsonSerializerOptions);
 
         try
         {
@@ -77,6 +80,7 @@ public static class JsonSerializerExtension
         }
         catch (Exception ex) when (ex is JsonException or NotSupportedException)
         {
+            LoggerUtil.LogError($"Json格式化序列错误：{ex.Message}");
             return null;
         }
     }
@@ -94,11 +98,12 @@ public static class JsonSerializerExtension
 
         try
         {
-            options ??= _defaultJsonSerializerOptions;
+            ValidateOptionsForAot(options ??= _defaultJsonSerializerOptions);
             return JsonSerializer.SerializeToUtf8Bytes(value, options);
         }
         catch (Exception ex) when (ex is JsonException or NotSupportedException)
         {
+            LoggerUtil.LogError($"Json格式化序列错误：{ex.Message}");
             return null;
         }
     }
@@ -112,7 +117,7 @@ public static class JsonSerializerExtension
     /// <param name="options">反序列化选项</param>
     /// <returns>反序列化后的对象或默认值</returns>
     public static T? JsonToValue<T>(
-        this string? json,
+        [StringSyntax("Json")] this string? json,
         T? defaultValue = default,
         JsonSerializerOptions? options = null)
     {
@@ -126,6 +131,7 @@ public static class JsonSerializerExtension
         }
         catch (Exception ex) when (ex is JsonException or NotSupportedException)
         {
+            LoggerUtil.LogError($"Json格式化序列错误：{ex.Message}");
             return defaultValue;
         }
     }
@@ -140,7 +146,7 @@ public static class JsonSerializerExtension
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>反序列化后的对象或默认值</returns>
     public static async ValueTask<T?> JsonToValueAsync<T>(
-        this string? json,
+        [StringSyntax("Json")] this string? json,
         T? defaultValue = default,
         JsonSerializerOptions? options = null,
         CancellationToken cancellationToken = default)
@@ -182,6 +188,7 @@ public static class JsonSerializerExtension
         }
         catch (Exception ex) when (ex is JsonException or NotSupportedException)
         {
+            LoggerUtil.LogError($"Json格式化序列错误：{ex.Message}");
             return defaultValue;
         }
     }
@@ -205,7 +212,7 @@ public static class JsonSerializerExtension
             return JsonSerializer.Deserialize<T>(json, options);
         }
 
-        ValidateOptionsForAot(options);
+        ValidateOptionsForAot(options ??= _defaultJsonSerializerOptions);
         var typeInfo = GetTypeInfo<T>(options);
         return JsonSerializer.Deserialize(json, typeInfo);
     }
@@ -227,7 +234,7 @@ public static class JsonSerializerExtension
             return JsonSerializer.Deserialize<T>(bytes, options);
         }
 
-        ValidateOptionsForAot(options);
+        ValidateOptionsForAot(options ??= _defaultJsonSerializerOptions);
         var typeInfo = GetTypeInfo<T>(options);
         return JsonSerializer.Deserialize(bytes, typeInfo);
     }
@@ -261,9 +268,14 @@ public static class JsonSerializerExtension
                 return await JsonSerializer.DeserializeAsync<T>(stream, options, cancellationToken);
             }
 
-            ValidateOptionsForAot(options);
+            ValidateOptionsForAot(options ??= _defaultJsonSerializerOptions);
             var typeInfo = GetTypeInfo<T>(options);
             return await JsonSerializer.DeserializeAsync(stream, typeInfo, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            LoggerUtil.LogError($"Json格式化序列错误：{ex.Message}");
+            return default;
         }
         finally
         {
@@ -281,7 +293,7 @@ public static class JsonSerializerExtension
     /// </exception>
     private static void ValidateOptionsForAot(JsonSerializerOptions? options)
     {
-        if (options is null)
+        if (!JsonSerializer.IsReflectionEnabledByDefault && options is null)
         {
             throw new InvalidOperationException(
                 "在 AOT 模式下必须提供 JsonSerializerOptions 并配置 JSON 类型信息");

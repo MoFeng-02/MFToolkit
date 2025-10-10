@@ -1,1 +1,1 @@
-1. 本类库文件用于Services注入，若需要使用，请额外引用MFToolkit.AutoAttribute属性库搭配使用
+1. 本类库文件用于Services注入，若需要使用，请额外引用MFToolkit.Abstractions属性库搭配使用

@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.AutoAttribute.DependencyInjection;
+﻿namespace MFToolkit.Abstractions.DependencyInjection;
 
 /// <summary>
 /// 服务生命周期

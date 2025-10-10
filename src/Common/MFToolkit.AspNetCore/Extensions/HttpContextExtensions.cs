@@ -16,8 +16,9 @@ public static class HttpContextExtensions
     /// <param name="httpContext"></param>
     /// <param name="key"></param>
     /// <returns></returns>
-    public static string? GetHeaderString(this HttpContext httpContext, string key)
+    public static string? GetHeaderString(this HttpContext httpContext, string? key)
     {
+        if(key.IsNullOrEmpty()) return null;
         var header = httpContext.Request.Headers[key];
 
         var result = header.ToString();

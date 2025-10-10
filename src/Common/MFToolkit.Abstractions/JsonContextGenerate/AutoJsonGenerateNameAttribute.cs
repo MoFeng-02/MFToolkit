@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.AutoAttribute.JsonContextGenerate;
+﻿namespace MFToolkit.Abstractions.JsonContextGenerate;
 /// <summary>
 /// Json Context 上下文自动生成名称特性
 /// </summary>

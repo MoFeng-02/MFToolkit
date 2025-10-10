@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\src\Common\MFToolkit.AutoAttribute\MFToolkit.AutoAttribute.csproj" />
+		<ProjectReference Include="..\src\Common\MFToolkit.Abstractions\MFToolkit.Abstractions.csproj" />
 		<ProjectReference Include="..\src\Common\MFToolkit.AutoGenerator\MFToolkit.AutoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\src\Common\MFToolkit\MFToolkit.csproj" />
 		<ProjectReference Include="..\src\SqlEntityCore\MFToolkit.SqlSugarCore.Extensions\MFToolkit.SqlSugarCore.Extensions.csproj" />
@@ -21,8 +21,8 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>-->
 		<!-- 依赖注入包 -->
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>

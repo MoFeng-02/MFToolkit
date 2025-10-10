@@ -64,7 +64,7 @@ public class CommonResult<T> : IResult
             StatusCode = StatusCode,
             IsSuccess = SuccessCodes.Contains(StatusCode)
         };
-        var result = model.ValueToJson();
+        var result = await model.ValueToJsonAsync(options: Context?.Options);
         httpContext.Response.StatusCode = StatusCode;
         if (result == null)
         {

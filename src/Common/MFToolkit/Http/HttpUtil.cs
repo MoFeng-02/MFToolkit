@@ -90,7 +90,7 @@ public sealed class HttpUtil
     public static HttpContent SetBodyAsMultipart(Stream stream, string? fileName = null)
     {
         var httpContent = new MultipartFormDataContent();
-        string boundary = string.Format("--{0}", DateTime.Now.Ticks.ToString("x"));
+        string boundary = string.Format("--{0}", DateTimeOffset.UtcNow.Ticks.ToString("x"));
         httpContent.Headers.Add("ContentType", $"multipart/form-data, boundary={boundary}");
         if (fileName == null) httpContent.Add(new StreamContent(stream, (int)stream.Length), "file");
         else httpContent.Add(new StreamContent(stream, (int)stream.Length), "file", fileName);
@@ -105,7 +105,7 @@ public sealed class HttpUtil
     public static HttpContent SetBodyAsMultipart(List<FileInfo> files)
     {
         var httpContent = new MultipartFormDataContent();
-        string boundary = string.Format("--{0}", DateTime.Now.Ticks.ToString("x"));
+        string boundary = string.Format("--{0}", DateTimeOffset.UtcNow.Ticks.ToString("x"));
         httpContent.Headers.Add("ContentType", $"multipart/form-data, boundary={boundary}");
         int index = -1;
         foreach (FileInfo file in files)

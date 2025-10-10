@@ -37,11 +37,11 @@ public class AutoInjectGenerator : IIncrementalGenerator
         if (classes.IsDefaultOrEmpty) return;
 
         var registrations = new List<ServiceRegistration>();
-        var attributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectAttribute`1");
-        var nonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectAttribute");
-        var tryAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoTryInjectAttribute`1");
-        var tryNonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoTryInjectAttribute");
-        var nameSpaceAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.AutoAttribute.DependencyInjection.AutoInjectServiceNameAttribute");
+        var attributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoInjectAttribute`1");
+        var nonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoInjectAttribute");
+        var tryAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoTryInjectAttribute`1");
+        var tryNonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoTryInjectAttribute");
+        var nameSpaceAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoInjectServiceNameAttribute");
         string? serviceName = null;
         foreach (var classDecl in classes.Distinct())
         {

@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.AutoAttribute.DependencyInjection;
+﻿namespace MFToolkit.Abstractions.DependencyInjection;
 /// <summary>
 /// 自动注入Try服务特性
 /// </summary>

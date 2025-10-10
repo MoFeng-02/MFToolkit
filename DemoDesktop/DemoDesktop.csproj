@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\src\AvaloniaUI\MFToolkit.Avaloniaui\MFToolkit.Avaloniaui.csproj" />
-		<ProjectReference Include="..\src\Common\MFToolkit.AutoAttribute\MFToolkit.AutoAttribute.csproj" />
+		<ProjectReference Include="..\src\Common\MFToolkit.Abstractions\MFToolkit.Abstractions.csproj" />
 		<ProjectReference Include="..\src\Common\MFToolkit.AutoGenerator\MFToolkit.AutoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<PackageReference Include="Avalonia" Version="11.2.6" />
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.6" />

@@ -64,7 +64,7 @@ public class LocalFileLogger : ILogger
             return;
         }
         var config = _getCurrentConfig() ?? throw new ArgumentNullException("config", "未提供配置参数，请提供配置参数");
-        var dateTime = DateTime.Now;
+        var dateTime = DateTimeOffset.Now;
         var groupFileInfo = GroupFile(logLevel, config, dateTime, exception);
         var content = formatter.Invoke(state, exception);
         //await FileWriteAsync(config, savePath, FormatterContent(content, logLevel));
@@ -78,7 +78,7 @@ public class LocalFileLogger : ILogger
     }
     class WaitWriteInfo
     {
-        public DateTime CreateTime { get; set; } = DateTime.Now;
+        public DateTimeOffset CreateTime { get; set; } = DateTimeOffset.Now;
         public LogLevel LogLevel { get; set; }
         public string? Content { get; set; }
         public GroupFileInfo? GroupFileInfo { get; set; }
@@ -91,9 +91,9 @@ public class LocalFileLogger : ILogger
     /// <param name="dateTime"></param>
     /// <param name="exception"></param>
     /// <returns></returns>
-    private string FormatterContent(string content, LogLevel logLevel, DateTime? dateTime = null, Exception? exception = null)
+    private string FormatterContent(string content, LogLevel logLevel, DateTimeOffset? dateTime = null, Exception? exception = null)
     {
-        return $"[{dateTime ?? DateTime.Now}] {logLevel} {_name}  {content}\n";
+        return $"[{dateTime ?? DateTimeOffset.Now}] {logLevel} {_name}  {content}\n";
     }
     private async Task StartWriteTaskAsync()
     {
@@ -133,9 +133,9 @@ public class LocalFileLogger : ILogger
     /// <param name="dateTime">日志时间</param>
     /// <param name="exception">异常</param>
     /// <returns></returns>
-    private GroupFileInfo GroupFile(LogLevel logLevel, LoggerConfiguration config, DateTime? dateTime = null, Exception? exception = null)
+    private GroupFileInfo GroupFile(LogLevel logLevel, LoggerConfiguration config, DateTimeOffset? dateTime = null, Exception? exception = null)
     {
-        DateTime time = dateTime ?? DateTime.Now;
+        DateTimeOffset time = dateTime ?? DateTimeOffset.Now;
         var dateStr = config.SaveTimeType switch
         {
             SaveTimeType.Day => $"{time:yyyy_MM_dd}",

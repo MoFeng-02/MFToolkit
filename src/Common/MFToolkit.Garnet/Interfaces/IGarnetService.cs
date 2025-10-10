@@ -171,5 +171,7 @@ public interface IGarnetService : IDisposable
     /// 根据给定的半径查询附近的成员。
     /// </summary>
     Task<IEnumerable<(string Member, double Distance)>> GeoRadiusAsync(string key, string member, double radius, GeoUnit unit);
+
+    Task<RedisResult> ExecuteAsync(string command, params object[] args);
 }
 

@@ -9,7 +9,7 @@ public class BasicPayload
     /// <summary>
     /// 刷新Token过期时间(默认一天)
     /// </summary>
-    public double RefreshExpirationTime { get; set; } = (DateTime.Now.AddDays(1) - DateTime.UtcNow).TotalSeconds;
+    public double RefreshExpirationTime { get; set; } = (DateTimeOffset.UtcNow.AddDays(1) - DateTimeOffset.UtcNow).TotalSeconds;
     /// <summary>
     /// 签发方
     /// </summary>

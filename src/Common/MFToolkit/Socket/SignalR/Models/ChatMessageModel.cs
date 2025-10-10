@@ -17,5 +17,5 @@ public class ChatMessageModel
     /// <summary>
     /// 发送时间
     /// </summary>
-    public DateTime SendTime { get; set; } = DateTime.Now;
+    public DateTimeOffset SendTime { get; set; } = DateTimeOffset.UtcNow;
 }

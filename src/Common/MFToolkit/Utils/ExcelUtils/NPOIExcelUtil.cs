@@ -271,7 +271,7 @@ public sealed class NPOIExcelUtil
     {
         if (t != "xlsx" && t != "xls") throw new Exception("错误，不支持的导出格式：" + t);
         IWorkbook workbook = t == "xlsx" ? new XSSFWorkbook() : new HSSFWorkbook();
-        e.ExportName ??= DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        e.ExportName ??= DateTimeOffset.Now.ToString("yyyyMMddHHmmssfff");
         ISheet sheet = workbook.CreateSheet(e.ExportName);
         IRow headerRow = sheet.CreateRow(0);
 

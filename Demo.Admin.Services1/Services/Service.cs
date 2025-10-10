@@ -1,4 +1,4 @@
-﻿using MFToolkit.AutoAttribute.DependencyInjection;
+﻿using MFToolkit.Abstractions.DependencyInjection;
 
 namespace Demo.Admin.Services1.Services
 {
