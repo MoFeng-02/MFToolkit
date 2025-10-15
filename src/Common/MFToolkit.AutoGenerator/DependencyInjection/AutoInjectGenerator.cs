@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
+using MFToolkit.AutoGenerator.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -138,7 +139,7 @@ public class AutoInjectGenerator : IIncrementalGenerator
         else
         {
             // 处理非泛型属性中的Type参数
-            serviceType = GetServiceType(attribute);
+            serviceType = GetServiceType(attribute, classSymbol);
         }
 
         // 默认回退到实现类型
@@ -177,7 +178,7 @@ public class AutoInjectGenerator : IIncrementalGenerator
         if (string.IsNullOrEmpty(attributeClassName))
             return Lifetime.Transient;
 
-        if (attributeClassName.Contains("Singleton"))
+        if (attributeClassName!.Contains("Singleton"))
             return Lifetime.Singleton;
         if (attributeClassName.Contains("Scoped"))
             return Lifetime.Scoped;
@@ -199,27 +200,46 @@ public class AutoInjectGenerator : IIncrementalGenerator
     }
 
 
-    private static ITypeSymbol? GetServiceType(AttributeData attribute)
+    private static ITypeSymbol? GetServiceType(AttributeData attribute, INamedTypeSymbol classSymbol)
     {
+
         foreach (var arg in attribute.ConstructorArguments)
         {
-            if (arg.Value is ITypeSymbol typeSymbol)
+            // 1. 泛型特性（如 [Singleton<IService>]）优先从泛型参数获取服务类型
+            if (attribute.AttributeClass?.IsGenericType == true &&
+                attribute.AttributeClass.TypeArguments.Length > 0)
             {
-                return typeSymbol;
+                return attribute.AttributeClass.TypeArguments[0];
             }
+
+            // 2. 判断是否为单独的生命周期特性（关键修复点）
+            var attrName = attribute.AttributeClass?.Name;
+            var isLifetimeAttribute = attrName is "SingletonAttribute" or "ScopedAttribute" or "TransientAttribute"
+                or "TrySingletonAttribute" or "TryScopedAttribute" or "TryTransientAttribute";
+
+            // 3. 非泛型生命周期特性的服务类型默认为自身（避免将Key参数误判为服务类型）
+            if (isLifetimeAttribute && !attribute.AttributeClass!.IsGenericType)
+            {
+                // 生命周期特性的构造函数中出现的Type参数均视为Key，而非服务类型
+                return classSymbol;
+            }
+
+            //if (arg.Value is ITypeSymbol typeSymbol)
+            //{
+            //    return typeSymbol;
+            //}
         }
         return null;
     }
 
 
-    private static string? GetServiceKey(AttributeData attribute)
+    private static object? GetServiceKey(AttributeData attribute)
     {
+        // 遍历构造函数参数，返回原始值（而非仅字符串）
+        // 注意：需根据实际属性定义调整参数索引（此处假设第一个参数为key）
         foreach (var arg in attribute.ConstructorArguments)
         {
-            if (arg.Value is string key)
-            {
-                return key;
-            }
+            return arg.Value; // 返回原始object类型，而非仅string
         }
         return null;
     }
@@ -334,7 +354,7 @@ namespace {targetNamespace}
                     _ => "TryAddKeyedTransient"
                 } : keyMethod;
 
-            var line = !string.IsNullOrEmpty(reg.ServiceKey)
+            var line = !string.IsNullOrEmpty(reg.ServiceKey?.ToString())
                 ? reg.IsTry
                     ? BuildTryKeyedServiceLine(tryKeyMethod, serviceType, implementationType, reg.ServiceKey)
                     : BuildKeyedServiceLine(keyMethod, serviceType, implementationType, reg.ServiceKey)
@@ -347,19 +367,21 @@ namespace {targetNamespace}
         return sb.ToString();
     }
 
-    private static string BuildKeyedServiceLine(string method, string service, string impl, string? key)
+    private static string BuildKeyedServiceLine(string method, string service, string impl, object? key)
     {
+        var keyLiteral = CodeLiteralConverter.ConvertToLiteral(key); // 使用转换后的字面量
         var str = !string.IsNullOrWhiteSpace(impl) && service != impl
-            ? $"global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.{method}<{service}, {impl}>(services, \"{key}\")"
-            : $"global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.{method}<{service}>(services, \"{key}\")";
+            ? $"global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.{method}<{service}, {impl}>(services, {keyLiteral})"
+            : $"global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.{method}<{service}>(services, {keyLiteral})";
         return str + ";";
     }
 
-    private static string BuildTryKeyedServiceLine(string method, string service, string impl, string? key)
+    private static string BuildTryKeyedServiceLine(string method, string service, string impl, object? key)
     {
+        var keyLiteral = CodeLiteralConverter.ConvertToLiteral(key); // 使用转换后的字面量
         var str = !string.IsNullOrWhiteSpace(impl) && service != impl
-            ? $"global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.{method}<{service}, {impl}>(services, \"{key}\")"
-            : $"global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.{method}<{service}>(services, \"{key}\")";
+            ? $"global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.{method}<{service}, {impl}>(services, {keyLiteral})"
+            : $"global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.{method}<{service}>(services, {keyLiteral})";
         return str + ";";
     }
 
@@ -383,10 +405,11 @@ namespace {targetNamespace}
         return str + ";";
     }
 
+
     private class ServiceRegistration(
         ITypeSymbol serviceType,
         INamedTypeSymbol implementationType,
-        string? serviceKey,
+        object? serviceKey,
         Lifetime lifetime,
         string targetNamespace,
         bool isTry = false,
@@ -395,7 +418,7 @@ namespace {targetNamespace}
     {
         public ITypeSymbol ServiceType { get; set; } = serviceType;
         public INamedTypeSymbol ImplementationType { get; set; } = implementationType;
-        public string? ServiceKey { get; set; } = serviceKey;
+        public object? ServiceKey { get; set; } = serviceKey;
         public Lifetime Lifetime { get; set; } = lifetime;
         public string TargetNamespace { get; } = targetNamespace;
         public bool IsTry { get; set; } = isTry;

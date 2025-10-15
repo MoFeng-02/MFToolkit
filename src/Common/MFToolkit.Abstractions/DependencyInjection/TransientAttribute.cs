@@ -19,12 +19,12 @@ public class TransientAttribute : AutoInjectAttribute
     /// <summary>
     /// 带Key的瞬态服务自动注入
     /// </summary>
-    public TransientAttribute(string key) : base(key, Lifetime.Transient) { }
+    public TransientAttribute(object? key) : base(key, Lifetime.Transient) { }
 
     /// <summary>
     /// 带类型和Key的瞬态服务自动注入
     /// </summary>
-    public TransientAttribute(Type serviceType, string? key) : base(serviceType, key, Lifetime.Transient) { }
+    public TransientAttribute(Type serviceType, object? key) : base(serviceType, key, Lifetime.Transient) { }
 }
 
 /// <summary>
@@ -41,5 +41,5 @@ public class TransientAttribute<TService> : AutoInjectAttribute<TService>
     /// <summary>
     /// 带Key的泛型瞬态服务自动注入
     /// </summary>
-    public TransientAttribute(string key) : base(key, Lifetime.Transient) { }
+    public TransientAttribute(object? key) : base(key, Lifetime.Transient) { }
 }

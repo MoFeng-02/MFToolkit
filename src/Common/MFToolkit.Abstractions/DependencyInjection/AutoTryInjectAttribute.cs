@@ -25,7 +25,7 @@ public class AutoTryInjectAttribute : AutoInjectAttribute
     /// </summary>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoTryInjectAttribute(string key, Lifetime lifetime = Lifetime.Transient) : base(key, lifetime)
+    public AutoTryInjectAttribute(object? key, Lifetime lifetime = Lifetime.Transient) : base(key, lifetime)
     {
     }
     /// <summary>
@@ -34,7 +34,7 @@ public class AutoTryInjectAttribute : AutoInjectAttribute
     /// <param name="serviceType">服务类型</param>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoTryInjectAttribute(Type serviceType, string? key, Lifetime lifetime = Lifetime.Transient) : base(serviceType, key, lifetime)
+    public AutoTryInjectAttribute(Type serviceType, object? key, Lifetime lifetime = Lifetime.Transient) : base(serviceType, key, lifetime)
     {
     }
 }
@@ -58,7 +58,7 @@ public class AutoTryInjectAttribute<TService> : AutoInjectAttribute<TService>
     /// </summary>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoTryInjectAttribute(string key, Lifetime lifetime = Lifetime.Transient) : base(key, lifetime)
+    public AutoTryInjectAttribute(object? key, Lifetime lifetime = Lifetime.Transient) : base(key, lifetime)
     {
     }
 }

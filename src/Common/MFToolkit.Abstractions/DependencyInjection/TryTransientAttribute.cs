@@ -19,12 +19,12 @@ public class TryTransientAttribute : AutoTryInjectAttribute
     /// <summary>
     /// 带Key的瞬态服务自动Try注入
     /// </summary>
-    public TryTransientAttribute(string key) : base(key, Lifetime.Transient) { }
+    public TryTransientAttribute(object? key) : base(key, Lifetime.Transient) { }
 
     /// <summary>
     /// 带类型和Key的瞬态服务自动Try注入
     /// </summary>
-    public TryTransientAttribute(Type serviceType, string? key) : base(serviceType, key, Lifetime.Transient) { }
+    public TryTransientAttribute(Type serviceType, object? key) : base(serviceType, key, Lifetime.Transient) { }
 }
 
 /// <summary>
@@ -41,5 +41,5 @@ public class TryTransientAttribute<TService> : AutoTryInjectAttribute<TService>
     /// <summary>
     /// 带Key的泛型瞬态服务自动Try注入
     /// </summary>
-    public TryTransientAttribute(string key) : base(key, Lifetime.Transient) { }
+    public TryTransientAttribute(object? key) : base(key, Lifetime.Transient) { }
 }

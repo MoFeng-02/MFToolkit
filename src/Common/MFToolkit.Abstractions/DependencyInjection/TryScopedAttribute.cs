@@ -19,12 +19,12 @@ public class TryScopedAttribute : AutoTryInjectAttribute
     /// <summary>
     /// 带Key的作用域服务自动Try注入
     /// </summary>
-    public TryScopedAttribute(string key) : base(key, Lifetime.Scoped) { }
+    public TryScopedAttribute(object? key) : base(key, Lifetime.Scoped) { }
 
     /// <summary>
     /// 带类型和Key的作用域服务自动Try注入
     /// </summary>
-    public TryScopedAttribute(Type serviceType, string? key) : base(serviceType, key, Lifetime.Scoped) { }
+    public TryScopedAttribute(Type serviceType, object? key) : base(serviceType, key, Lifetime.Scoped) { }
 }
 
 /// <summary>
@@ -41,5 +41,5 @@ public class TryScopedAttribute<TService> : AutoTryInjectAttribute<TService>
     /// <summary>
     /// 带Key的泛型作用域服务自动Try注入
     /// </summary>
-    public TryScopedAttribute(string key) : base(key, Lifetime.Scoped) { }
+    public TryScopedAttribute(object? key) : base(key, Lifetime.Scoped) { }
 }

@@ -19,12 +19,12 @@ public class TrySingletonAttribute : AutoTryInjectAttribute
     /// <summary>
     /// 带Key的单例服务自动Try注入
     /// </summary>
-    public TrySingletonAttribute(string key) : base(key, Lifetime.Singleton) { }
+    public TrySingletonAttribute(object? key) : base(key, Lifetime.Singleton) { }
 
     /// <summary>
     /// 带类型和Key的单例服务自动Try注入
     /// </summary>
-    public TrySingletonAttribute(Type serviceType, string? key) : base(serviceType, key, Lifetime.Singleton) { }
+    public TrySingletonAttribute(Type serviceType, object? key) : base(serviceType, key, Lifetime.Singleton) { }
 }
 
 /// <summary>
@@ -41,5 +41,5 @@ public class TrySingletonAttribute<TService> : AutoTryInjectAttribute<TService>
     /// <summary>
     /// 带Key的泛型单例服务自动Try注入
     /// </summary>
-    public TrySingletonAttribute(string key) : base(key, Lifetime.Singleton) { }
+    public TrySingletonAttribute(object? key) : base(key, Lifetime.Singleton) { }
 }

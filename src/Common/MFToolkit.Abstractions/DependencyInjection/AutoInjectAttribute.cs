@@ -14,7 +14,7 @@ public class AutoInjectAttribute : Attribute
     /// <summary>
     /// 服务Key
     /// </summary>
-    public string? Key { get; }
+    public object? Key { get; }
     /// <summary>
     /// 服务生命周期
     /// </summary>
@@ -46,7 +46,7 @@ public class AutoInjectAttribute : Attribute
     /// </summary>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoInjectAttribute(string key, Lifetime lifetime = Lifetime.Transient)
+    public AutoInjectAttribute(object? key, Lifetime lifetime = Lifetime.Transient)
     {
         ServiceType = null;
         Key = key;
@@ -58,7 +58,7 @@ public class AutoInjectAttribute : Attribute
     /// <param name="serviceType">服务类型</param>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoInjectAttribute(Type serviceType, string? key, Lifetime lifetime = Lifetime.Transient)
+    public AutoInjectAttribute(Type serviceType, object? key, Lifetime lifetime = Lifetime.Transient)
     {
         ServiceType = serviceType;
         Key = key;
@@ -84,7 +84,7 @@ public class AutoInjectAttribute<TService> : AutoInjectAttribute
     /// </summary>
     /// <param name="key">Key</param>
     /// <param name="lifetime">生命周期</param>
-    public AutoInjectAttribute(string key, Lifetime lifetime = Lifetime.Transient) : base(typeof(TService), key, lifetime)
+    public AutoInjectAttribute(object? key, Lifetime lifetime = Lifetime.Transient) : base(typeof(TService), key, lifetime)
     {
     }
 }

@@ -19,7 +19,7 @@ public class ScopedAttribute : AutoInjectAttribute
     /// <summary>
     /// 带Key的作用域服务自动注入
     /// </summary>
-    public ScopedAttribute(string key) : base(key, Lifetime.Scoped) { }
+    public ScopedAttribute(object? key) : base(key, Lifetime.Scoped) { }
 
     /// <summary>
     /// 带类型和Key的作用域服务自动注入
@@ -41,5 +41,5 @@ public class ScopedAttribute<TService> : AutoInjectAttribute<TService>
     /// <summary>
     /// 带Key的泛型作用域服务自动注入
     /// </summary>
-    public ScopedAttribute(string key) : base(key, Lifetime.Scoped) { }
+    public ScopedAttribute(object? key) : base(key, Lifetime.Scoped) { }
 }

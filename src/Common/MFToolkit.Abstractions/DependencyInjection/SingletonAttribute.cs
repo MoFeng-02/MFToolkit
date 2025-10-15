@@ -19,12 +19,12 @@ public class SingletonAttribute : AutoInjectAttribute
     /// <summary>
     /// 带Key的单例服务自动注入
     /// </summary>
-    public SingletonAttribute(string key) : base(key, Lifetime.Singleton) { }
+    public SingletonAttribute(object? key) : base(key, Lifetime.Singleton) { }
 
     /// <summary>
     /// 带类型和Key的单例服务自动注入
     /// </summary>
-    public SingletonAttribute(Type serviceType, string? key) : base(serviceType, key, Lifetime.Singleton) { }
+    public SingletonAttribute(Type serviceType, object? key) : base(serviceType, key, Lifetime.Singleton) { }
 }
 
 /// <summary>
@@ -41,5 +41,5 @@ public class SingletonAttribute<TService> : AutoInjectAttribute<TService>
     /// <summary>
     /// 带Key的泛型单例服务自动注入
     /// </summary>
-    public SingletonAttribute(string key) : base(key, Lifetime.Singleton) { }
+    public SingletonAttribute(object? key) : base(key, Lifetime.Singleton) { }
 }
