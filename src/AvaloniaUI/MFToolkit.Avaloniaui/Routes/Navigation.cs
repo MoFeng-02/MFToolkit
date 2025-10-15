@@ -89,11 +89,11 @@ public partial class Navigation
     /// </summary>
     private static void HandleViewModelParameters(Control control, Dictionary<string, object?>? parameters)
     {
-        if (control.DataContext is ViewModelBase vm)
+        if (control.DataContext is IQueryAttributable queryAttributable)
         {
             // 增强类型转换
             var convertedParams = ConvertParameters(parameters);
-            vm.ApplyQueryAttributes(convertedParams);
+            queryAttributable.ApplyQueryAttributes(convertedParams);
         }
     }
 

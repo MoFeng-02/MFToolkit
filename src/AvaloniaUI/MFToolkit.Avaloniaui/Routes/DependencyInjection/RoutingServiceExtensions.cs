@@ -116,15 +116,7 @@ internal class RouteBuilder : IRouteBuilder
     public IRouteBuilder AddRoute(Type pageType, string? route = null, bool isTopNavigation = false,
         bool isKeepAlive = false, int priority = 0, RoutingMeta? meta = null)
     {
-        _routes.Add(new RoutingModel
-        {
-            PageType = pageType,
-            Route = route ?? pageType.Name.ToLower(),
-            IsTopNavigation = isTopNavigation,
-            IsKeepAlive = isKeepAlive,
-            Priority = priority,
-            Meta = meta
-        });
+        _routes.Add(new RoutingModel(pageType, route, isKeepAlive, isTopNavigation, priority, meta));
         return this;
     }
 

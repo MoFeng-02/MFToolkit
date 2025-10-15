@@ -37,24 +37,58 @@ public class AutoInjectGenerator : IIncrementalGenerator
         if (classes.IsDefaultOrEmpty) return;
 
         var registrations = new List<ServiceRegistration>();
+        // 原有特性Symbol
         var attributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoInjectAttribute`1");
         var nonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoInjectAttribute");
         var tryAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoTryInjectAttribute`1");
         var tryNonGenericAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoTryInjectAttribute");
+
+        // 新增：单独生命周期特性Symbol（泛型+非泛型）
+        // 普通注入系列
+        var singletonAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.SingletonAttribute`1");
+        var nonGenericSingletonAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.SingletonAttribute");
+        var scopedAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.ScopedAttribute`1");
+        var nonGenericScopedAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.ScopedAttribute");
+        var transientAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TransientAttribute`1");
+        var nonGenericTransientAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TransientAttribute");
+
+        // Try注入系列
+        var trySingletonAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TrySingletonAttribute`1");
+        var nonGenericTrySingletonAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TrySingletonAttribute");
+        var tryScopedAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TryScopedAttribute`1");
+        var nonGenericTryScopedAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TryScopedAttribute");
+        var tryTransientAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TryTransientAttribute`1");
+        var nonGenericTryTransientAttrSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.TryTransientAttribute");
+
         var nameSpaceAttributeSymbol = compilation.GetTypeByMetadataName("MFToolkit.Abstractions.DependencyInjection.AutoInjectServiceNameAttribute");
         string? serviceName = null;
+
         foreach (var classDecl in classes.Distinct())
         {
             var model = compilation.GetSemanticModel(classDecl.SyntaxTree);
 
             if (model.GetDeclaredSymbol(classDecl) is not INamedTypeSymbol classSymbol || classSymbol.IsAbstract || classSymbol.IsStatic) continue;
 
+            // 扩展属性筛选，包含新的生命周期特性
             var attributes = classSymbol.GetAttributes()
                 .Where(a => a.AttributeClass != null &&
                     (a.AttributeClass.OriginalDefinition?.Equals(attributeSymbol, SymbolEqualityComparer.Default) == true ||
                      a.AttributeClass.Equals(nonGenericAttributeSymbol, SymbolEqualityComparer.Default) ||
                      a.AttributeClass.OriginalDefinition?.Equals(tryAttributeSymbol, SymbolEqualityComparer.Default) == true ||
-                     a.AttributeClass.Equals(tryNonGenericAttributeSymbol, SymbolEqualityComparer.Default)))
+                     a.AttributeClass.Equals(tryNonGenericAttributeSymbol, SymbolEqualityComparer.Default) ||
+                     // 新增：单独生命周期特性判断
+                     a.AttributeClass.OriginalDefinition?.Equals(singletonAttrSymbol, SymbolEqualityComparer.Default) == true ||
+                     a.AttributeClass.Equals(nonGenericSingletonAttrSymbol, SymbolEqualityComparer.Default) ||
+                     a.AttributeClass.OriginalDefinition?.Equals(scopedAttrSymbol, SymbolEqualityComparer.Default) == true ||
+                     a.AttributeClass.Equals(nonGenericScopedAttrSymbol, SymbolEqualityComparer.Default) ||
+                     a.AttributeClass.OriginalDefinition?.Equals(transientAttrSymbol, SymbolEqualityComparer.Default) == true ||
+                     a.AttributeClass.Equals(nonGenericTransientAttrSymbol, SymbolEqualityComparer.Default) ||
+                     a.AttributeClass.OriginalDefinition?.Equals(trySingletonAttrSymbol, SymbolEqualityComparer.Default) == true ||
+                     a.AttributeClass.Equals(nonGenericTrySingletonAttrSymbol, SymbolEqualityComparer.Default) ||
+                     a.AttributeClass.OriginalDefinition?.Equals(tryScopedAttrSymbol, SymbolEqualityComparer.Default) == true ||
+                     a.AttributeClass.Equals(nonGenericTryScopedAttrSymbol, SymbolEqualityComparer.Default) ||
+                     a.AttributeClass.OriginalDefinition?.Equals(tryTransientAttrSymbol, SymbolEqualityComparer.Default) == true ||
+                     a.AttributeClass.Equals(nonGenericTryTransientAttrSymbol, SymbolEqualityComparer.Default)))
                 .ToList();
 
             var namespaceAttributes = classSymbol.GetAttributes()
@@ -66,7 +100,6 @@ public class AutoInjectGenerator : IIncrementalGenerator
             {
                 if (classSymbol.ContainingNamespace.ToDisplayString().Contains(AssemblyName))
                 {
-                    // 获取命名空间属性和服务注入名称
                     serviceName = namespaceAttributes.ConstructorArguments[0].Value?.ToString();
                 }
             }
@@ -89,28 +122,34 @@ public class AutoInjectGenerator : IIncrementalGenerator
     {
         // 优先从泛型属性中获取服务类型
         ITypeSymbol? serviceType = null;
+        var attributeClassName = attribute.AttributeClass?.Name;
 
-        // 是否为 Try 注入属性
-        var isTryInject = attribute.AttributeClass?.Name == "AutoTryInjectAttribute";
-        string? debugInfo = null;
-        // 处理泛型 AutoInjectAttribute<T> 和 AutoTryInjectAttribute<T>
-        if (attribute.AttributeClass?.IsGenericType == true &&
-            (attribute.AttributeClass.Name == "AutoInjectAttribute" || attribute.AttributeClass.Name == "AutoTryInjectAttribute"))
+        // 新增：判断是否为单独生命周期特性
+        bool isLifetimeAttribute = IsLifetimeAttribute(attributeClassName);
+        // 新增：从特性名称判断是否为Try注入
+        bool isTryInject = attributeClassName?.StartsWith("Try") == true ||
+                          attributeClassName == "AutoTryInjectAttribute";
+
+        // 处理泛型属性（包括新的生命周期泛型特性）
+        if (attribute.AttributeClass?.IsGenericType == true)
         {
             serviceType = attribute.AttributeClass.TypeArguments[0];
         }
         else
         {
-            // 处理非泛型 AutoInjectAttribute 或旧逻辑
+            // 处理非泛型属性中的Type参数
             serviceType = GetServiceType(attribute);
-            //debugInfo = attribute.ToString(); // 获取调试信息
         }
 
         // 默认回退到实现类型
         serviceType ??= classSymbol;
 
         var serviceKey = GetServiceKey(attribute);
-        var lifetime = GetLifetime(attribute);
+        // 新增：从单独生命周期特性获取生命周期
+        var lifetime = isLifetimeAttribute
+            ? GetLifetimeFromAttributeName(attributeClassName)
+            : GetLifetime(attribute);
+
         string targetNamespace = nameSpace != null ? nameSpace + ".DependencyInjection.AutoGenerated" : GetTargetNamespace(classSymbol.ContainingNamespace.ToDisplayString());
 
         return new ServiceRegistration(
@@ -119,17 +158,40 @@ public class AutoInjectGenerator : IIncrementalGenerator
             serviceKey,
             lifetime,
             targetNamespace,
-            isTryInject,
-            debugInfo
+            isTryInject
         );
+    }
+
+    // 新增：判断是否为单独生命周期特性
+    private bool IsLifetimeAttribute(string? attributeClassName)
+    {
+        if (string.IsNullOrEmpty(attributeClassName)) return false;
+
+        return attributeClassName is "SingletonAttribute" or "ScopedAttribute" or "TransientAttribute" or
+               "TrySingletonAttribute" or "TryScopedAttribute" or "TryTransientAttribute";
+    }
+
+    // 新增：从特性名称获取生命周期
+    private Lifetime GetLifetimeFromAttributeName(string? attributeClassName)
+    {
+        if (string.IsNullOrEmpty(attributeClassName))
+            return Lifetime.Transient;
+
+        if (attributeClassName.Contains("Singleton"))
+            return Lifetime.Singleton;
+        if (attributeClassName.Contains("Scoped"))
+            return Lifetime.Scoped;
+        if (attributeClassName.Contains("Transient"))
+            return Lifetime.Transient;
+
+        return Lifetime.Transient;
     }
 
     private static string GetTargetNamespace(string originalNamespace)
     {
-        // 分割命名空间层级（如 ["Demo", "DemoModel"]）
         var parts = originalNamespace.Split('.');
-        if (parts.Length == 0) return "MFToolkit.AutoGenerated"; // 根命名空间处理
-        // 提取父级命名空间（去掉最后一级）并拼接 "AutoGenerated"
+        if (parts.Length == 0) return "MFToolkit.AutoGenerated";
+
         var parentNamespace = parts[0];
         return string.IsNullOrEmpty(parentNamespace)
             ? "MFToolkit.AutoGenerated"
@@ -139,7 +201,6 @@ public class AutoInjectGenerator : IIncrementalGenerator
 
     private static ITypeSymbol? GetServiceType(AttributeData attribute)
     {
-        // 处理非泛型属性中的 Type 参数（例如 [AutoInject(typeof(IService))]）
         foreach (var arg in attribute.ConstructorArguments)
         {
             if (arg.Value is ITypeSymbol typeSymbol)
@@ -151,19 +212,8 @@ public class AutoInjectGenerator : IIncrementalGenerator
     }
 
 
-    //private static string? GetServiceKey(AttributeData attribute)
-    //{
-    //    if (attribute.ConstructorArguments.Length > 1 &&
-    //        attribute.ConstructorArguments[1].Value is string key)
-    //    {
-    //        return key;
-    //    }
-    //    return null;
-    //}
-
     private static string? GetServiceKey(AttributeData attribute)
     {
-        // 检查是否有 string 参数
         foreach (var arg in attribute.ConstructorArguments)
         {
             if (arg.Value is string key)
@@ -196,17 +246,15 @@ public class AutoInjectGenerator : IIncrementalGenerator
     string? serviceName
 )
     {
-        // 按目标命名空间分组
         var groupedRegistrations = registrations
             .GroupBy(r => r.TargetNamespace)
             .ToList();
 
         foreach (var group in groupedRegistrations)
         {
-            string targetNamespace = group.Key; // 如 "Demo.AutoGenerated"
+            string targetNamespace = group.Key;
             var registrationsInGroup = group.ToList();
 
-            // 生成代码模板
             var source = $@"
 // <auto-generated/>
 
@@ -232,7 +280,6 @@ namespace {targetNamespace}
     }}
 }}";
 
-            // 生成文件名（如 "Demo.AutoGenerated.AutoInject.g.cs"）
             string fileName = $"{targetNamespace}.AutoInject.g.cs";
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
         }
@@ -246,7 +293,6 @@ namespace {targetNamespace}
 
         foreach (var reg in registrations.OrderBy(r => r.Lifetime).ThenBy(r => r.IsTry))
         {
-            // 添加生命周期分组注释
             if (currentLifetime != reg.Lifetime)
             {
                 if (sb.Length > 0) sb.AppendLine();
@@ -289,14 +335,13 @@ namespace {targetNamespace}
                 } : keyMethod;
 
             var line = !string.IsNullOrEmpty(reg.ServiceKey)
-                ?
-              reg.IsTry ? BuildTryKeyedServiceLine(tryKeyMethod, serviceType, implementationType, reg.ServiceKey) : BuildKeyedServiceLine(keyMethod, serviceType, implementationType, reg.ServiceKey)
-                : reg.IsTry ? BuildNormalTryServiceLine(tryMethod, serviceType, implementationType, isGeneric) : BuildNormalServiceLine(method, serviceType, implementationType, isGeneric);
-            if(reg.DebugInfo != null)
-            {
-                // 如果需要调试信息，可以取消注释
-                sb.AppendLine("//" + reg.DebugInfo);
-            }
+                ? reg.IsTry
+                    ? BuildTryKeyedServiceLine(tryKeyMethod, serviceType, implementationType, reg.ServiceKey)
+                    : BuildKeyedServiceLine(keyMethod, serviceType, implementationType, reg.ServiceKey)
+                : reg.IsTry
+                    ? BuildNormalTryServiceLine(tryMethod, serviceType, implementationType, isGeneric)
+                    : BuildNormalServiceLine(method, serviceType, implementationType, isGeneric);
+
             sb.AppendLine(line);
         }
         return sb.ToString();
@@ -309,6 +354,7 @@ namespace {targetNamespace}
             : $"global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.{method}<{service}>(services, \"{key}\")";
         return str + ";";
     }
+
     private static string BuildTryKeyedServiceLine(string method, string service, string impl, string? key)
     {
         var str = !string.IsNullOrWhiteSpace(impl) && service != impl
@@ -326,6 +372,7 @@ namespace {targetNamespace}
                 : $"global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.{method}<{service}>(services)";
         return str + ";";
     }
+
     private static string BuildNormalTryServiceLine(string method, string service, string impl, bool isGeneric)
     {
         var str = isGeneric
@@ -350,8 +397,8 @@ namespace {targetNamespace}
         public INamedTypeSymbol ImplementationType { get; set; } = implementationType;
         public string? ServiceKey { get; set; } = serviceKey;
         public Lifetime Lifetime { get; set; } = lifetime;
-        public string TargetNamespace { get; } = targetNamespace; // 新增属性
-        public bool IsTry { get; set; } = isTry; // 是否为 Try 注入
-        public string? DebugInfo { get; set; } = debugInfo; // 调试信息
+        public string TargetNamespace { get; } = targetNamespace;
+        public bool IsTry { get; set; } = isTry;
+        public string? DebugInfo { get; set; } = debugInfo;
     }
 }

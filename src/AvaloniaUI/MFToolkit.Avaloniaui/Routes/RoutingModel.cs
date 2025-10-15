@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MFToolkit.Avaloniaui.Routes;
 
 /// <summary>
-/// 路由配置模型（线程安全设计）
+/// 路由配置模型
 /// </summary>
 public class RoutingModel
 {
@@ -11,12 +12,12 @@ public class RoutingModel
     /// <summary>
     /// 页面
     /// </summary>
-    public required Type PageType { get; init; }
+    public Type PageType { get; init; }
 
     /// <summary>
     /// 页面路由
     /// </summary>
-    public required string Route { get; init; } = Guid.NewGuid().ToString();
+    public string Route { get; init; } = Guid.NewGuid().ToString();
 
     /// <summary>
     /// 预解析的路由段集合（使用不可变数组提升性能）
@@ -43,7 +44,41 @@ public class RoutingModel
     /// </summary>
     public RoutingMeta? Meta { get; set; }
 
-
+    /// <summary>
+    /// 路由模型构造函数
+    /// </summary>
+    /// <param name="pageType">页面</param>
+    /// <param name="route">路由路径</param>
+    /// <param name="isKeepAlive">是否保活</param>
+    /// <param name="isTopNavigation">是否顶级路由</param>
+    /// <param name="priority">优先级</param>
+    /// <param name="meta">其他项</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public RoutingModel(Type pageType, string? route = null, bool isKeepAlive = false, bool isTopNavigation = false, int priority = 0, RoutingMeta? meta = null)
+    {
+        PageType = pageType ?? throw new ArgumentNullException(nameof(pageType));
+        Route = route ?? Guid.NewGuid().ToString();
+        IsKeepAlive = isKeepAlive;
+        IsTopNavigation = isTopNavigation;
+        Priority = priority;
+        Meta = meta;
+    }
+}
+/// <summary>
+/// 泛型路由配置模型
+/// </summary>
+/// <remarks>
+/// 路由模型构造函数
+/// </remarks>
+/// <typeparam name="TPage"></typeparam>
+/// <param name="route">路由路径</param>
+/// <param name="isKeepAlive">是否保活</param>
+/// <param name="isTopNavigation">是否顶级路由</param>
+/// <param name="priority">优先级</param>
+/// <param name="meta">其他项</param>
+/// <exception cref="ArgumentNullException"></exception>
+public sealed class RoutingModel<TPage>(string route, bool isKeepAlive = false, bool isTopNavigation = false, int priority = 0, RoutingMeta? meta = null) : RoutingModel(typeof(TPage), route, isKeepAlive, isTopNavigation, priority, meta)
+{
 }
 
 /// <summary>
@@ -70,12 +105,12 @@ public class RouteCurrentInfo
     /// 其他项
     /// </summary>
     public RoutingMeta? Meta { get; set; }
-    
+
     /// <summary>
     /// 标记当前页面是否在导航堆栈中
     /// </summary>
     public bool IsInNavigationStack { get; set; }
-    
+
     /// <summary>
     /// 最后一次访问时间（UTC）
     /// </summary>
@@ -111,6 +146,9 @@ public class RoutePathParameter
     public string ErrorMessage { get; set; } = null!;
 }
 
+/// <summary>
+/// 路由其它想
+/// </summary>
 public class RoutingMeta
 {
     /// <summary>

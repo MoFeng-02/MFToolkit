@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Authors>莫枫</Authors>
-		<Version>0.2.3-beta</Version>
+		<Version>0.3.0-beta</Version>
 		<Description>通用.Net9及以上AvaloniaUI样式控件库</Description>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
@@ -19,11 +19,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="11.2.6" />
-	  <PackageReference Include="Avalonia.Skia" Version="11.2.6" />
+	  <PackageReference Include="Avalonia" Version="11.3.7" />
+	  <PackageReference Include="Avalonia.Skia" Version="11.3.7" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
-	  <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.4" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>

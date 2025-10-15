@@ -91,13 +91,13 @@ public sealed class Routing
     /// 注册路由
     /// <para>说明：若IsTopNavigation为true，则IsKeepAlive强制为True</para>
     /// </summary>
-    /// <param name="type">页面</param>
+    /// <param name="pageType">页面</param>
     /// <param name="route">路由</param>
     /// <param name="isTopNavigation">是否顶级菜单页</param>
     /// <param name="isKeepAlive">是否保活页</param>
     /// <param name="priority">页面优先级（排序）</param>
     /// <param name="meta">Meta</param>
-    public static void RegisterRoute(Type type, string? route = null, bool isTopNavigation =
+    public static void RegisterRoute(Type pageType, string? route = null, bool isTopNavigation =
         false, bool isKeepAlive = false, int priority = 0, RoutingMeta? meta = null)
     {
         // 如果路由为空，则设置随机路由
@@ -105,15 +105,7 @@ public sealed class Routing
         if (RoutingModels.Any(q => q.Route == route))
             throw new Exception($"Route already exists: {route}");
         if (isTopNavigation) isKeepAlive = true;
-        RoutingModels.Add(new RoutingModel
-        {
-            Route = route,
-            PageType = type,
-            IsTopNavigation = isTopNavigation,
-            IsKeepAlive = isKeepAlive,
-            Priority = priority,
-            Meta = meta
-        });
+        RoutingModels.Add(new RoutingModel(pageType, route, isKeepAlive, isTopNavigation, priority, meta));
 
         // 按优先级排序
         RoutingModels.Sort((a, b) => b.Priority.CompareTo(a.Priority));
@@ -340,7 +332,7 @@ public sealed class Routing
                 mergedParameters[kvp.Key] = kvp.Value;
             }
         }
-        
+
         // 创建实例（兼容原有逻辑）
         var instance = CreatePageInstance(routingModel, mergedParameters, ServiceProvider);
         var routeInfo = BuildRouteInfo(routingModel, path, mergedParameters, instance);
@@ -406,7 +398,7 @@ public sealed class Routing
                 mergedParameters[kvp.Key] = kvp.Value;
             }
         }
-        
+
         // 创建实例（兼容原有逻辑）
         var instance = CreatePageInstance(routingModel, mergedParameters, ServiceProvider);
         var routeInfo = BuildRouteInfo(routingModel, path, mergedParameters, instance);
@@ -571,6 +563,7 @@ public sealed class Routing
     /// 查找最佳匹配的路由配置
     /// </summary>
     /// <param name="path">请求路径</param>
+    /// <param name="pathParameters">路径参数</param>
     /// <returns>匹配的路由配置，未找到返回null</returns>
     private static RoutingModel? FindBestMatchRoute(string path, out Dictionary<string, object?> pathParameters)
     {
@@ -598,14 +591,14 @@ public sealed class Routing
     /// <param name="pathSegments">请求路径分段</param>
     /// <returns>是否匹配 + 路径参数字典</returns>
     private static (bool IsMatch, Dictionary<string, object?> Parameters) IsRouteMatch(
-        string routeTemplate, 
+        string routeTemplate,
         string[] pathSegments)
     {
         var parameters = new Dictionary<string, object?>();
         var templateSegments = routeTemplate.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
         // 分段数量必须一致
-        if (templateSegments.Length != pathSegments.Length) 
+        if (templateSegments.Length != pathSegments.Length)
             return (false, parameters);
 
         // 逐段匹配
@@ -790,7 +783,7 @@ public sealed class Routing
         var isTopNavigation = findInfo.IsTopNavigation;
         if (isTopNavigation)
         {
-            var res = !TopNavigations.TryGetValue(findInfo.Route, out var result) ? null : result;
+            var res = !TopNavigations.TryGetValue(findInfo.Route!, out var result) ? null : result;
             return Task.FromResult(res);
         }
 
