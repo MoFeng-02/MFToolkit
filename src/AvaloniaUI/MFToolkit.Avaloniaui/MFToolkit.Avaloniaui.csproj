@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Authors>莫枫</Authors>
-		<Version>0.3.0-beta</Version>
+		<Version>0.3.1-beta</Version>
 		<Description>通用.Net9及以上AvaloniaUI样式控件库</Description>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
@@ -14,6 +14,11 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Routes\Routes.zip" />
+	  <None Remove="RoutingsOld.zip" />
+	</ItemGroup>
 	<ItemGroup>
 		<None Include="Docs\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
