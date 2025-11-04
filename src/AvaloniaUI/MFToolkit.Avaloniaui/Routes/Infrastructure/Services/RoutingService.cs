@@ -16,7 +16,7 @@ public class RoutingService : IRoutingService
 {
     #region 静态成员（支持静态调用）
 
-    private static readonly RoutingService? DefaultInstance;
+    private static RoutingService? DefaultInstance;
 
     private static readonly List<RoutingModel> _routingModels = [];
 
@@ -115,6 +115,7 @@ public class RoutingService : IRoutingService
         _serviceProvider = serviceProvider;
         _routeParser = routeParser ?? throw new ArgumentNullException(nameof(routeParser));
         _keepAliveCache = keepAliveCache ?? new KeepAliveCache();
+        DefaultInstance = this;
         // 从DI容器中获取所有路由守卫
         if (_serviceProvider == null) return;
         var guards = _serviceProvider.GetServices<IRouteGuard>();
@@ -276,7 +277,7 @@ public class RoutingService : IRoutingService
         var current = NavigationStack.Pop();
 
         // 如果当前页面不是保活页面，从缓存中移除
-        if (current.RoutingModel?.IsKeepAlive == false)
+        if (current.RoutingModel is { IsKeepAlive: false, IsTopNavigation: false })
         {
             _keepAliveCache.RemoveCache(current.RoutePath ?? string.Empty);
         }
@@ -487,14 +488,6 @@ public class RoutingService : IRoutingService
                  && string.Equals(r.RoutingModel.Route, model.Route, StringComparison.OrdinalIgnoreCase)
         );
 
-        if (existingRoute != null)
-        {
-            // 已有相同页面模型实例，更新参数后返回（修复：添加参数更新逻辑）
-            ApplyParametersToTarget(existingRoute.ViewModel, existingRoute.Page, parameters);
-            existingRoute.Parameters = new Dictionary<string, object?>(parameters); // 深拷贝新参数
-            return existingRoute;
-        }
-
         // 5. 无重复实例，添加到目标栈
         if (model.IsTopNavigation)
         {
@@ -508,6 +501,14 @@ public class RoutingService : IRoutingService
             {
                 _thisTopNavigationId = model.RoutingId;
             }
+        }
+
+        if (existingRoute != null)
+        {
+            // 已有相同页面模型实例，更新参数后返回（修复：添加参数更新逻辑）
+            ApplyParametersToTarget(existingRoute.ViewModel, existingRoute.Page, parameters);
+            existingRoute.Parameters = new Dictionary<string, object?>(parameters); // 深拷贝新参数
+            return existingRoute;
         }
 
         targetStack.Push(routeInfo);
@@ -586,5 +587,11 @@ public class RoutingService : IRoutingService
             Debug.WriteLine($"创建视图模型实例失败: {ex.Message}");
             return null;
         }
+    }
+
+    /// <inheritdoc/>
+    public bool CanGoBack()
+    {
+        return NavigationStack.Count > 1;
     }
 }

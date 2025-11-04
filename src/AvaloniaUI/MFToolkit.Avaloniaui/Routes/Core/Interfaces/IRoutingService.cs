@@ -53,7 +53,13 @@ public interface IRoutingService
     /// </summary>
     /// <returns>当前路由信息</returns>
     RouteCurrentInfo? GetCurrentRouteInfo();
-    
+
+    /// <summary>
+    /// 是否可以返回上一页
+    /// </summary>
+    /// <returns></returns>
+    bool CanGoBack();
+
     /// <summary>
     /// 清除路由历史
     /// </summary>

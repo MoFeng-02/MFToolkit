@@ -67,4 +67,10 @@ public interface INavigationService
     /// </summary>
     /// <returns>视图模型实例</returns>
     object? GetCurrentViewModel();
+
+    /// <summary>
+    /// 是否可以返回上一页
+    /// </summary>
+    /// <returns></returns>
+    bool CanGoBack();
 }

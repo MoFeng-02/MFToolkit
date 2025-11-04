@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Authors>莫枫</Authors>
-		<Version>0.3.1-beta</Version>
+		<Version>0.3.5-beta</Version>
 		<Description>通用.Net9及以上AvaloniaUI样式控件库</Description>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>

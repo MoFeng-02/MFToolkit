@@ -1,10 +1,5 @@
 <Solution>
   <Folder Name="/Demo/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
-    <Project Path="Demo.Admin.Services1/Demo.Admin.Services1.csproj" Id="ac465c69-e83f-4cbc-a3cf-2ed4a16cd960" />
-    <Project Path="Demo.Admin.Services2/Demo.Admin.Services2.csproj" Id="de50422a-a292-43a9-9c5e-6ab5e1ea03e6" />
-    <Project Path="Demo01/Demo01.csproj" Id="eded60d2-5ced-4b03-896b-85a8c41fc6d6" />
-    <Project Path="DemoDesktop.Desktop/DemoDesktop.Desktop.csproj" />
-    <Project Path="DemoDesktop/DemoDesktop.csproj" />
     <Project Path="GeneratorDemo/GeneratorDemo.csproj" Id="3616b1ca-8b7e-45ac-ac56-2ff58dffaaae" />
   </Folder>
   <Folder Name="/src/" />
@@ -35,6 +30,9 @@
   <Folder Name="/src/MAUI/">
     <Project Path="src/MAUI/MFToolkit.Maui.Material/MFToolkit.Maui.Material.csproj" />
     <Project Path="src/MAUI/MFToolkit.Maui/MFToolkit.Maui.csproj" />
+  </Folder>
+  <Folder Name="/src/Minecraft/">
+    <Project Path="src/Minecraft/MFToolkit.Minecraft/MFToolkit.Minecraft.csproj" />
   </Folder>
   <Folder Name="/src/SqlEntityCore/" Id="21e11661-98b9-4d66-a4b3-4a2660e06109">
     <Project Path="src/SqlEntityCore/MFToolkit.SqlSugarCore.Extensions/MFToolkit.SqlSugarCore.Extensions.csproj" />

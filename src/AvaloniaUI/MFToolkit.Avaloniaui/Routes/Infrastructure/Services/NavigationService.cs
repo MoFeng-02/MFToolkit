@@ -35,6 +35,7 @@ public class NavigationService : INavigationService
     public NavigationService(IRoutingService routingService)
     {
         _routingService = routingService ?? throw new ArgumentNullException(nameof(routingService));
+        _defaultInstance = this;
     }
 
     /// <summary>
@@ -138,5 +139,11 @@ public class NavigationService : INavigationService
     public object? GetCurrentViewModel()
     {
         return _routingService.GetCurrentRouteInfo()?.ViewModel;
+    }
+
+    /// <inheritdoc/>
+    public bool CanGoBack()
+    {
+        return _routingService.CanGoBack();
     }
 }
