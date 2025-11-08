@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using MFToolkit.Minecraft.Core;
+using MFToolkit.Minecraft.JsonExtensions;
 
 namespace MFToolkit.Minecraft.Options;
 

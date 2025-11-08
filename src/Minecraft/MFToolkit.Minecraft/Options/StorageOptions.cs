@@ -1,4 +1,5 @@
-﻿using MFToolkit.Minecraft.Enums;
+﻿using System;
+using MFToolkit.Minecraft.Enums;
 
 namespace MFToolkit.Minecraft.Options;
 
@@ -43,11 +44,29 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     public string? CustomLogsPath { get; set; }
 
     /// <summary>
+    /// 获取版本清单目录路径
+    /// </summary>
+    /// <returns></returns>
+    public virtual string GetVersionManifestDirectory()
+    {
+        return Path.Combine(AppContext.BaseDirectory, "VersionManifest");
+    }
+
+    /// <summary>
+    /// 获取版本清单路径
+    /// </summary>
+    /// <returns></returns>
+    public virtual string GetVersionManifestPath()
+    {
+        return Path.Combine(GetVersionManifestDirectory(), "version_manifest.json");
+    }
+
+    /// <summary>
     /// 获取版本存储路径
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
     /// <returns>版本存储路径</returns>
-    public string GetVersionsPath(string? versionId = null)
+    public virtual string GetVersionsPath(string? versionId = null)
     {
         return StorageMode switch
         {
@@ -66,7 +85,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
     /// <returns>资源存储路径</returns>
-    public string GetAssetsPath(string? versionId = null)
+    public virtual string GetAssetsPath(string? versionId = null)
     {
         return StorageMode switch
         {
@@ -85,7 +104,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
     /// <returns>库存储路径</returns>
-    public string GetLibrariesPath(string? versionId = null)
+    public virtual string GetLibrariesPath(string? versionId = null)
     {
         return StorageMode switch
         {
@@ -104,7 +123,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
     /// <returns>配置存储路径</returns>
-    public string GetConfigPath(string? versionId = null)
+    public virtual string GetConfigPath(string? versionId = null)
     {
         return StorageMode switch
         {
@@ -123,7 +142,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
     /// <returns>日志存储路径</returns>
-    public string GetLogsPath(string? versionId = null)
+    public virtual string GetLogsPath(string? versionId = null)
     {
         return StorageMode switch
         {
@@ -142,7 +161,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID</param>
     /// <returns>版本完整路径</returns>
-    public string GetVersionPath(string versionId)
+    public virtual string GetVersionPath(string versionId)
     {
         if (string.IsNullOrEmpty(versionId))
             throw new ArgumentNullException(nameof(versionId));
@@ -155,7 +174,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID</param>
     /// <returns>JAR文件路径</returns>
-    public string GetVersionJarPath(string versionId)
+    public virtual string GetVersionJarPath(string versionId)
     {
         if (string.IsNullOrEmpty(versionId))
             throw new ArgumentNullException(nameof(versionId));
@@ -168,12 +187,19 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID</param>
     /// <returns>JSON文件路径</returns>
-    public string GetVersionJsonPath(string versionId)
+    public virtual string GetVersionJsonPath(string versionId)
     {
         if (string.IsNullOrEmpty(versionId))
             throw new ArgumentNullException(nameof(versionId));
 
         return Path.Combine(GetVersionPath(versionId), $"{versionId}.json");
+    }
+    /// <summary>
+    /// 获取资源索引文件夹路径
+    /// </summary>
+    public virtual string GetAssetIndexsPath()
+    {
+        return Path.Combine(GetAssetsPath(), "indexes");
     }
 
     /// <summary>
@@ -181,7 +207,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="assetsVersion">资源版本</param>
     /// <returns>资源索引文件路径</returns>
-    public string GetAssetIndexPath(string assetsVersion)
+    public virtual string GetAssetIndexPath(string assetsVersion)
     {
         if (string.IsNullOrEmpty(assetsVersion))
             throw new ArgumentNullException(nameof(assetsVersion));
@@ -194,7 +220,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="hash">资源哈希值</param>
     /// <returns>资源对象路径</returns>
-    public string GetAssetObjectPath(string hash)
+    public virtual string GetAssetObjectPath(string hash)
     {
         if (string.IsNullOrEmpty(hash))
             throw new ArgumentNullException(nameof(hash));
@@ -211,7 +237,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="libraryPath">库路径（如：com/mojang/netty/1.6/netty-1.6.jar）</param>
     /// <returns>库文件路径</returns>
-    public string GetLibraryPath(string libraryPath)
+    public virtual string GetLibraryPath(string libraryPath)
     {
         if (string.IsNullOrEmpty(libraryPath))
             throw new ArgumentNullException(nameof(libraryPath));
@@ -220,11 +246,20 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     }
 
     /// <summary>
+    /// 获取皮肤存储路径
+    /// </summary>
+    /// <returns></returns>
+    public virtual string GetSkinsPath()
+    {
+        return Path.Combine(GetAssetsPath(), "skins");
+    }
+
+    /// <summary>
     /// 获取资源索引目录路径
     /// </summary>
     /// <param name="versionId"></param>
     /// <returns></returns>
-    public string GetIndexsPath(string? versionId = null)
+    public virtual string GetIndexsPath(string? versionId = null)
     {
         return Path.Combine(GetAssetsPath(versionId), "indexes");
     }
@@ -234,7 +269,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId"></param>
     /// <returns></returns>
-    public string GetObjectsPath(string? versionId = null)
+    public virtual string GetObjectsPath(string? versionId = null)
     {
         return Path.Combine(GetAssetsPath(versionId), "objects");
     }
@@ -244,7 +279,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID</param>
     /// <returns>原生库存储路径</returns>
-    public string GetNativesPath(string versionId)
+    public virtual string GetNativesPath(string versionId)
     {
         if (string.IsNullOrEmpty(versionId))
             throw new ArgumentNullException(nameof(versionId));
@@ -269,7 +304,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
     /// <returns>截图存储路径</returns>
-    public string GetScreenshotsPath(string? versionId = null)
+    public virtual string GetScreenshotsPath(string? versionId = null)
     {
         return StorageMode switch
         {
@@ -289,7 +324,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
     /// <returns>世界存储路径</returns>
-    public string GetSavesPath(string? versionId = null)
+    public virtual string GetSavesPath(string? versionId = null)
     {
         return StorageMode switch
         {
@@ -308,8 +343,11 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// 确保所有必要的目录都已创建
     /// </summary>
     /// <param name="versionId">版本ID（可选）</param>
-    public void EnsureDirectories(string? versionId = null)
+    public virtual void EnsureDirectories(string? versionId = null)
     {
+        BasePath = BasePath == ".minecraft"
+            ? Path.Combine(AppContext.BaseDirectory, "minecraft")
+            : BasePath;
         // 创建基础目录
         Directory.CreateDirectory(BasePath);
 

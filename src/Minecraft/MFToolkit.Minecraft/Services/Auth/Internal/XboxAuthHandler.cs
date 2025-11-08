@@ -1,10 +1,10 @@
 ﻿using System.Net.Http.Json;
 using MFToolkit.Minecraft.Constants;
-using MFToolkit.Minecraft.Core;
 using MFToolkit.Minecraft.Entities.Account;
 using MFToolkit.Minecraft.Entities.Account.Http;
+using MFToolkit.Minecraft.JsonExtensions;
 
-namespace MFToolkit.Minecraft.Internal.Auth;
+namespace MFToolkit.Minecraft.Services.Auth.Internal;
 
 /// <summary>
 /// Xbox认证处理器

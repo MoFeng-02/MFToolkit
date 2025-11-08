@@ -5,28 +5,33 @@ namespace MFToolkit.Minecraft.Enums;
 /// <summary>
 /// Minecraft版本类型
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum VersionType
 {
     /// <summary>
-    /// 正式版本
+    /// 非支持的版本
     /// </summary>
+    None,
+    /// <summary>
+    /// 正式版
+    /// </summary>
+    [JsonPropertyName("release")]
     Release,
-    
+
     /// <summary>
-    /// 快照版本
+    /// 快照版
     /// </summary>
+    [JsonPropertyName("snapshot")]
     Snapshot,
-    
+
     /// <summary>
-    /// 旧测试版
+    /// 旧Alpha版
+    /// </summary>
+    [JsonPropertyName("old_alpha")]
+    OldAlpha,
+
+    /// <summary>
+    /// 旧Beta版
     /// </summary>
     [JsonPropertyName("old_beta")]
     OldBeta,
-    
-    /// <summary>
-    /// 旧阿尔法版
-    /// </summary>
-    [JsonPropertyName("old_alpha")]
-    OldAlpha
 }

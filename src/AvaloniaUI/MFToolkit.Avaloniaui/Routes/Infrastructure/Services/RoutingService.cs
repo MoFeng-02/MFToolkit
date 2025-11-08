@@ -425,40 +425,44 @@ public class RoutingService : IRoutingService
     {
         object? page = null;
         object? viewModel = null;
-
-        // 1. 处理保活页面（从缓存获取或创建新实例）
-        if (model.IsKeepAlive && _keepAliveCache.TryGet(route, out var cachedPage, out var cachedViewModel))
+        // 顶级路由直接返回其栈中最新实例（栈顶元素）
+        if (model.IsTopNavigation)
         {
-            // 顶级路由直接返回其栈中最新实例（栈顶元素）
-            if (model.IsTopNavigation)
+            _thisTopNavigationId = model.RoutingId;
+            if (NavigationRoutes.TryGetValue(model.RoutingId, out var topStack) && topStack.Count > 0)
             {
-                _thisTopNavigationId = model.RoutingId;
-                if (NavigationRoutes.TryGetValue(model.RoutingId, out var topStack) && topStack.Count > 0)
-                {
-                    return topStack.Peek(); // 修复：使用Peek()获取栈顶元素（最新实例）
-                }
+                var t = topStack.Peek(); // 修复：使用Peek()获取栈顶元素（最新实例）
+                page = t.Page;
+                viewModel = t.ViewModel;
             }
-
-            page = cachedPage;
-            viewModel = cachedViewModel;
         }
-        else
+
+        if (page == null)
         {
-            // 创建新页面实例（失败则返回null）
-            page = CreatePageInstance(model);
-            if (page == null) return null;
-
-            // 创建视图模型并关联到页面
-            viewModel = CreateViewModelInstance(model);
-            if (page is Control control && viewModel != null)
+            // 1. 处理保活页面（从缓存获取或创建新实例）
+            if (model.IsKeepAlive && _keepAliveCache.TryGet(route, out var cachedPage, out var cachedViewModel))
             {
-                control.DataContext = viewModel;
+                page = cachedPage;
+                viewModel = cachedViewModel;
             }
-
-            // 保活页面添加到缓存
-            if (model.IsKeepAlive)
+            else
             {
-                _keepAliveCache.AddOrUpdate(route, page, viewModel);
+                // 创建新页面实例（失败则返回null）
+                page = CreatePageInstance(model);
+                if (page == null) return null;
+
+                // 创建视图模型并关联到页面
+                viewModel = CreateViewModelInstance(model);
+                if (page is Control control && viewModel != null)
+                {
+                    control.DataContext = viewModel;
+                }
+
+                // 保活页面添加到缓存
+                if (model.IsKeepAlive)
+                {
+                    _keepAliveCache.AddOrUpdate(route, page, viewModel);
+                }
             }
         }
 

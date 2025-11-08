@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MFToolkit.Minecraft.Converters;
 using MFToolkit.Minecraft.Entities.Account;
 using MFToolkit.Minecraft.Entities.Account.Http;
 using MFToolkit.Minecraft.Entities.Cape;
@@ -9,16 +10,23 @@ using MFToolkit.Minecraft.Entities.Versions;
 using MFToolkit.Minecraft.Enums;
 using MFToolkit.Minecraft.Options;
 
-namespace MFToolkit.Minecraft.Core;
+namespace MFToolkit.Minecraft.JsonExtensions;
 
 /// <summary>
 /// JSON序列化上下文，用于AOT编译支持
 /// </summary>
-[JsonSourceGenerationOptions(Converters = [typeof(JsonStringEnumConverter)], WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSourceGenerationOptions(Converters = [
+    typeof(SafeStringEnumConverter<VersionType>),
+    typeof(SafeStringEnumConverter<StorageMode>),
+    ],
+    WriteIndented = true,
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(VersionManifest))]
 [JsonSerializable(typeof(LatestVersionInfo))]
 [JsonSerializable(typeof(VersionInfo))]
+[JsonSerializable(typeof(VersionType))]
 [JsonSerializable(typeof(List<VersionInfo>))]
+[JsonSerializable(typeof(IReadOnlyList<VersionInfo>))]
 [JsonSerializable(typeof(GameVersionInfo))]
 [JsonSerializable(typeof(Download))]
 [JsonSerializable(typeof(Library))]
@@ -31,6 +39,11 @@ namespace MFToolkit.Minecraft.Core;
 [JsonSerializable(typeof(Rule))]
 [JsonSerializable(typeof(Os))]
 [JsonSerializable(typeof(RuleAction))]
+[JsonSerializable(typeof(LoggingConfig))]
+[JsonSerializable(typeof(LoggingEntry))]
+[JsonSerializable(typeof(LoggingFile))]
+[JsonSerializable(typeof(AssetIndexContent))] // 用于资源索引JSON
+[JsonSerializable(typeof(Dictionary<string, AssetObject>))] // 资源索引中的objects对象
 
 // Auth Account相关类型
 

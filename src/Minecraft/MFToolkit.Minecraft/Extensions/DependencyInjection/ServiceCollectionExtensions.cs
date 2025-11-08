@@ -1,18 +1,16 @@
-﻿using System;
-using System.Net.Http;
-using MFToolkit.Minecraft.Entities.Account;
-using MFToolkit.Minecraft.Internal.Auth;
+﻿using MFToolkit.Minecraft.Entities.Account;
 using MFToolkit.Minecraft.Options;
 using MFToolkit.Minecraft.Services.Auth;
 using MFToolkit.Minecraft.Services.Auth.Interfaces;
 using MFToolkit.Minecraft.Services.Cape;
+using MFToolkit.Minecraft.Services.Downloads;
+using MFToolkit.Minecraft.Services.Downloads.Interfaces;
 using MFToolkit.Minecraft.Services.Profile;
 using MFToolkit.Minecraft.Services.Skin;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
-namespace MFToolkit.Minecraft.Extensions;
+namespace MFToolkit.Minecraft.Extensions.DependencyInjection;
 
 /// <summary>
 /// 服务集合扩展
@@ -39,9 +37,9 @@ public static class ServiceCollectionExtensions
         //.ValidateOnStart();
 
         services.AddOptions<SkinOptions>();
-            //.BindConfiguration(SkinOptions.Skin)
-            //.ValidateOnStart();
-        
+        //.BindConfiguration(SkinOptions.Skin)
+        //.ValidateOnStart();
+
         // 添加HTTP客户端
         services.AddHttpClient<IOfficialAuthService, OfficialAuthService>();
         services.AddHttpClient<IOfflineAuthService, OfflineAuthService>();
@@ -49,7 +47,8 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient<IProfileService, ProfileService>();
         services.AddHttpClient<ISkinService, SkinService>();
         services.AddHttpClient<ICapeService, CapeService>();
-
+        services.AddHttpClient<IMinecraftVersionService, MinecraftVersionService>();
+        services.AddHttpClient<IMinecraftDownloadService, MinecraftDownloadService>();
 
         // 添加认证服务
         services.TryAddScoped<IOfficialAuthService, OfficialAuthService>();
@@ -59,7 +58,7 @@ public static class ServiceCollectionExtensions
         services.TryAddScoped<IProfileService, ProfileService>();
         services.TryAddScoped<ISkinService, SkinService>();
         services.TryAddScoped<ICapeService, CapeService>();
-        
+
         // 添加通用认证服务（根据账号类型自动选择合适的认证服务）
         services.TryAddScoped<Func<AccountType, IAuthService>>(serviceProvider => accountType =>
         {
@@ -71,10 +70,10 @@ public static class ServiceCollectionExtensions
                 _ => throw new NotSupportedException($"Account type '{accountType}' is not supported.")
             };
         });
-        
+
         return services;
     }
-    
+
     /// <summary>
     /// 添加Minecraft服务并配置官方认证选项
     /// </summary>
@@ -85,16 +84,16 @@ public static class ServiceCollectionExtensions
     {
         if (services == null)
             throw new ArgumentNullException(nameof(services));
-        
+
         if (configureOfficialAuth == null)
             throw new ArgumentNullException(nameof(configureOfficialAuth));
-        
+
         services.AddMinecraftServices();
         services.Configure(configureOfficialAuth);
-        
+
         return services;
     }
-    
+
     /// <summary>
     /// 添加Minecraft服务并配置所有选项
     /// </summary>
@@ -111,21 +110,21 @@ public static class ServiceCollectionExtensions
     {
         if (services == null)
             throw new ArgumentNullException(nameof(services));
-        
+
         if (configureOfficialAuth == null)
             throw new ArgumentNullException(nameof(configureOfficialAuth));
-        
+
         if (configureOfflineAuth == null)
             throw new ArgumentNullException(nameof(configureOfflineAuth));
-        
+
         if (configureSkin == null)
             throw new ArgumentNullException(nameof(configureSkin));
-        
+
         services.AddMinecraftServices();
         services.Configure(configureOfficialAuth);
         services.Configure(configureOfflineAuth);
         services.Configure(configureSkin);
-        
+
         return services;
     }
 }

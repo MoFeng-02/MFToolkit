@@ -5,7 +5,6 @@ namespace MFToolkit.Minecraft.Enums;
 /// <summary>
 /// 存储模式
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum StorageMode
 {
     /// <summary>

@@ -19,8 +19,18 @@ public class VersionInfo
     /// 版本类型
     /// </summary>
     [JsonPropertyName("type")]
-    public required VersionType Type { get; set; }
-    
+    public VersionType VersionType { get; set; }
+    // public required string TypeString { get; set; }
+    //
+    // [JsonIgnore]
+    // public VersionType? VersionType => TypeString.ToLower() switch
+    // {
+    //     "release" => Enums.VersionType.Release,
+    //     "snapshot" => Enums.VersionType.Snapshot,
+    //     "old_alpha" => Enums.VersionType.OldAlpha,
+    //     "old_beta" => Enums.VersionType.OldBeta,
+    //     _ => null
+    // };
     /// <summary>
     /// 版本详情URL
     /// </summary>

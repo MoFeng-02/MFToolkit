@@ -12,18 +12,24 @@ public class Download
     /// </summary>
     [JsonPropertyName("url")]
     public required string Url { get; set; }
-    
+
     /// <summary>
     /// SHA1哈希值
     /// </summary>
     [JsonPropertyName("sha1")]
-    public required string Sha1 { get; set; }
-    
+    public string? Sha1 { get; set; }
+
     /// <summary>
     /// 文件大小（字节）
     /// </summary>
     [JsonPropertyName("size")]
     public long Size { get; set; }
+
+    /// <summary>
+    /// 文件路径（仅在某些特定情况下使用）
+    /// </summary>
+    [JsonPropertyName("path")]
+    public string? Path { get; set; }
 }
 
 /// <summary>
@@ -36,22 +42,28 @@ public class Downloads
     /// </summary>
     [JsonPropertyName("client")]
     public Download? Client { get; set; }
-    
+
     /// <summary>
     /// 服务器下载信息
     /// </summary>
     [JsonPropertyName("server")]
     public Download? Server { get; set; }
-    
+
     /// <summary>
     /// 客户端映射文件下载信息
     /// </summary>
     [JsonPropertyName("client_mappings")]
     public Download? ClientMappings { get; set; }
-    
+
     /// <summary>
     /// 服务器映射文件下载信息
     /// </summary>
     [JsonPropertyName("server_mappings")]
     public Download? ServerMappings { get; set; }
+
+    /// <summary>
+    /// Windows服务器下载信息
+    /// </summary>
+    [JsonPropertyName("windows_server")]
+    public Download? WindowsServer { get; set; }
 }

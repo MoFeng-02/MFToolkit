@@ -1,9 +1,9 @@
 ﻿using MFToolkit.Minecraft.Entities.Account;
 using MFToolkit.Minecraft.Entities.Account.Http;
 using MFToolkit.Minecraft.Exceptions.Auths;
-using MFToolkit.Minecraft.Internal.Auth;
 using MFToolkit.Minecraft.Options;
 using MFToolkit.Minecraft.Services.Auth.Interfaces;
+using MFToolkit.Minecraft.Services.Auth.Internal;
 using Microsoft.Extensions.Options;
 
 namespace MFToolkit.Minecraft.Services.Auth;
