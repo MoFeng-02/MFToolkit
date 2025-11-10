@@ -40,6 +40,10 @@ public static class ServiceCollectionExtensions
         //.BindConfiguration(SkinOptions.Skin)
         //.ValidateOnStart();
 
+        services.AddOptions<StorageOptions>();
+
+        services.AddOptions<DownloadOptions>();
+        
         // 添加HTTP客户端
         services.AddHttpClient<IOfficialAuthService, OfficialAuthService>();
         services.AddHttpClient<IOfflineAuthService, OfflineAuthService>();

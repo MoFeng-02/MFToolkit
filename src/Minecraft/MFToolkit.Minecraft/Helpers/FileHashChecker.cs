@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.Minecraft.Helpers;
+
 /// <summary>
 /// 提供文件哈希检测的工具类
 /// </summary>
@@ -12,7 +13,10 @@ public static class FileHashChecker
     /// </summary>
     /// <param name="filePath">待检测文件的完整路径</param>
     /// <param name="expectedSha1">预期的SHA1哈希值（小写十六进制字符串，长度40）</param>
+    /// <param name="logger">日志传递</param>
     /// <param name="cancellationToken">取消令牌（用于中断检测操作）</param>
+    /// <exception cref="InvalidDataException">当校验失败时抛出</exception>
+    /// <exception cref="FileNotFoundException">文件不存在抛出</exception>
     /// <returns>检测结果：true=匹配，false=不匹配；文件不存在或异常时返回false</returns>
     public static async Task<bool> CheckFileSha1Async(
         string filePath,
@@ -29,25 +33,28 @@ public static class FileHashChecker
 
         // 2. 检查文件是否存在
         if (!File.Exists(filePath))
+        {
+            logger?.LogError("文件不存在" + filePath);
             return false;
+        }
 
         // 3. 异步计算文件SHA1哈希
         string actualSha1;
         try
         {
             // 使用异步文件流+SHA1计算（适配大文件，避免一次性加载到内存）
-            using var fileStream = new FileStream(
+            await using var fileStream = new FileStream(
                 filePath,
                 FileMode.Open,
                 FileAccess.Read,
                 FileShare.Read,
-                bufferSize: 4096,  // 4KB缓冲区，平衡性能与内存占用
-                useAsync: true);   // 启用异步IO
+                bufferSize: 4096, // 4KB缓冲区，平衡性能与内存占用
+                useAsync: true); // 启用异步IO
 
-            using var sha1 = SHA1.Create();  // 线程安全，无需单例
+            using var sha1 = SHA1.Create(); // 线程安全，无需单例
 
             // 异步计算哈希（.NET 5+支持ComputeHashAsync，低版本需手动实现）
-            byte[] hashBytes = await sha1.ComputeHashAsync(fileStream, cancellationToken).ConfigureAwait(false);
+            var hashBytes = await sha1.ComputeHashAsync(fileStream, cancellationToken).ConfigureAwait(false);
 
             // 转换字节数组为小写十六进制字符串
             actualSha1 = Convert.ToHexStringLower(hashBytes);
@@ -58,7 +65,7 @@ public static class FileHashChecker
             logger?.LogWarning($"{filePath}文件取消验证，为Token令牌取消");
             return false;
         }
-        catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             // 处理文件读写异常（如文件被占用、权限不足等）
             logger?.LogWarning($"{filePath}文件哈希计算失败：{ex.Message}");

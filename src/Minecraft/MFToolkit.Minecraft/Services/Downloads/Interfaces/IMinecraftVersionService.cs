@@ -25,5 +25,5 @@ public interface IMinecraftVersionService
     /// <param name="localPath">本地路径（直接包括了文件名）</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<GameVersionInfo> GetGameVersionInfoAsync(string versionId, string? localPath = null, CancellationToken cancellationToken = default);
+    Task<GameVersionDetail> GetGameVersionInfoAsync(string versionId, string? localPath = null, CancellationToken cancellationToken = default);
 }

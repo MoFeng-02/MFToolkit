@@ -8,10 +8,19 @@ namespace MFToolkit.Minecraft.Options;
 /// </summary>
 public class StorageOptions() : BaseOptions("storage_options.json")
 {
+    private string _basePath = ".minecraft";
+
     /// <summary>
     /// 基础路径
     /// </summary>
-    public string BasePath { get; set; } = ".minecraft";
+    public string BasePath
+    {
+        get =>
+            _basePath == ".minecraft"
+                ? Path.Combine(AppContext.BaseDirectory, "minecraft")
+                : _basePath;
+        set => _basePath = value;
+    }
 
     /// <summary>
     /// 存储模式
@@ -194,6 +203,7 @@ public class StorageOptions() : BaseOptions("storage_options.json")
 
         return Path.Combine(GetVersionPath(versionId), $"{versionId}.json");
     }
+
     /// <summary>
     /// 获取资源索引文件夹路径
     /// </summary>
@@ -345,9 +355,6 @@ public class StorageOptions() : BaseOptions("storage_options.json")
     /// <param name="versionId">版本ID（可选）</param>
     public virtual void EnsureDirectories(string? versionId = null)
     {
-        BasePath = BasePath == ".minecraft"
-            ? Path.Combine(AppContext.BaseDirectory, "minecraft")
-            : BasePath;
         // 创建基础目录
         Directory.CreateDirectory(BasePath);
 

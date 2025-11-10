@@ -56,7 +56,7 @@ public class MirrorConfiguration
     /// 当前使用的镜像源
     /// </summary>
     [JsonPropertyName("currentMirror")]
-    public string CurrentMirror { get; set; } = "official";
+    public string CurrentMirror { get; set; } = "bmclapi";
 
     /// <summary>
     /// 镜像源配置字典
@@ -227,7 +227,7 @@ public class DownloadSettings
     /// 最大重试次数
     /// </summary>
     [JsonPropertyName("maxRetryCount")]
-    public int MaxRetryCount { get; set; } = 3;
+    public int MaxRetryCount { get; set; } = 2;
 
     /// <summary>
     /// 重试延迟（毫秒）

@@ -62,7 +62,7 @@ public class MinecraftVersionService : IMinecraftVersionService
                throw new InvalidOperationException("无法解析版本清单");
     }
 
-    public async Task<GameVersionInfo> GetGameVersionInfoAsync(string versionId, string? localPath = null,
+    public async Task<GameVersionDetail> GetGameVersionInfoAsync(string versionId, string? localPath = null,
         CancellationToken cancellationToken = default)
     {
         // 1. 首先尝试从本地文件读取
@@ -90,7 +90,7 @@ public class MinecraftVersionService : IMinecraftVersionService
     /// <summary>
     /// 尝试从本地文件获取版本信息
     /// </summary>
-    private async Task<GameVersionInfo?> TryGetFromLocalFileAsync(string versionId, string localPath,
+    private async Task<GameVersionDetail?> TryGetFromLocalFileAsync(string versionId, string localPath,
         CancellationToken cancellationToken)
     {
         // 获取版本清单以验证本地文件
@@ -123,7 +123,7 @@ public class MinecraftVersionService : IMinecraftVersionService
         {
             var jsonContent = await File.ReadAllTextAsync(localPath, cancellationToken);
             var gameVersionInfo =
-                JsonSerializer.Deserialize(jsonContent, MinecraftJsonSerializerContext.Default.GameVersionInfo);
+                JsonSerializer.Deserialize(jsonContent, MinecraftJsonSerializerContext.Default.GameVersionDetail);
 
             if (gameVersionInfo == null)
             {
@@ -162,7 +162,7 @@ public class MinecraftVersionService : IMinecraftVersionService
     /// <summary>
     /// 从远程获取版本信息
     /// </summary>
-    private async Task<GameVersionInfo> GetFromRemoteAsync(string versionId, string? localPath,
+    private async Task<GameVersionDetail> GetFromRemoteAsync(string versionId, string? localPath,
         CancellationToken cancellationToken)
     {
         // 获取版本清单
@@ -186,7 +186,7 @@ public class MinecraftVersionService : IMinecraftVersionService
 
             // 解析版本信息
             var gameVersionInfo =
-                JsonSerializer.Deserialize(jsonContent, MinecraftJsonSerializerContext.Default.GameVersionInfo);
+                JsonSerializer.Deserialize(jsonContent, MinecraftJsonSerializerContext.Default.GameVersionDetail);
             if (gameVersionInfo == null)
             {
                 throw new InvalidOperationException($"无法解析版本 {versionId} 的JSON数据");
@@ -222,7 +222,7 @@ public class MinecraftVersionService : IMinecraftVersionService
     /// <summary>
     /// 保存版本信息到本地文件
     /// </summary>
-    private async Task SaveVersionInfoToLocalAsync(GameVersionInfo versionInfo, string localPath,
+    private async Task SaveVersionInfoToLocalAsync(GameVersionDetail versionDetail, string localPath,
         CancellationToken cancellationToken)
     {
         try
@@ -236,14 +236,14 @@ public class MinecraftVersionService : IMinecraftVersionService
 
             // 序列化并保存
             var jsonContent =
-                JsonSerializer.Serialize(versionInfo, MinecraftJsonSerializerContext.Default.GameVersionInfo);
+                JsonSerializer.Serialize(versionDetail, MinecraftJsonSerializerContext.Default.GameVersionDetail);
             await File.WriteAllTextAsync(localPath, jsonContent, cancellationToken);
 
-            _logger.LogDebug($"版本 {versionInfo.Id} 的信息已保存到本地: {localPath}");
+            _logger.LogDebug($"版本 {versionDetail.Id} 的信息已保存到本地: {localPath}");
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, $"保存版本 {versionInfo.Id} 信息到本地文件失败: {localPath}");
+            _logger.LogWarning(ex, $"保存版本 {versionDetail.Id} 信息到本地文件失败: {localPath}");
             // 不抛出异常，因为主要功能已经完成
         }
     }

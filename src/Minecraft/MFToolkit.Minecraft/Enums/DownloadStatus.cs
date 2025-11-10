@@ -1,9 +1,11 @@
 ﻿namespace MFToolkit.Minecraft.Enums;
+
 /// <summary>
 /// 下载状态枚举
 /// </summary>
 public enum DownloadStatus
 {
+    None,
     /// <summary>
     /// 准备
     /// </summary>
@@ -42,5 +44,10 @@ public enum DownloadStatus
     /// <summary>
     /// 已取消
     /// </summary>
-    Cancelled
+    Cancelled,
+
+    /// <summary>
+    /// 重试中
+    /// </summary>
+    Retrying
 }

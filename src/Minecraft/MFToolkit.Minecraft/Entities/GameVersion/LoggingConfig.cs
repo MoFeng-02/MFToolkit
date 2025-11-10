@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿// LoggingConfig.cs
+using System.Text.Json.Serialization;
 
 namespace MFToolkit.Minecraft.Entities.GameVersion;
 
@@ -23,23 +24,23 @@ public class LoggingEntry
     /// 参数
     /// </summary>
     [JsonPropertyName("argument")]
-    public required string Argument { get; set; }
+    public string Argument { get; set; } = string.Empty;
 
     /// <summary>
-    /// 日志文件信息
+    /// 日志文件配置
     /// </summary>
     [JsonPropertyName("file")]
-    public required LoggingFile File { get; set; }
+    public LoggingFile File { get; set; } = new();
 
     /// <summary>
-    /// 类型
+    /// 日志类型
     /// </summary>
     [JsonPropertyName("type")]
-    public required string Type { get; set; }
+    public string Type { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// 日志文件信息
+/// 日志文件配置
 /// </summary>
 public class LoggingFile
 {
@@ -47,13 +48,13 @@ public class LoggingFile
     /// 文件ID
     /// </summary>
     [JsonPropertyName("id")]
-    public required string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     /// <summary>
-    /// SHA1哈希值
+    /// SHA1哈希
     /// </summary>
     [JsonPropertyName("sha1")]
-    public required string Sha1 { get; set; }
+    public string Sha1 { get; set; } = string.Empty;
 
     /// <summary>
     /// 文件大小
@@ -65,5 +66,5 @@ public class LoggingFile
     /// 下载URL
     /// </summary>
     [JsonPropertyName("url")]
-    public required string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 }

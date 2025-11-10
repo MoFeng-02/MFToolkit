@@ -9,40 +9,25 @@ namespace MFToolkit.Minecraft.Entities.GameVersion;
 public class ExtractRules
 {
     /// <summary>
-    /// 要排除的文件模式
+    /// 排除的文件模式
     /// </summary>
     [JsonPropertyName("exclude")]
-    public List<string>? Exclude { get; set; }
-    
+    public List<string> Exclude { get; set; } = [];
+
     /// <summary>
     /// 检查文件是否应该被排除
     /// </summary>
-    /// <param name="filePath">文件路径</param>
-    /// <returns>是否应该被排除</returns>
     public bool ShouldExclude(string filePath)
     {
-        if (Exclude == null || Exclude.Count == 0)
+        if (Exclude.Count == 0)
             return false;
-            
-        foreach (string pattern in Exclude)
-        {
-            if (MatchesPattern(filePath, pattern))
-                return true;
-        }
-        
-        return false;
+
+        return Exclude.Any(pattern => MatchesPattern(filePath, pattern));
     }
-    
-    /// <summary>
-    /// 检查文件路径是否匹配模式
-    /// </summary>
-    /// <param name="filePath">文件路径</param>
-    /// <param name="pattern">模式</param>
-    /// <returns>是否匹配</returns>
-    private bool MatchesPattern(string filePath, string pattern)
+
+    private static bool MatchesPattern(string filePath, string pattern)
     {
-        // 简单的通配符匹配实现
-        string regexPattern = "^" + Regex.Escape(pattern)
+        var regexPattern = "^" + Regex.Escape(pattern)
             .Replace("\\*", ".*")
             .Replace("\\?", ".") + "$";
             

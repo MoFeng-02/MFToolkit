@@ -1,4 +1,4 @@
-﻿namespace MFToolkit.Minecraft.Services.Downloads.Models;
+﻿namespace MFToolkit.Minecraft.Entities.Downloads;
 
 /// <summary>
 /// 表示验证文件的结果

@@ -18,6 +18,9 @@ namespace MFToolkit.Minecraft.JsonExtensions;
 [JsonSourceGenerationOptions(Converters = [
     typeof(SafeStringEnumConverter<VersionType>),
     typeof(SafeStringEnumConverter<StorageMode>),
+    typeof(SafeStringEnumConverter<RuleAction>),
+    typeof(ArgumentListConverter),
+    typeof(ArgumentValueConverter),
     ],
     WriteIndented = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
@@ -27,8 +30,9 @@ namespace MFToolkit.Minecraft.JsonExtensions;
 [JsonSerializable(typeof(VersionType))]
 [JsonSerializable(typeof(List<VersionInfo>))]
 [JsonSerializable(typeof(IReadOnlyList<VersionInfo>))]
-[JsonSerializable(typeof(GameVersionInfo))]
-[JsonSerializable(typeof(Download))]
+[JsonSerializable(typeof(GameVersionDetail))]
+[JsonSerializable(typeof(Downloads))]
+[JsonSerializable(typeof(DownloadItem))]
 [JsonSerializable(typeof(Library))]
 [JsonSerializable(typeof(LibraryDownloads))]
 [JsonSerializable(typeof(ExtractRules))]
@@ -36,6 +40,7 @@ namespace MFToolkit.Minecraft.JsonExtensions;
 [JsonSerializable(typeof(JavaVersionInfo))]
 [JsonSerializable(typeof(Arguments))]
 [JsonSerializable(typeof(RuleBasedArgument))]
+[JsonSerializable(typeof(List<RuleBasedArgument>))]
 [JsonSerializable(typeof(Rule))]
 [JsonSerializable(typeof(Os))]
 [JsonSerializable(typeof(RuleAction))]

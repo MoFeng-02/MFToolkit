@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace MFToolkit.Minecraft.Services.Downloads.Models;
+namespace MFToolkit.Minecraft.Entities.Downloads;
 /// <summary>
 /// 表示Minecraft相关文件的下载错误信息
 /// </summary>
