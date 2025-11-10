@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using System.Diagnostics;
+using System.Reflection;
 using Avalonia.Controls;
 using MFToolkit.Avaloniaui.Routes.Core.Abstractions;
 using MFToolkit.Avaloniaui.Routes.Core.Entities;
@@ -16,9 +16,9 @@ public class RoutingService : IRoutingService
 {
     #region 静态成员（支持静态调用）
 
-    private static RoutingService? DefaultInstance;
+    private static RoutingService? _defaultInstance;
 
-    private static readonly List<RoutingModel> _routingModels = [];
+    private static readonly List<RoutingModel> RoutingModels = [];
 
     /// <summary>
     /// 当前顶级导航ID
@@ -43,7 +43,7 @@ public class RoutingService : IRoutingService
     /// <summary>
     /// 静态默认实例，用于不使用依赖注入的场景
     /// </summary>
-    public static readonly RoutingService Default = DefaultInstance ??= new RoutingService(
+    public static readonly RoutingService Default = _defaultInstance ??= new RoutingService(
         serviceProvider: null,
         routeParser: new RouteParser(),
         keepAliveCache: new KeepAliveCache());
@@ -115,7 +115,7 @@ public class RoutingService : IRoutingService
         _serviceProvider = serviceProvider;
         _routeParser = routeParser ?? throw new ArgumentNullException(nameof(routeParser));
         _keepAliveCache = keepAliveCache ?? new KeepAliveCache();
-        DefaultInstance = this;
+        _defaultInstance = this;
         // 从DI容器中获取所有路由守卫
         if (_serviceProvider == null) return;
         var guards = _serviceProvider.GetServices<IRouteGuard>();
@@ -176,15 +176,15 @@ public class RoutingService : IRoutingService
         ArgumentNullException.ThrowIfNull(model);
 
         // 检查路由是否已存在
-        if (_routingModels.Any(m => string.Equals(m.Route, model.Route, StringComparison.OrdinalIgnoreCase)))
+        if (RoutingModels.Any(m => string.Equals(m.Route, model.Route, StringComparison.OrdinalIgnoreCase)))
         {
             throw new InvalidOperationException($"路由 '{model.Route}' 已存在");
         }
 
-        _routingModels.Add(model);
+        RoutingModels.Add(model);
 
         // 按优先级排序，确保高优先级路由先匹配
-        _routingModels.Sort((a, b) => b.Priority.CompareTo(a.Priority));
+        RoutingModels.Sort((a, b) => b.Priority.CompareTo(a.Priority));
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ public class RoutingService : IRoutingService
     /// <returns></returns>
     public string? PageTypeToRoute(Type type)
     {
-        var query = _routingModels.FirstOrDefault(q => q.PageType == type);
+        var query = RoutingModels.FirstOrDefault(q => q.PageType == type);
         return query?.Route;
     }
 
@@ -226,10 +226,6 @@ public class RoutingService : IRoutingService
 
         // 创建或获取页面和视图模型
         var routeInfo = await CreateOrGetRouteInfo(matchingModel, route, mergedParameters);
-        if (routeInfo == null)
-        {
-            return null;
-        }
 
         // 添加到导航栈
         // NavigationStack.Push(routeInfo);
@@ -363,7 +359,7 @@ public class RoutingService : IRoutingService
     {
         var parameters = new Dictionary<string, object?>();
 
-        foreach (var model in _routingModels)
+        foreach (var model in RoutingModels)
         {
             if (_routeParser.Match(route, model.Route, out var routeParams))
             {
@@ -423,8 +419,6 @@ public class RoutingService : IRoutingService
     private async Task<RouteCurrentInfo?> CreateOrGetRouteInfo(RoutingModel model, string route,
         Dictionary<string, object?> parameters)
     {
-        object? page = null;
-        object? viewModel = null;
         // 顶级路由直接返回其栈中最新实例（栈顶元素）
         if (model.IsTopNavigation)
         {
@@ -432,37 +426,36 @@ public class RoutingService : IRoutingService
             if (NavigationRoutes.TryGetValue(model.RoutingId, out var topStack) && topStack.Count > 0)
             {
                 var t = topStack.Peek(); // 修复：使用Peek()获取栈顶元素（最新实例）
-                page = t.Page;
-                viewModel = t.ViewModel;
+                ApplyParametersToTarget(t.ViewModel, t.Page, parameters);
+                return t;
             }
         }
 
-        if (page == null)
+        object? page = null;
+        object? viewModel = null;
+        
+        // 1. 处理保活页面（从缓存获取或创建新实例）
+        if (model.IsKeepAlive && _keepAliveCache.TryGet(route, out var cachedPage, out var cachedViewModel))
         {
-            // 1. 处理保活页面（从缓存获取或创建新实例）
-            if (model.IsKeepAlive && _keepAliveCache.TryGet(route, out var cachedPage, out var cachedViewModel))
+            page = cachedPage;
+            viewModel = cachedViewModel;
+        }
+        else
+        {
+            // 创建新页面实例（失败则返回null）
+            page = CreatePageInstance(model);
+
+            // 创建视图模型并关联到页面
+            viewModel = CreateViewModelInstance(model);
+            if (page is Control control && viewModel != null)
             {
-                page = cachedPage;
-                viewModel = cachedViewModel;
+                control.DataContext = viewModel;
             }
-            else
+
+            // 保活页面添加到缓存
+            if (model.IsKeepAlive)
             {
-                // 创建新页面实例（失败则返回null）
-                page = CreatePageInstance(model);
-                if (page == null) return null;
-
-                // 创建视图模型并关联到页面
-                viewModel = CreateViewModelInstance(model);
-                if (page is Control control && viewModel != null)
-                {
-                    control.DataContext = viewModel;
-                }
-
-                // 保活页面添加到缓存
-                if (model.IsKeepAlive)
-                {
-                    _keepAliveCache.AddOrUpdate(route, page, viewModel);
-                }
+                _keepAliveCache.AddOrUpdate(route, page, viewModel);
             }
         }
 
@@ -478,7 +471,10 @@ public class RoutingService : IRoutingService
             Parameters = parameters,
             RoutePath = route
         };
-
+        // if (model.IsTopNavigation)
+        // {
+        //     TopNavigations.TryAdd(model.RoutingId, routeInfo);
+        // }
         // 4. 处理导航栈（核心优化：检查当前顶级栈是否已有相同页面模型）
         var targetStackId = model.IsTopNavigation ? model.RoutingId : _thisTopNavigationId;
 
@@ -523,7 +519,7 @@ public class RoutingService : IRoutingService
     /// <summary>
     /// 向目标（视图模型或页面）应用参数
     /// </summary>
-    private void ApplyParametersToTarget(object? viewModel, object? page, Dictionary<string, object?> parameters)
+    private static void ApplyParametersToTarget(object? viewModel, object? page, Dictionary<string, object?> parameters)
     {
         if (viewModel is IQueryAttributable queryAttributable)
         {
@@ -535,67 +531,236 @@ public class RoutingService : IRoutingService
         }
     }
 
-    /// <summary>
-    /// 创建页面实例
-    /// </summary>
-    /// <param name="model">路由模型</param>
-    /// <returns>页面实例，可为null</returns>
-    private object? CreatePageInstance(RoutingModel model)
-    {
-        try
-        {
-            // 优先使用DI容器创建实例
-            if (_serviceProvider != null)
-            {
-                return ActivatorUtilities.CreateInstance(_serviceProvider, model.PageType);
-            }
-
-            // 否则使用反射创建实例
-            return Activator.CreateInstance(model.PageType);
-        }
-        catch (Exception ex)
-        {
-            // 记录异常日志
-            Debug.WriteLine($"创建页面实例失败: {ex.Message}");
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// 创建视图模型实例（支持null）
-    /// </summary>
-    /// <param name="model">路由模型</param>
-    /// <returns>视图模型实例，可为null</returns>
-    private object? CreateViewModelInstance(RoutingModel model)
-    {
-        // 如果视图模型类型为null，直接返回null
-        if (model.ViewModelType == null)
-        {
-            return null;
-        }
-
-        try
-        {
-            // 优先使用DI容器创建实例
-            if (_serviceProvider != null)
-            {
-                return ActivatorUtilities.CreateInstance(_serviceProvider, model.ViewModelType);
-            }
-
-            // 否则使用反射创建实例
-            return Activator.CreateInstance(model.ViewModelType);
-        }
-        catch (Exception ex)
-        {
-            // 记录异常日志
-            Debug.WriteLine($"创建视图模型实例失败: {ex.Message}");
-            return null;
-        }
-    }
-
     /// <inheritdoc/>
     public bool CanGoBack()
     {
         return NavigationStack.Count > 1;
+    }
+
+    /// <summary>
+    /// 创建页面实例
+    /// </summary>
+    /// <param name="model">路由模型，包含页面类型信息</param>
+    /// <returns>页面实例</returns>
+    /// <exception cref="ArgumentNullException">当 <paramref name="model"/> 为 null 时抛出</exception>
+    /// <exception cref="InvalidOperationException">当页面创建失败时抛出</exception>
+    private object CreatePageInstance(RoutingModel model)
+    {
+        // 严格的 null 检查
+        ArgumentNullException.ThrowIfNull(model);
+        ArgumentNullException.ThrowIfNull(model.PageType);
+
+        // 如果没有DI容器，直接使用反射创建
+        if (_serviceProvider == null)
+        {
+            return CreateInstanceDirectly(model.PageType);
+        }
+
+        try
+        {
+            // 首先尝试直接从DI容器获取（快速路径）
+            return _serviceProvider.GetRequiredService(model.PageType);
+        }
+        catch (InvalidOperationException)
+        {
+            // 如果页面类型本身未在DI容器中注册，需要手动构造
+            return CreateUnregisteredTypeWithDependencies(model.PageType);
+        }
+    }
+
+    /// <summary>
+    /// 创建视图模型实例
+    /// </summary>
+    /// <param name="model">路由模型，包含视图模型类型信息</param>
+    /// <returns>视图模型实例，如果 ViewModelType 为 null 则返回 null</returns>
+    /// <exception cref="ArgumentNullException">当 <paramref name="model"/> 为 null 时抛出</exception>
+    /// <exception cref="InvalidOperationException">当视图模型创建失败时抛出</exception>
+    private object? CreateViewModelInstance(RoutingModel model)
+    {
+        // 严格的 null 检查
+        ArgumentNullException.ThrowIfNull(model);
+
+        // 如果未指定视图模型类型，直接返回 null
+        if (model.ViewModelType is null)
+        {
+            return null;
+        }
+
+        // 如果没有DI容器，直接使用反射创建
+        if (_serviceProvider == null)
+        {
+            return CreateInstanceDirectly(model.ViewModelType);
+        }
+
+        try
+        {
+            // 首先尝试直接从DI容器获取（快速路径）
+            return _serviceProvider.GetRequiredService(model.ViewModelType);
+        }
+        catch (InvalidOperationException)
+        {
+            // 如果视图模型类型本身未在DI容器中注册，手动构造
+            return CreateUnregisteredTypeWithDependencies(model.ViewModelType);
+        }
+    }
+
+    /// <summary>
+    /// 直接使用 Activator 创建实例（无依赖注入）
+    /// </summary>
+    /// <param name="type">要创建实例的类型</param>
+    /// <returns>创建的实例</returns>
+    /// <exception cref="InvalidOperationException">当创建实例失败时抛出</exception>
+    private static object CreateInstanceDirectly(Type type)
+    {
+        try
+        {
+            return Activator.CreateInstance(type)
+                   ?? throw new InvalidOperationException($"Activator.CreateInstance 返回 null 对于类型: {type}");
+        }
+        catch (MissingMethodException ex)
+        {
+            throw new InvalidOperationException($"类型 {type} 没有公共的无参构造函数或依赖无法满足", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"创建 {type} 实例失败: {ex.Message}", ex);
+        }
+    }
+
+    /// <summary>
+    /// 为未在DI容器中注册的类型创建实例，同时正确处理其依赖关系
+    /// </summary>
+    /// <param name="type">要创建实例的类型</param>
+    /// <returns>创建的实例</returns>
+    /// <exception cref="ArgumentNullException">当 <paramref name="type"/> 为 null 时抛出</exception>
+    /// <exception cref="InvalidOperationException">当无法解析必需依赖或创建实例失败时抛出</exception>
+    private object CreateUnregisteredTypeWithDependencies(Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+
+        // 获取所有公共构造函数，选择参数最多的一个
+        var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+        if (constructors.Length == 0)
+        {
+            throw new InvalidOperationException($"类型 {type} 没有公共构造函数");
+        }
+
+        // 选择参数最多的构造函数（通常是主要的DI构造函数）
+        var constructor = constructors
+            .OrderByDescending(c => c.GetParameters().Length)
+            .First();
+
+        var parameters = constructor.GetParameters();
+
+        // 如果没有参数，直接创建实例
+        if (parameters.Length == 0)
+        {
+            return CreateInstanceDirectly(type);
+        }
+
+        var arguments = new object[parameters.Length];
+
+        // 逐个解析构造函数参数
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            var parameter = parameters[i];
+            arguments[i] = ResolveParameter(parameter);
+        }
+
+        // 使用解析好的参数创建实例
+        try
+        {
+            return constructor.Invoke(arguments);
+        }
+        catch (TargetInvocationException ex) when (ex.InnerException is not null)
+        {
+            // 解包 TargetInvocationException 以显示真实的异常信息
+            throw new InvalidOperationException($"创建 {type} 实例失败: {ex.InnerException.Message}", ex.InnerException);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"创建 {type} 实例失败: {ex.Message}", ex);
+        }
+    }
+
+    /// <summary>
+    /// 解析单个构造函数参数
+    /// </summary>
+    /// <param name="parameter">参数信息</param>
+    /// <returns>解析后的参数值</returns>
+    /// <exception cref="ArgumentNullException">当 <paramref name="parameter"/> 为 null 时抛出</exception>
+    /// <exception cref="InvalidOperationException">当无法解析必需依赖时抛出</exception>
+    private object ResolveParameter(ParameterInfo parameter)
+    {
+        ArgumentNullException.ThrowIfNull(parameter);
+
+        var parameterType = parameter.ParameterType;
+
+        // 尝试从DI容器获取服务
+        var service = _serviceProvider!.GetService(parameterType);
+
+        if (service is not null)
+        {
+            return service;
+        }
+
+        // DI容器中没有找到服务，检查是否有默认值
+        if (parameter.HasDefaultValue)
+        {
+            return parameter.DefaultValue!;
+        }
+
+        // 检查参数是否可为null
+        if (IsNullableParameter(parameter))
+        {
+            return null!;
+        }
+
+        // 无法解析必需依赖，抛出详细错误信息
+        throw new InvalidOperationException(
+            $$"""
+              无法解析必需依赖: {{parameterType}}
+              位置: {{parameter.Member.DeclaringType?.Name}} 的构造函数参数 "{{parameter.Name}}"
+              解决方案:
+                1. 在DI容器中注册 {{parameterType}} 服务
+                2. 为参数 {{parameter.Name}} 提供默认值
+                3. 将参数 {{parameter.Name}} 改为可空类型 ({{parameterType}}?)
+              """);
+    }
+
+    /// <summary>
+    /// 检查参数是否可为null
+    /// </summary>
+    /// <param name="parameter">参数信息</param>
+    /// <returns>如果参数可为null返回true，否则返回false</returns>
+    private static bool IsNullableParameter(ParameterInfo parameter)
+    {
+        ArgumentNullException.ThrowIfNull(parameter);
+
+        var parameterType = parameter.ParameterType;
+
+        // 检查 Nullable<T> 泛型类型
+        if (Nullable.GetUnderlyingType(parameterType) is not null)
+        {
+            return true;
+        }
+
+        // 对于引用类型，默认可为null（除非有NotNullAttribute）
+        if (!parameterType.IsValueType)
+        {
+            // 在 .NET 8+ 中，可以使用 NullabilityInfoContext 进行更精确的检查
+            try
+            {
+                var nullabilityInfo = new NullabilityInfoContext().Create(parameter);
+                return nullabilityInfo.WriteState is not NullabilityState.NotNull;
+            }
+            catch
+            {
+                // 如果 NullabilityInfoContext 失败，回退到基本检查
+                return true;
+            }
+        }
+
+        return false;
     }
 }

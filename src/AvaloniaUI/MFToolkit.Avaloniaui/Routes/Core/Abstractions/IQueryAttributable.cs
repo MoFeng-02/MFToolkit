@@ -6,7 +6,7 @@ namespace MFToolkit.Avaloniaui.Routes.Core.Abstractions;
 public interface IQueryAttributable
 {
     /// <summary>
-    /// 应用查询参数
+    /// 路由传递参数
     /// </summary>
     /// <param name="parameters">查询参数字典</param>
     void ApplyQueryAttributes(IDictionary<string, object?> parameters);
