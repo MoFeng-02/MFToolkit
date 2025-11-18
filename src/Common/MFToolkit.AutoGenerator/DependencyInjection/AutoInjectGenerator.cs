@@ -73,7 +73,8 @@ public class AutoInjectGenerator : IIncrementalGenerator
             // 扩展属性筛选，包含新的生命周期特性
             var attributes = classSymbol.GetAttributes()
                 .Where(a => a.AttributeClass != null &&
-                    (a.AttributeClass.OriginalDefinition?.Equals(attributeSymbol, SymbolEqualityComparer.Default) == true ||
+                    (
+                     a.AttributeClass.OriginalDefinition?.Equals(attributeSymbol, SymbolEqualityComparer.Default) == true ||
                      a.AttributeClass.Equals(nonGenericAttributeSymbol, SymbolEqualityComparer.Default) ||
                      a.AttributeClass.OriginalDefinition?.Equals(tryAttributeSymbol, SymbolEqualityComparer.Default) == true ||
                      a.AttributeClass.Equals(tryNonGenericAttributeSymbol, SymbolEqualityComparer.Default) ||
@@ -89,7 +90,8 @@ public class AutoInjectGenerator : IIncrementalGenerator
                      a.AttributeClass.OriginalDefinition?.Equals(tryScopedAttrSymbol, SymbolEqualityComparer.Default) == true ||
                      a.AttributeClass.Equals(nonGenericTryScopedAttrSymbol, SymbolEqualityComparer.Default) ||
                      a.AttributeClass.OriginalDefinition?.Equals(tryTransientAttrSymbol, SymbolEqualityComparer.Default) == true ||
-                     a.AttributeClass.Equals(nonGenericTryTransientAttrSymbol, SymbolEqualityComparer.Default)))
+                     a.AttributeClass.Equals(nonGenericTryTransientAttrSymbol, SymbolEqualityComparer.Default))
+                     )
                 .ToList();
 
             var namespaceAttributes = classSymbol.GetAttributes()
@@ -145,7 +147,7 @@ public class AutoInjectGenerator : IIncrementalGenerator
         // 默认回退到实现类型
         serviceType ??= classSymbol;
 
-        var serviceKey = GetServiceKey(attribute);
+        var serviceKey = GetServiceKey(attribute, classSymbol);
         // 新增：从单独生命周期特性获取生命周期
         var lifetime = isLifetimeAttribute
             ? GetLifetimeFromAttributeName(attributeClassName)
@@ -200,50 +202,162 @@ public class AutoInjectGenerator : IIncrementalGenerator
     }
 
 
+    //private static ITypeSymbol? GetServiceType(AttributeData attribute, INamedTypeSymbol classSymbol)
+    //{
+
+    //    foreach (var arg in attribute.ConstructorArguments)
+    //    {
+    //        // 1. 泛型特性（如 [Singleton<IService>]）优先从泛型参数获取服务类型
+    //        if (attribute.AttributeClass?.IsGenericType == true &&
+    //            attribute.AttributeClass.TypeArguments.Length > 0)
+    //        {
+    //            return attribute.AttributeClass.TypeArguments[0];
+    //        }
+
+    //        // 2. 判断是否为单独的生命周期特性（关键修复点）
+    //        var attrName = attribute.AttributeClass?.Name;
+    //        var isLifetimeAttribute = attrName is "SingletonAttribute" or "ScopedAttribute" or "TransientAttribute"
+    //            or "TrySingletonAttribute" or "TryScopedAttribute" or "TryTransientAttribute";
+
+    //        // 3. 非泛型生命周期特性的服务类型默认为自身（避免将Key参数误判为服务类型）
+    //        if (isLifetimeAttribute && !attribute.AttributeClass!.IsGenericType)
+    //        {
+    //            // 生命周期特性的构造函数中出现的Type参数均视为Key，而非服务类型
+    //            return classSymbol;
+    //        }
+
+    //        //if (arg.Value is ITypeSymbol typeSymbol)
+    //        //{
+    //        //    return typeSymbol;
+    //        //}
+    //    }
+    //    return null;
+    //}
     private static ITypeSymbol? GetServiceType(AttributeData attribute, INamedTypeSymbol classSymbol)
     {
-
-        foreach (var arg in attribute.ConstructorArguments)
+        // 1. 泛型特性：直接从泛型参数获取服务类型
+        if (attribute.AttributeClass?.IsGenericType == true &&
+            attribute.AttributeClass.TypeArguments.Length > 0)
         {
-            // 1. 泛型特性（如 [Singleton<IService>]）优先从泛型参数获取服务类型
-            if (attribute.AttributeClass?.IsGenericType == true &&
-                attribute.AttributeClass.TypeArguments.Length > 0)
-            {
-                return attribute.AttributeClass.TypeArguments[0];
-            }
-
-            // 2. 判断是否为单独的生命周期特性（关键修复点）
-            var attrName = attribute.AttributeClass?.Name;
-            var isLifetimeAttribute = attrName is "SingletonAttribute" or "ScopedAttribute" or "TransientAttribute"
-                or "TrySingletonAttribute" or "TryScopedAttribute" or "TryTransientAttribute";
-
-            // 3. 非泛型生命周期特性的服务类型默认为自身（避免将Key参数误判为服务类型）
-            if (isLifetimeAttribute && !attribute.AttributeClass!.IsGenericType)
-            {
-                // 生命周期特性的构造函数中出现的Type参数均视为Key，而非服务类型
-                return classSymbol;
-            }
-
-            //if (arg.Value is ITypeSymbol typeSymbol)
-            //{
-            //    return typeSymbol;
-            //}
+            return attribute.AttributeClass.TypeArguments[0];
         }
-        return null;
+
+        // 2. 非泛型特性：需要判断 Type 参数是否真的是服务类型
+        if (attribute.AttributeConstructor != null)
+        {
+            var parameters = attribute.AttributeConstructor.Parameters;
+
+            for (int i = 0; i < parameters.Length && i < attribute.ConstructorArguments.Length; i++)
+            {
+                var parameter = parameters[i];
+                var argument = attribute.ConstructorArguments[i];
+
+                // 如果参数类型是 Type，且参数值也是 Type
+                if (parameter.Type.Name == "Type" && argument.Value is ITypeSymbol typeSymbol)
+                {
+                    // 检查这个 Type 是否可以被当作服务类型使用
+                    // 即：实现类是否继承或实现了这个 Type
+                    if (IsValidServiceType(classSymbol, typeSymbol))
+                    {
+                        return typeSymbol;
+                    }
+                    // 如果不是有效的服务类型，那么这个 Type 参数可能是被当作 Key 使用了
+                    // 继续查找其他参数
+                }
+            }
+        }
+
+        // 3. 默认使用实现类自身
+        return classSymbol;
     }
 
-
-    private static object? GetServiceKey(AttributeData attribute)
+    private static bool IsValidServiceType(INamedTypeSymbol implementationType, ITypeSymbol potentialServiceType)
     {
-        // 遍历构造函数参数，返回原始值（而非仅字符串）
-        // 注意：需根据实际属性定义调整参数索引（此处假设第一个参数为key）
-        foreach (var arg in attribute.ConstructorArguments)
+        // 如果实现类型就是服务类型，直接返回 true
+        if (SymbolEqualityComparer.Default.Equals(implementationType, potentialServiceType))
+            return true;
+
+        // 检查实现类型是否继承自服务类型
+        var baseType = implementationType.BaseType;
+        while (baseType != null)
         {
-            return arg.Value; // 返回原始object类型，而非仅string
+            if (SymbolEqualityComparer.Default.Equals(baseType, potentialServiceType))
+                return true;
+            baseType = baseType.BaseType;
         }
+
+        // 检查实现类型是否实现了服务接口
+        foreach (var interfaceType in implementationType.AllInterfaces)
+        {
+            if (SymbolEqualityComparer.Default.Equals(interfaceType, potentialServiceType))
+                return true;
+        }
+
+        return false;
+    }
+
+    //private static object? GetServiceKey(AttributeData attribute)
+    //{
+    //    // 遍历构造函数参数，返回原始值（而非仅字符串）
+    //    // 注意：需根据实际属性定义调整参数索引（此处假设第一个参数为key）
+    //    foreach (var arg in attribute.ConstructorArguments)
+    //    {
+    //        return arg.Value; // 返回原始object类型，而非仅string
+    //    }
+    //    return null;
+    //}
+
+    private static object? GetServiceKey(AttributeData attribute, INamedTypeSymbol classSymbol)
+    {
+        // 1. 先检查命名参数
+        foreach (var namedArg in attribute.NamedArguments)
+        {
+            if (namedArg.Key == "Key" && namedArg.Value.Value != null)
+            {
+                return namedArg.Value.Value;
+            }
+        }
+
+        // 2. 检查构造函数参数
+        if (attribute.AttributeConstructor != null)
+        {
+            var parameters = attribute.AttributeConstructor.Parameters;
+
+            for (int i = 0; i < parameters.Length && i < attribute.ConstructorArguments.Length; i++)
+            {
+                var parameter = parameters[i];
+                var argument = attribute.ConstructorArguments[i];
+
+                // 如果参数类型是 Type，需要判断它是否真的是服务类型
+                if (parameter.Type.Name == "Type" && argument.Value is ITypeSymbol typeSymbol)
+                {
+                    // 如果不是有效的服务类型，那么这个 Type 就是被当作 Key 使用了
+                    if (!IsValidServiceType(classSymbol, typeSymbol))
+                    {
+                        return typeSymbol; // 这个 Type 实际上是 Key
+                    }
+                    // 如果是有效的服务类型，就跳过，继续找真正的 Key
+                    continue;
+                }
+
+                // 其他类型的参数直接当作 Key
+                var keyValue = argument.Value;
+                if (keyValue != null && !IsDefaultValue(keyValue))
+                {
+                    return keyValue;
+                }
+            }
+        }
+
         return null;
     }
 
+    private static bool IsDefaultValue(object value)
+    {
+        return (value is int intValue && intValue == 0) ||
+               (value is string strValue && string.IsNullOrEmpty(strValue)) ||
+               value == null;
+    }
 
     private Lifetime GetLifetime(AttributeData attribute)
     {

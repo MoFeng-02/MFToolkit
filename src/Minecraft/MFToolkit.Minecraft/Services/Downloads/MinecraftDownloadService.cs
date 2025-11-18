@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Security.Cryptography;
 using MFToolkit.Minecraft.Entities.Downloads;
+using MFToolkit.Minecraft.Entities.GameVersion;
 using MFToolkit.Minecraft.Entities.Versions;
 using MFToolkit.Minecraft.Enums;
 using MFToolkit.Minecraft.Helpers;
@@ -41,6 +42,8 @@ public class MinecraftDownloadService : IMinecraftDownloadService
     /// </summary>
     public event Action<MinecraftDownloadCompletedResult>? DownloadCompleted;
 
+    public Action<VersionInfoDetail>? CompletedInfoAction { get; set; }
+
     // /// <summary>
     // /// UI线程执行委托事件，用于跨线程操作UI元素
     // /// </summary>
@@ -54,7 +57,7 @@ public class MinecraftDownloadService : IMinecraftDownloadService
     /// <summary>
     /// 下载队列锁，保护非线程安全集合的操作
     /// </summary>
-    private readonly Lock _downloadQueueLock = new Lock();
+    private readonly Lock _downloadQueueLock = new();
 
     /// <summary>
     /// 存储配置选项
@@ -105,7 +108,7 @@ public class MinecraftDownloadService : IMinecraftDownloadService
     /// <summary>
     /// 原版Minecraft下载处理器
     /// </summary>
-    private readonly VanillaHandle _vanillaHandle;
+    private VanillaHandle _vanillaHandle;
 
     /// <summary>
     /// HTTP客户端，用于发送下载请求
@@ -148,11 +151,6 @@ public class MinecraftDownloadService : IMinecraftDownloadService
         _versionCancellationTokens = new ConcurrentDictionary<string, CancellationTokenSource>();
         _activeDownloads = new ConcurrentDictionary<Guid, MinecraftDownloadProgress>();
         _activeTasks = new ConcurrentDictionary<string, Task>();
-        _vanillaHandle = new VanillaHandle(
-            httpClient,
-            StorageOptions.CurrentValue,
-            DownloadOptions.CurrentValue,
-            logger);
         // 初始化时同步一次当前配置（确保启动时使用正确的并发数）
         var initialMax = downloadOptions.CurrentValue.Settings.MaxDownloadThreads;
         _concurrencyController.OnDownloadOptionsChanged(initialMax, null);
@@ -211,9 +209,8 @@ public class MinecraftDownloadService : IMinecraftDownloadService
     /// </summary>
     public async Task<bool> StartDownloadAsync(
         VersionInfo versionInfo,
-        string? versionName = null,
+        string? customName = null,
         StorageOptions? storageOptions = null,
-        DownloadPriority priority = DownloadPriority.Normal,
         CancellationToken cancellationToken = default)
     {
         // 验证输入参数
@@ -222,19 +219,25 @@ public class MinecraftDownloadService : IMinecraftDownloadService
         // 为当前版本创建专属取消令牌（可单独取消该版本下载）
         using var versionCts = CreateVersionCancellationTokenSource(versionInfo.Id, cancellationToken);
 
+        // 创建版本总表
+        var completedDownload = new MinecraftDownloadCompletedResult()
+        {
+            VersionId = versionInfo.Id,
+        };
         try
         {
+            storageOptions ??= StorageOptions.CurrentValue;
+            _vanillaHandle = new VanillaHandle(
+                storageOptions,
+                DownloadOptions.CurrentValue,
+                _logger,
+                customName);
             ClearDownloadQueue();
             _linkedCts = CancellationTokenSource.CreateLinkedTokenSource(versionCts.Token);
 
-            // 创建版本总表
-            var completedDownload = new MinecraftDownloadCompletedResult()
-            {
-                VersionId = versionInfo.Id,
-            };
             _completedDownloads.TryAdd(versionInfo.Id, completedDownload);
             // 1. 下载版本详情清单
-            var version = _vanillaHandle.GetGameVersionInfoJson(versionInfo, versionName);
+            var version = _vanillaHandle.GetGameVersionInfoJson(versionInfo);
             var versionProgress = version.SetDownloadProgress();
             DictionaryVersionPaths.TryAdd(versionInfo.Id, [version.SetDownloadVersionAllFilePath()]);
 
@@ -245,7 +248,7 @@ public class MinecraftDownloadService : IMinecraftDownloadService
             // 2. 下载核心文件
             var gameVersion = await _vanillaHandle.GetGameVersionInfoAsync(version.SavePath);
             var coreDownloadTasks =
-                await _vanillaHandle.GetDownloadTasksAsync(gameVersion, GetCurrentOs(), versionName);
+                await _vanillaHandle.GetDownloadTasksAsync(gameVersion, GetCurrentOs());
             var coreProgressList = coreDownloadTasks.Select(q => q.SetDownloadProgress()).ToList();
 
             // 批量添加：核心文件
@@ -266,8 +269,9 @@ public class MinecraftDownloadService : IMinecraftDownloadService
             await StartDownloadAsync(assetProgressList, versionCts.Token);
 
 
-            // 触发完成事件
-            TriggerDownloadCompleted(versionInfo.Id);
+            // 全部下载完成后，执行一次获取版本信息的操作
+            CompletedInfoAction?.Invoke(
+                VersionInfoDetail.GetVersionInfoDetail(gameVersion, storageOptions, ModLoaderType, customName));
             return true;
         }
         // 改进：区分处理不同类型的异常
@@ -293,6 +297,8 @@ public class MinecraftDownloadService : IMinecraftDownloadService
         }
         finally
         {
+            // 触发完成事件
+            TriggerDownloadCompleted(versionInfo.Id);
             // 清理当前版本的取消令牌
             _versionCancellationTokens.TryRemove(versionInfo.Id, out _);
         }
@@ -303,9 +309,8 @@ public class MinecraftDownloadService : IMinecraftDownloadService
     /// </summary>
     public Task<int> StartBatchDownloadAsync(
         IEnumerable<VersionInfo> versionInfos,
-        IEnumerable<string>? saveFileNames = null,
+        IEnumerable<string>? customNames = null,
         StorageOptions? storageOptions = null,
-        DownloadPriority priority = DownloadPriority.Normal,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

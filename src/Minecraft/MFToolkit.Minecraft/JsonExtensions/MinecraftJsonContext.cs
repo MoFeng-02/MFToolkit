@@ -31,6 +31,7 @@ namespace MFToolkit.Minecraft.JsonExtensions;
 [JsonSerializable(typeof(List<VersionInfo>))]
 [JsonSerializable(typeof(IReadOnlyList<VersionInfo>))]
 [JsonSerializable(typeof(GameVersionDetail))]
+[JsonSerializable(typeof(VersionInfoDetail))]
 [JsonSerializable(typeof(Downloads))]
 [JsonSerializable(typeof(DownloadItem))]
 [JsonSerializable(typeof(Library))]
@@ -91,7 +92,7 @@ namespace MFToolkit.Minecraft.JsonExtensions;
 #region Options
 [JsonSerializable(typeof(StorageOptions))]
 [JsonSerializable(typeof(StorageMode))]
-[JsonSerializable(typeof(LauncherConfig))]
+[JsonSerializable(typeof(LauncherOptions))]
 [JsonSerializable(typeof(DownloadOptions))]
 #endregion
 public partial class MinecraftJsonSerializerContext : JsonSerializerContext

@@ -5,8 +5,10 @@ namespace MFToolkit.Minecraft.Options;
 /// <summary>
 /// 下载配置选项
 /// </summary>
-public class DownloadOptions() : BaseOptions("download_options.json")
+public class DownloadOptions : BaseOptions
 {
+    public static readonly string ConfigPath = Path.Combine(AppContext.BaseDirectory, "config", "download_config.json");
+
     /// <summary>
     /// 镜像源配置
     /// </summary>
@@ -44,6 +46,15 @@ public class DownloadOptions() : BaseOptions("download_options.json")
     public void SetCurrentMirror(string mirrorKey)
     {
         Mirrors.CurrentMirror = mirrorKey;
+    }
+
+    /// <summary>
+    /// 保存当前选项类
+    /// </summary>
+    /// <returns></returns>
+    public Task SaveAsync()
+    {
+        return base.SaveAsync(ConfigPath);
     }
 }
 
@@ -129,6 +140,7 @@ public class MirrorConfiguration
         {
             return config.BaseUrl;
         }
+
         return "";
     }
 
@@ -217,11 +229,17 @@ public class MirrorConfig
 /// </summary>
 public class DownloadSettings
 {
+    private int _maxDownloadThreads = 20;
+
     /// <summary>
-    /// 最大下载线程数
+    /// 最大下载线程数（范围：1-256）
     /// </summary>
     [JsonPropertyName("maxDownloadThreads")]
-    public int MaxDownloadThreads { get; set; } = 5;
+    public int MaxDownloadThreads
+    {
+        get => _maxDownloadThreads;
+        set => _maxDownloadThreads = Math.Clamp(value, 1, 256);
+    }
 
     /// <summary>
     /// 最大重试次数

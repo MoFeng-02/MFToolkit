@@ -1,15 +1,14 @@
-using System.Text.Json;
 using MFToolkit.Minecraft.Enums;
-using MFToolkit.Minecraft.JsonExtensions;
 
 namespace MFToolkit.Minecraft.Options;
 
 /// <summary>
 /// 启动器配置
 /// </summary>
-public class LauncherConfig() : BaseOptions("launcher_config.json")
+public class LauncherOptions : BaseOptions
 {
-    private static readonly string _configPath = Path.Combine(AppContext.BaseDirectory, "config", "launcher_config.json");
+    public static readonly string ConfigPath = Path.Combine(AppContext.BaseDirectory, "config", "launcher_config.json");
+
     /// <summary>
     /// 最后使用的版本ID
     /// </summary>
@@ -55,7 +54,6 @@ public class LauncherConfig() : BaseOptions("launcher_config.json")
     /// </summary>
     public string BasePath { get; set; } = ".minecraft";
 
-
     /// <summary>
     /// 是否启用全屏
     /// </summary>
@@ -67,27 +65,14 @@ public class LauncherConfig() : BaseOptions("launcher_config.json")
     public bool AdvancedOpenGL { get; set; } = true;
 
     /// <summary>
-    /// 保存配置
+    /// 游戏参数
     /// </summary>
-    public void Save()
-    {
-        try
-        {
-            // 确保目录存在
-            var directory = Path.GetDirectoryName(_configPath);
-            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+    public List<string> GameArguments { get; set; } = new();
 
-            string json = JsonSerializer.Serialize(this, MinecraftJsonSerializerContext.Default.LauncherConfig);
-            File.WriteAllText(_configPath, json);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"保存配置失败: {ex.Message}");
-        }
-    }
+    /// <summary>
+    /// JVM参数
+    /// </summary>
+    public List<string> JvmArguments { get; set; } = new();
 
     /// <summary>
     /// 创建存储选项
@@ -100,5 +85,26 @@ public class LauncherConfig() : BaseOptions("launcher_config.json")
             BasePath = BasePath,
             StorageMode = StorageMode
         };
+    }
+
+    /// <summary>
+    /// 验证配置是否有效
+    /// </summary>
+    public bool Validate()
+    {
+        return !string.IsNullOrEmpty(Username) &&
+               WindowWidth > 0 &&
+               WindowHeight > 0 &&
+               MinMemoryMB > 0 &&
+               MaxMemoryMB >= MinMemoryMB;
+    }
+
+    /// <summary>
+    /// 保存当前选项类
+    /// </summary>
+    /// <returns></returns>
+    public Task SaveAsync()
+    {
+        return base.SaveAsync(ConfigPath);
     }
 }

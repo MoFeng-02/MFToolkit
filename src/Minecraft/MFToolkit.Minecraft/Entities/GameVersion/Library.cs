@@ -45,6 +45,8 @@ public class Library
 
     /// <summary>
     /// 检查库是否适用于指定环境
+    /// <param name="os">系统</param>
+    /// <param name="features">库不用，一般的新版参数下面的rules规则有</param>
     /// </summary>
     public bool IsApplicable(string os, Dictionary<string, bool>? features = null)
     {
@@ -83,7 +85,7 @@ public class Library
             yield return Downloads.Artifact;
 
         var nativeClassifier = GetNativeClassifier(os);
-        if (!string.IsNullOrEmpty(nativeClassifier) && 
+        if (!string.IsNullOrEmpty(nativeClassifier) &&
             Downloads?.Classifiers != null &&
             Downloads.Classifiers.TryGetValue(nativeClassifier, out var nativeDownload))
         {
@@ -113,4 +115,30 @@ public class LibraryDownloads
     /// </summary>
     [JsonPropertyName("classifiers")]
     public Dictionary<string, DownloadItem>? Classifiers { get; set; }
+}
+
+/// <summary>
+/// 库路径简约信息，原生库和普通库均在里面
+/// </summary>
+public class LibrarySimple
+{
+    /// <summary>
+    /// 名称（可能包含 Maven 坐标，如 group:artifact:version:natives-windows）
+    /// </summary>
+    public required string Name { get; set; }
+
+    /// <summary>
+    /// SHA1 校验值
+    /// </summary>
+    public required string Sha1 { get; set; }
+
+    /// <summary>
+    /// Maven 路径（如 org/lwjgl/lwjgl/natives-windows-x86_64/3.3.1/...）
+    /// </summary>
+    public required string Path { get; set; }
+
+    /// <summary>
+    /// 文件大小（字节）
+    /// </summary>
+    public long Size { get; set; }
 }

@@ -2,9 +2,9 @@
 $projects = @(
     #"../src/Common/MFToolkit"
     #"../src/Common/MFToolkit.AspNetCore",
-    #"../src/Common/MFToolkit.Abstractions",
-    #"../src/Common/MFToolkit.AutoGenerator"
-    "../src/AvaloniaUI/MFToolkit.Avaloniaui"
+    "../src/Common/MFToolkit.Abstractions",
+    "../src/Common/MFToolkit.AutoGenerator"
+    #"../src/AvaloniaUI/MFToolkit.Avaloniaui"
     #"../src/Minecraft/MFToolkit.Minecraft"
     #1"../src/Applet/WeChat/MFToolkit.WeChat",
     #1"../src/Applet/Integration/MFToolkit.Integration.Applet",

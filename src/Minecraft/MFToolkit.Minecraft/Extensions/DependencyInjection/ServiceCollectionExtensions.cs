@@ -5,10 +5,14 @@ using MFToolkit.Minecraft.Services.Auth.Interfaces;
 using MFToolkit.Minecraft.Services.Cape;
 using MFToolkit.Minecraft.Services.Downloads;
 using MFToolkit.Minecraft.Services.Downloads.Interfaces;
+using MFToolkit.Minecraft.Services.Java;
+using MFToolkit.Minecraft.Services.Java.Interfaces;
+using MFToolkit.Minecraft.Services.Java.Internals;
 using MFToolkit.Minecraft.Services.Profile;
 using MFToolkit.Minecraft.Services.Skin;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace MFToolkit.Minecraft.Extensions.DependencyInjection;
 
@@ -75,6 +79,21 @@ public static class ServiceCollectionExtensions
             };
         });
 
+        // 注册IJavaFinder为单例，使用工厂方法创建平台特定实例
+        services.TryAddSingleton<IJavaFinder>(sp => JavaFinderFactory.CreateJavaFinder());
+
+        // 注册IJavaService为单例，使用JavaService实现
+        // // 注册IJavaService，使用安全包装器
+        services.TryAddSingleton<IJavaService>(sp =>
+        {
+            var javaFinder = sp.GetRequiredService<IJavaFinder>();
+            var baseService = new JavaService(javaFinder);
+            return baseService;
+            // var logger = sp.GetService<ILogger<SafeJavaService>>();
+            //     
+            // return new SafeJavaService(baseService, logger);
+        });
+        
         return services;
     }
 

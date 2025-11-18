@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using MFToolkit.Minecraft.Entities.Downloads;
+using MFToolkit.Minecraft.Entities.GameVersion;
 using MFToolkit.Minecraft.Entities.Versions;
 using MFToolkit.Minecraft.Enums;
 using MFToolkit.Minecraft.Options;
@@ -26,6 +27,11 @@ public interface IMinecraftDownloadService : IDisposable
     /// 下载完成事件 - 当所有文件下载完成后触发，包含所有下载文件的详细信息
     /// </summary>
     event Action<MinecraftDownloadCompletedResult>? DownloadCompleted;
+
+    /// <summary>
+    /// 只在正确下载完成后调用，传递各方位信息，和DownloadCompleted不同
+    /// </summary>
+    public Action<VersionInfoDetail>? CompletedInfoAction { get; set; }
 
     // /// <summary>
     // /// 下载错误事件 - 当下载过程中发生错误时触发
@@ -59,7 +65,7 @@ public interface IMinecraftDownloadService : IDisposable
     /// 获取版本所有下载列表
     /// </summary>
     Dictionary<string, List<MinecraftVersionAllFilePath>> DictionaryVersionPaths { get; set; }
-    
+
     /// <summary>
     /// 通过版本Id获取指定的下载表
     /// </summary>
@@ -73,26 +79,26 @@ public interface IMinecraftDownloadService : IDisposable
     /// 启动下载任务
     /// </summary>
     /// <param name="versionInfo">版本</param>
-    /// <param name="versionName">自定义名称(存储版本json和版本文件的名称，不需要后缀)</param>
+    /// <param name="customName">自定义名称(存储版本json和版本文件的名称，不需要后缀)</param>
     /// <param name="storageOptions">存储选项</param>
-    /// <param name="priority">下载优先级</param>
     /// <param name="cancellationToken">任务令牌</param>
     /// <returns>是否成功启动</returns>
-    Task<bool> StartDownloadAsync(VersionInfo versionInfo, string? versionName = null,
-        StorageOptions? storageOptions = null, DownloadPriority priority = DownloadPriority.Normal,
+    Task<bool> StartDownloadAsync(VersionInfo versionInfo,
+        string? customName = null,
+        StorageOptions? storageOptions = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 批量启动下载任务
     /// </summary>
     /// <param name="versionInfos">版本列表</param>
-    /// <param name="saveFileNames">自定义名称列表，需要和版本列表下标对应(存储版本json和版本文件的名称，不需要后缀)</param>
+    /// <param name="customNames">自定义名称列表，需要和版本列表下标对应(存储版本json和版本文件的名称，不需要后缀)</param>
     /// <param name="storageOptions">存储选项</param>
-    /// <param name="priority">下载优先级</param>
     /// <param name="cancellationToken">任务令牌</param>
     /// <returns>成功启动的版本数量</returns>
-    Task<int> StartBatchDownloadAsync(IEnumerable<VersionInfo> versionInfos, IEnumerable<string>? saveFileNames = null,
-        StorageOptions? storageOptions = null, DownloadPriority priority = DownloadPriority.Normal,
+    Task<int> StartBatchDownloadAsync(IEnumerable<VersionInfo> versionInfos,
+        IEnumerable<string>? customNames = null,
+        StorageOptions? storageOptions = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>

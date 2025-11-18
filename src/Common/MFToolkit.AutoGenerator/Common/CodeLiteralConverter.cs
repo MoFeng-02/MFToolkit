@@ -14,7 +14,7 @@ public static class CodeLiteralConverter
     public static string ConvertToLiteral(object? value)
     {
         if (value == null)
-            return "null";
+            return "";
 
         var type = value.GetType();
 
