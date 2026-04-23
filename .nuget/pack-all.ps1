@@ -1,9 +1,10 @@
 # 定义项目路径
 $projects = @(
     #"../src/Common/MFToolkit"
+   "../src/Common/MFToolkit.Routing"
     #"../src/Common/MFToolkit.AspNetCore",
-    "../src/Common/MFToolkit.Abstractions",
-    "../src/Common/MFToolkit.AutoGenerator"
+    #"../src/Common/MFToolkit.Abstractions",
+    #"../src/Common/MFToolkit.AutoGenerator"
     #"../src/AvaloniaUI/MFToolkit.Avaloniaui"
     #"../src/Minecraft/MFToolkit.Minecraft"
     #1"../src/Applet/WeChat/MFToolkit.WeChat",

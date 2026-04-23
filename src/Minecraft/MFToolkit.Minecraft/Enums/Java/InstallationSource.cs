@@ -7,8 +7,6 @@ public enum InstallationSource
 {
     /// <summary>PATH环境变量</summary>
     PathEnvironment,
-    /// <summary>Windows注册表</summary>
-    Registry,
     /// <summary>常见目录</summary>
     CommonDirectories,
     /// <summary>进程搜索</summary>

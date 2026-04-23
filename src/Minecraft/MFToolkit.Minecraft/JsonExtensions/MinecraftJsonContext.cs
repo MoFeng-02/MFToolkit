@@ -92,7 +92,7 @@ namespace MFToolkit.Minecraft.JsonExtensions;
 #region Options
 [JsonSerializable(typeof(StorageOptions))]
 [JsonSerializable(typeof(StorageMode))]
-[JsonSerializable(typeof(LauncherOptions))]
+[JsonSerializable(typeof(GameLauncherOptions))]
 [JsonSerializable(typeof(DownloadOptions))]
 #endregion
 public partial class MinecraftJsonSerializerContext : JsonSerializerContext

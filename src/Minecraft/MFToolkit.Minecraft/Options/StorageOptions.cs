@@ -389,11 +389,50 @@ public class StorageOptions : BaseOptions
     }
 
     /// <summary>
-    /// 保存当前选项类
+    /// 保存当前存储配置
     /// </summary>
+    /// <remarks>
+    /// <para>🚨 警告：此方法将保存到全局配置文件，会覆盖用户的全局存储设置！</para>
+    /// 
+    /// <para>📌 使用层级：</para>
+    /// <list type="bullet">
+    ///   <item><description>✅ 应用设置界面 - 用户明确修改全局存储配置时使用</description></item>
+    ///   <item><description>✅ 配置管理服务 - 初始化或重置全局配置时使用</description></item>
+    ///   <item><description>❌ VersionInfoDetail - 禁止在版本详情中调用，避免覆盖全局配置</description></item>
+    ///   <item><description>❌ 版本操作流程 - 禁止在下载、安装版本时调用</description></item>
+    /// </list>
+    /// 
+    /// <para>⚠️ 危险场景：</para>
+    /// <list type="bullet">
+    ///   <item><description>如果此配置实例被 VersionInfoDetail 引用并在版本操作中被修改</description></item>
+    ///   <item><description>保存后会永久改变用户的存储模式设置</description></item>
+    ///   <item><description>导致后续版本错误地存储到非预期位置</description></item>
+    /// </list>
+    /// 
+    /// <para>💡 安全建议：</para>
+    /// <list type="bullet">
+    ///   <item><description>VersionInfoDetail 应使用配置副本而非全局实例</description></item>
+    ///   <item><description>版本特定配置应保存到版本目录而非全局配置</description></item>
+    ///   <item><description>仅在用户明确确认时调用此方法</description></item>
+    /// </list>
+    /// </remarks>
     /// <returns></returns>
     public Task SaveAsync()
     {
         return base.SaveAsync(ConfigPath);
+    }
+
+    /// <summary>
+    /// 保存到版本特定配置文件（安全方法）
+    /// </summary>
+    /// <param name="versionId">版本ID，用于创建版本特定的配置路径</param>
+    /// <returns></returns>
+    public Task SaveAsVersionConfigAsync(string versionId)
+    {
+        if (string.IsNullOrEmpty(versionId))
+            throw new ArgumentNullException(nameof(versionId));
+
+        var versionConfigPath = Path.Combine(GetVersionsPath(versionId), "storage_config.json");
+        return SaveAsync(versionConfigPath);
     }
 }

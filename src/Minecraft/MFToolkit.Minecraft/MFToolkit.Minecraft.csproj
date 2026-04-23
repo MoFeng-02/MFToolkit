@@ -8,7 +8,7 @@
 		<PackageId>MFToolkit.Minecraft</PackageId>
 		<Version>0.1.0-Alpha</Version>
 		<Authors>MF Developer</Authors>
-		<Description>一个用于 Minecraft 身份验证、资料管理、皮肤和斗篷处理、以及游戏资源版本等等相关的 .NET 9 工具包。</Description>
+		<Description>一个用于 Minecraft 身份验证、资料管理、皮肤和斗篷处理、以及游戏资源版本等等相关的 .NET 10 工具包。</Description>
 		<PackageTags>Minecraft;Auth;Skin;Cape;Profile;Versions;Games</PackageTags>
 		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>

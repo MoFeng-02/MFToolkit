@@ -41,4 +41,20 @@ public class JavaInstallation
     /// Java主版本号 (8, 11, 17, 21, etc.)
     /// </summary>
     public int MajorVersion { get; set; }
+
+    /// <summary>
+    /// 检查是否推荐用于Minecraft
+    /// </summary>
+    public bool IsRecommendedForMinecraft
+    {
+        get
+        {
+            // Minecraft通常推荐使用OpenJDK及其衍生版本
+            return Vendor == JavaVendor.OpenJDK ||
+                   Vendor == JavaVendor.Eclipse ||
+                   Vendor == JavaVendor.Microsoft ||
+                   Vendor == JavaVendor.Amazon ||
+                   Vendor == JavaVendor.Zulu;
+        }
+    }
 }

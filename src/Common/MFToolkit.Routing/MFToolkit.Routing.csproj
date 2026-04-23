@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Authors>莫枫</Authors>
+		<Version>1.0.0</Version>
+		<Description>通用Net UI 框架导航库，支持顶级路由导航和路由保活，以及路由传参</Description>
+		<RepositoryUrl>https://github.com/MoFeng-02/MFToolkit</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/MoFeng-02/MFToolkit</PackageProjectUrl>
+		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+	</ItemGroup>
+
+</Project>
