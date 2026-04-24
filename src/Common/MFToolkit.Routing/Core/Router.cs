@@ -1,3 +1,4 @@
+using MFToolkit.Routing.Core;
 using MFToolkit.Routing.Core.Interfaces;
 using MFToolkit.Routing.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,56 +42,45 @@ public class Router : IRouter
     public bool CanGoBack => _stackManager.CurrentStack.CanGoBack;
 
     /// <inheritdoc />
+    public int StackDepth => _stackManager.CurrentStack.Count;
+
+    /// <inheritdoc />
     public IReadOnlyList<RouteEntity> RegisteredTopRoutes => _stackManager.RegisteredTopRoutes;
 
     /// <inheritdoc />
     public bool IsUsingDefaultTopRoute => _stackManager.IsUsingDefaultTopRoute;
 
     /// <summary>
-    /// 路由注册表
+    /// 栈管理器（仅供内部使用）
     /// </summary>
-    public RouteRegistry Registry => _registry;
-
-    /// <summary>
-    /// 栈管理器
-    /// </summary>
-    public RouteStackManager StackManager => _stackManager;
+    internal RouteStackManager StackManager => _stackManager;
 
     /// <summary>
     /// 创建一个新的 Router 实例
     /// </summary>
     /// <param name="guards">路由守卫集合</param>
+    /// <param name="routes">已注册的路由集合</param>
     /// <param name="serviceProvider">服务提供者（用于创建 ViewModel）</param>
-    public Router(IEnumerable<IRouteGuard>? guards = null, IServiceProvider? serviceProvider = null)
+    public Router(IEnumerable<IRouteGuard>? guards, IEnumerable<RouteEntity>? routes, IServiceProvider? serviceProvider)
     {
         _registry = new RouteRegistry();
         _stackManager = new RouteStackManager();
         _guards = guards ?? Enumerable.Empty<IRouteGuard>();
         _serviceProvider = serviceProvider;
-    }
 
-    // === 注册 ===
-
-    /// <inheritdoc />
-    public void RegisterRoute(RouteEntity entity)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-
-        _registry.Register(entity);
-
-        // 如果是顶级路由，同时注册到栈管理器
-        if (entity.IsTop)
+        // 注册路由
+        if (routes != null)
         {
-            _stackManager.RegisterTopRoute(entity);
-        }
-    }
+            foreach (var route in routes)
+            {
+                _registry.Register(route);
 
-    /// <inheritdoc />
-    public void RegisterRoutes(IEnumerable<RouteEntity> entities)
-    {
-        foreach (var entity in entities)
-        {
-            RegisterRoute(entity);
+                // 如果是顶级路由，注册到栈管理器
+                if (route.IsTop)
+                {
+                    _stackManager.RegisterTopRoute(route);
+                }
+            }
         }
     }
 
@@ -180,14 +170,14 @@ public class Router : IRouter
         return NavigateAsync(typeof(T), parameters);
     }
 
-    private async Task<NavigationResult> NavigateInternalAsync(RouteEntity route, Dictionary<string, object?>? parameters)
+    private async Task<NavigationResult> NavigateInternalAsync(RouteEntity route, Dictionary<string, object?>? parameters, string action = NavigationActions.Push)
     {
         var from = CurrentRoute;
         var toParameters = MergeParameters(route, parameters);
 
         // 2. 触发 NavigationStarting 事件
         var toEntry = new RouteEntry(route, toParameters);
-        OnNavigationStarting(from, toEntry);
+        OnNavigationStarting(action, from, toEntry);
 
         // 3. 守卫检查
         foreach (var guard in _guards)
@@ -195,7 +185,7 @@ public class Router : IRouter
             if (!await guard.CanNavigateAsync(route, toParameters))
             {
                 await guard.OnNavigationBlockedAsync(route, toParameters);
-                OnNavigationFailed(from, toEntry, NavigationStatus.Blocked, "导航被守卫阻止");
+                OnNavigationFailed(action, from, toEntry, NavigationStatus.Blocked, "导航被守卫阻止");
                 return NavigationResult.Blocked(route);
             }
         }
@@ -206,7 +196,13 @@ public class Router : IRouter
             currentAware.OnNavigatingFrom();
         }
 
-        // 5. 创建 ViewModel（如果注册了）
+        // 5. 从 DI 获取 Page 实例（如果已注册）
+        if (route.RouteType != null && _serviceProvider != null)
+        {
+            toEntry.PageInstance = _serviceProvider.GetRequiredService(route.RouteType);
+        }
+
+        // 6. 创建 ViewModel（如果注册了）
         if (route.ViewModelType != null && _serviceProvider != null)
         {
             toEntry.ViewModelInstance = _serviceProvider.GetRequiredService(route.ViewModelType);
@@ -218,23 +214,23 @@ public class Router : IRouter
             }
         }
 
-        // 6. 入栈
+        // 7. 入栈
         _stackManager.CurrentStack.Push(toEntry);
 
-        // 7. 触发目标页面 OnNavigated
+        // 8. 触发目标页面 OnNavigated
         if (toEntry.PageInstance is INavigationAware targetAware)
         {
             targetAware.OnNavigated(toParameters);
         }
 
-        // 7.1 触发 Page 的 IQueryAttributable 参数注入（如果 Page 也实现了）
+        // 8.1 触发 Page 的 IQueryAttributable 参数注入（如果 Page 也实现了）
         if (toEntry.PageInstance is IQueryAttributable pageAttributable && toParameters != null)
         {
             pageAttributable.ApplyQueryAttributes(toParameters);
         }
 
-        // 8. 触发 Navigated 事件
-        OnNavigated(from, toEntry);
+        // 9. 触发 Navigated 事件
+        OnNavigated(action, from, toEntry);
 
         return NavigationResult.Success(route);
     }
@@ -259,7 +255,7 @@ public class Router : IRouter
             }
 
             // 触发 NavigationStarting 事件
-            OnNavigationStarting(from, null);
+            OnNavigationStarting(NavigationActions.Pop, from, null);
 
             // 1. 触发 OnNavigatingFrom
             if (from.PageInstance is INavigationAware currentAware)
@@ -300,7 +296,7 @@ public class Router : IRouter
                 if (newTop.PageInstance == null)
                 {
                     // 触发重建请求（框架侧处理）
-                    OnNavigationFailed(newTop, null, NavigationStatus.Cancelled, "需要重建页面实例");
+                    OnNavigationFailed(NavigationActions.Pop, newTop, null, NavigationStatus.Cancelled, "需要重建页面实例");
                 }
                 else
                 {
@@ -325,7 +321,7 @@ public class Router : IRouter
             }
 
             // 5. 触发 Navigated 事件
-            OnNavigated(popped, newTop);
+            OnNavigated(NavigationActions.Pop, popped, newTop);
 
             return NavigationResult.Success(from.Entity);
         }
@@ -407,7 +403,7 @@ public class Router : IRouter
                 }
             }
 
-            OnNavigated(from, newTop);
+            OnNavigated(NavigationActions.PopToRoot, from, newTop);
 
             return NavigationResult.Success(from.Entity);
         }
@@ -424,26 +420,298 @@ public class Router : IRouter
     // === 栈管理 ===
 
     /// <inheritdoc />
+    public async Task<NavigationResult> GoBackToAsync(string routeKey)
+    {
+        await _navigationLock.WaitAsync();
+        try
+        {
+            var from = CurrentRoute;
+            if (from == null)
+            {
+                return NavigationResult.Cancelled("当前没有路由");
+            }
+
+            // 查找目标路由在栈中的位置
+            var targetIndex = -1;
+            for (int i = _stackManager.CurrentStack.Count - 1; i >= 0; i--)
+            {
+                var entry = _stackManager.CurrentStack.History[i];
+                if (entry.Entity.RouteKey == routeKey || entry.Entity.RoutePath == routeKey)
+                {
+                    targetIndex = i;
+                    break;
+                }
+            }
+
+            if (targetIndex < 0)
+            {
+                return NavigationResult.NotFound(routeKey);
+            }
+
+            // 如果目标就是当前页，不需要操作
+            if (targetIndex == _stackManager.CurrentStack.Count - 1)
+            {
+                return NavigationResult.Success(from.Entity);
+            }
+
+            // 触发 NavigationStarting 事件
+            OnNavigationStarting(NavigationActions.PopToPage, from, null);
+
+            // 逐个弹出直到目标页
+            while (_stackManager.CurrentStack.Count > targetIndex + 1)
+            {
+                var entry = _stackManager.CurrentStack.Current;
+                if (entry == null) break;
+
+                // 触发 OnNavigatingFrom
+                if (entry.PageInstance is INavigationAware aware)
+                {
+                    aware.OnNavigatingFrom();
+                }
+
+                // 处理 KeepAlive
+                if (!entry.Entity.IsKeepalive)
+                {
+                    if (entry.PageInstance is INavigationAware fromAware)
+                    {
+                        fromAware.OnNavigatedFrom();
+                    }
+                    DisposePage(entry);
+                }
+                else
+                {
+                    if (entry.PageInstance is INavigationAware fromAware)
+                    {
+                        fromAware.OnNavigatedFrom();
+                    }
+                }
+
+                _stackManager.CurrentStack.Pop();
+            }
+
+            // 激活栈顶
+            var newTop = CurrentRoute;
+            if (newTop != null)
+            {
+                if (newTop.PageInstance is INavigationAware newAware)
+                {
+                    newAware.OnNavigated(newTop.Parameters);
+                }
+
+                // 触发 ViewModel 的 IQueryAttributable 参数注入
+                if (newTop.ViewModelInstance is IQueryAttributable vmAttributable && newTop.Parameters != null)
+                {
+                    vmAttributable.ApplyQueryAttributes(newTop.Parameters);
+                }
+
+                // 触发 Page 的 IQueryAttributable 参数注入
+                if (newTop.PageInstance is IQueryAttributable pageAttributable && newTop.Parameters != null)
+                {
+                    pageAttributable.ApplyQueryAttributes(newTop.Parameters);
+                }
+            }
+
+            OnNavigated(NavigationActions.PopToPage, from, newTop);
+
+            return NavigationResult.Success(from.Entity);
+        }
+        catch (Exception ex)
+        {
+            return NavigationResult.Error(ex);
+        }
+        finally
+        {
+            _navigationLock.Release();
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<NavigationResult> GoBackToAsync(Type pageType)
+    {
+        var route = _registry.FindByType(pageType);
+        if (route == null)
+        {
+            return NavigationResult.NotFound(pageType.Name);
+        }
+
+        return await GoBackToAsync(route.RouteKey);
+    }
+
+    /// <inheritdoc />
+    public Task<NavigationResult> GoBackToAsync<T>() where T : class
+    {
+        return GoBackToAsync(typeof(T));
+    }
+
+    /// <inheritdoc />
+    public async Task<NavigationResult> ReplaceAsync(string routeKey, Dictionary<string, object?>? parameters = null)
+    {
+        await _navigationLock.WaitAsync();
+        try
+        {
+            var from = CurrentRoute;
+            if (from == null)
+            {
+                return NavigationResult.Cancelled("当前没有路由");
+            }
+
+            RouteEntity? route;
+            Dictionary<string, object?>? resolvedParams = null;
+
+            // 尝试直接查找路由
+            route = _registry.FindByKey(routeKey);
+            if (route != null)
+            {
+                resolvedParams = parameters;
+            }
+            else
+            {
+                // 尝试路径参数匹配
+                foreach (var registered in _registry.GetAll())
+                {
+                    if (registered.RoutePath != null && RouteParser.HasParameters(registered.RoutePath))
+                    {
+                        var pathParams = RouteParser.ParseParameters(registered.RoutePath, routeKey);
+                        if (pathParams != null)
+                        {
+                            route = registered;
+                            resolvedParams = MergeParameters(pathParams, parameters);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (route == null)
+            {
+                return NavigationResult.NotFound(routeKey);
+            }
+
+            // 触发 NavigationStarting 事件
+            var toEntry = new RouteEntry(route, resolvedParams);
+            OnNavigationStarting(NavigationActions.Replace, from, toEntry);
+
+            // 守卫检查
+            foreach (var guard in _guards)
+            {
+                if (!await guard.CanNavigateAsync(route, resolvedParams))
+                {
+                    await guard.OnNavigationBlockedAsync(route, resolvedParams);
+                    OnNavigationFailed(NavigationActions.Replace, from, toEntry, NavigationStatus.Blocked, "导航被守卫阻止");
+                    return NavigationResult.Blocked(route);
+                }
+            }
+
+            // 处理当前页面
+            if (from.PageInstance is INavigationAware currentAware)
+            {
+                currentAware.OnNavigatingFrom();
+            }
+
+            if (!from.Entity.IsKeepalive)
+            {
+                if (from.PageInstance is INavigationAware fromAware)
+                {
+                    fromAware.OnNavigatedFrom();
+                }
+                DisposePage(from);
+            }
+            else
+            {
+                if (from.PageInstance is INavigationAware fromAware)
+                {
+                    fromAware.OnNavigatedFrom();
+                }
+            }
+
+            // 出栈当前
+            _stackManager.CurrentStack.Pop();
+
+            // 从 DI 获取 Page 实例（如果已注册）
+            if (route.RouteType != null && _serviceProvider != null)
+            {
+                toEntry.PageInstance = _serviceProvider.GetRequiredService(route.RouteType);
+            }
+
+            // 创建 ViewModel
+            if (route.ViewModelType != null && _serviceProvider != null)
+            {
+                toEntry.ViewModelInstance = _serviceProvider.GetRequiredService(route.ViewModelType);
+
+                if (toEntry.ViewModelInstance is IQueryAttributable attributable && resolvedParams != null)
+                {
+                    attributable.ApplyQueryAttributes(resolvedParams);
+                }
+            }
+
+            // 入栈新页面
+            _stackManager.CurrentStack.Push(toEntry);
+
+            // 触发目标页面 OnNavigated
+            if (toEntry.PageInstance is INavigationAware targetAware)
+            {
+                targetAware.OnNavigated(resolvedParams);
+            }
+
+            if (toEntry.PageInstance is IQueryAttributable pageAttributable && resolvedParams != null)
+            {
+                pageAttributable.ApplyQueryAttributes(resolvedParams);
+            }
+
+            OnNavigated(NavigationActions.Replace, from, toEntry);
+
+            return NavigationResult.Success(route);
+        }
+        catch (Exception ex)
+        {
+            return NavigationResult.Error(ex);
+        }
+        finally
+        {
+            _navigationLock.Release();
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<NavigationResult> ReplaceAsync(Type pageType, Dictionary<string, object?>? parameters = null)
+    {
+        var route = _registry.FindByType(pageType);
+        if (route == null)
+        {
+            return NavigationResult.NotFound(pageType.Name);
+        }
+
+        return await ReplaceAsync(route.RouteKey, parameters);
+    }
+
+    /// <inheritdoc />
+    public Task<NavigationResult> ReplaceAsync<T>(Dictionary<string, object?>? parameters = null) where T : class
+    {
+        return ReplaceAsync(typeof(T), parameters);
+    }
+
+    /// <inheritdoc />
     public void SwitchTopRoute(Guid topRouteId)
     {
         _stackManager.SwitchTopRoute(topRouteId);
+        OnNavigated(NavigationActions.SwitchTop, null, CurrentRoute);
     }
 
     // === 事件触发 ===
 
-    private void OnNavigationStarting(RouteEntry? from, RouteEntry? to)
+    private void OnNavigationStarting(string action, RouteEntry? from, RouteEntry? to)
     {
-        NavigationStarting?.Invoke(this, NavigationEventArgs.Starting(from, to, to?.Parameters));
+        NavigationStarting?.Invoke(this, NavigationEventArgs.Starting(action, from, to, to?.Parameters));
     }
 
-    private void OnNavigated(RouteEntry? from, RouteEntry? to)
+    private void OnNavigated(string action, RouteEntry? from, RouteEntry? to)
     {
-        Navigated?.Invoke(this, NavigationEventArgs.Navigated(from, to));
+        Navigated?.Invoke(this, NavigationEventArgs.Navigated(action, from, to));
     }
 
-    private void OnNavigationFailed(RouteEntry? from, RouteEntry? to, NavigationStatus status, string? message)
+    private void OnNavigationFailed(string action, RouteEntry? from, RouteEntry? to, NavigationStatus status, string? message)
     {
-        NavigationFailed?.Invoke(this, NavigationEventArgs.Failed(from, to, status, message));
+        NavigationFailed?.Invoke(this, NavigationEventArgs.Failed(action, from, to, status, message));
     }
 
     // === 辅助方法 ===

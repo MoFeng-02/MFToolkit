@@ -21,12 +21,12 @@ public class RouteEntry
     public DateTime NavigatedAt { get; }
 
     /// <summary>
-    /// 页面实例（由框架侧填充）
+    /// 页面实例（由 Router 从 DI 容器获取）
     /// </summary>
     public object? PageInstance { get; set; }
 
     /// <summary>
-    /// 视图模型实例（由 Router 创建）
+    /// 视图模型实例（由 Router 从 DI 容器获取）
     /// </summary>
     public object? ViewModelInstance { get; set; }
 

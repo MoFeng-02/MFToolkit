@@ -25,9 +25,10 @@ MFToolkit.Routing/
 │   │   ├── IRouteGuard.cs            # 路由守卫接口
 │   │   ├── INavigationAware.cs       # 生命周期钩子
 │   │   └── IRouter.cs                # 路由器接口
-│   ├── NavigationEventArgs.cs        # 导航事件参数
-│   ├── NavigationResult.cs           # 导航结果
-│   ├── NavigationStatus.cs           # 导航状态枚举
+│   ├── NavigationActions.cs            # 导航动作常量（Push/Pop/Replace等）
+│   ├── NavigationEventArgs.cs         # 导航事件参数
+│   ├── NavigationResult.cs            # 导航结果
+│   ├── NavigationStatus.cs            # 导航状态枚举
 │   ├── RouteRegistry.cs              # 路由注册表
 │   ├── RouteStack.cs                 # 路由栈
 │   ├── RouteStackManager.cs          # 栈管理器
@@ -77,8 +78,8 @@ MFToolkit.Routing/
 
 | 谁做 | 做什么 |
 |------|--------|
-| **Router** | 创建 ViewModel，触发 INavigationAware，触发 IQueryAttributable |
-| **框架层** | 创建 Page，绑定 ViewModel 到 BindingContext，处理 UI 切换 |
+| **Router** | 从 DI 获取 Page 和 ViewModel，触发 INavigationAware，触发 IQueryAttributable |
+| **框架层** | 绑定 ViewModel 到 BindingContext，处理 UI 切换 |
 
 ## 开发记录
 
@@ -90,3 +91,18 @@ MFToolkit.Routing/
   - 编写使用文档 README.md
 - 2026-04-23（晚）：重构接口文件结构
   - INavigationAware、IRouter 移动到 Core/Interfaces/ 文件夹，与 IQueryAttributable 同级
+- 2026-04-23（晚）：新增 NavigationActions 枚举
+  - 提供 Push/Pop/PopToRoot/PopToPage/Replace/SwitchTop 常量
+  - NavigationEventArgs 新增 Action 属性
+  - Router 新增 GoBackToAsync、ReplaceAsync 方法
+  - IRouter 新增 StackDepth 属性
+  - UI 框架可根据 Action 类型决定如何显示（普通 push 还是 modal 等）
+- 2026-04-23（夜）：Router 从 DI 获取 PageInstance 和 ViewModelInstance
+  - 修复：NavigateInternalAsync 和 ReplaceAsync 中使用 GetRequiredService 获取 PageInstance
+  - AddRoutes 保证 PageType/ViewModelType 已注册到 DI
+- 2026-04-23（夜）：内部类型访问级别收紧
+  - 删除 Router 的 RegisterRoute/RegisterRoutes 方法（已无用）
+  - RouteRegistry 改为 internal
+  - Router.Registry、Router.StackManager 改为 internal
+  - IStartupRouteRegistration 改为 public（供 Router 构造函数使用）
+  - 路由完全通过 AddRoutes 注册，Router 构造函数接收路由列表参数

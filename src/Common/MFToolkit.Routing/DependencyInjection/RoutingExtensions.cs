@@ -34,11 +34,13 @@ public static class RoutingExtensions
             return [.. sp.GetServices<IRouteGuard>()];
         });
 
-        // 注册 Router（传入 IServiceProvider 以便创建 ViewModel）
+        // 注册 Router（传入路由列表和服务提供者）
         services.AddSingleton<IRouter>(sp =>
         {
             var guards = sp.GetService<IEnumerable<IRouteGuard>>();
-            return new Router(guards, sp);
+            var routeRegistration = sp.GetService<IStartupRouteRegistration>();
+            var routes = routeRegistration?.Routes;
+            return new Router(guards, routes, sp);
         });
 
         return services;
@@ -118,10 +120,13 @@ public static class RoutingExtensions
 }
 
 /// <summary>
-/// 启动时路由注册标记接口
+/// 启动时路由注册标记接口（供 Router 内部使用）
 /// </summary>
-internal interface IStartupRouteRegistration
+public interface IStartupRouteRegistration
 {
+    /// <summary>
+    /// 已注册的所有路由集合
+    /// </summary>
     IEnumerable<RouteEntity> Routes { get; }
 }
 

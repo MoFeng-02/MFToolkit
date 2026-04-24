@@ -93,15 +93,41 @@ public interface IRouter
     /// </summary>
     IReadOnlyList<RouteEntity> RegisteredTopRoutes { get; }
 
-    // === 注册 ===
+    /// <summary>
+    /// 栈深度
+    /// </summary>
+    int StackDepth { get; }
+
+    // === 扩展导航 ===
 
     /// <summary>
-    /// 注册路由
+    /// 返回到指定路由（不包括该路由本身）
     /// </summary>
-    void RegisterRoute(RouteEntity entity);
+    Task<NavigationResult> GoBackToAsync(string routeKey);
 
     /// <summary>
-    /// 批量注册路由
+    /// 返回到指定页面类型（不包括该页面本身）
     /// </summary>
-    void RegisterRoutes(IEnumerable<RouteEntity> entities);
+    Task<NavigationResult> GoBackToAsync(Type pageType);
+
+    /// <summary>
+    /// 返回到指定页面类型（不包括该页面本身，泛型版本）
+    /// </summary>
+    Task<NavigationResult> GoBackToAsync<T>() where T : class;
+
+    /// <summary>
+    /// 替换当前页面
+    /// </summary>
+    Task<NavigationResult> ReplaceAsync(string routeKey, Dictionary<string, object?>? parameters = null);
+
+    /// <summary>
+    /// 替换当前页面
+    /// </summary>
+    Task<NavigationResult> ReplaceAsync(Type pageType, Dictionary<string, object?>? parameters = null);
+
+    /// <summary>
+    /// 替换当前页面（泛型版本）
+    /// </summary>
+    Task<NavigationResult> ReplaceAsync<T>(Dictionary<string, object?>? parameters = null) where T : class;
+
 }

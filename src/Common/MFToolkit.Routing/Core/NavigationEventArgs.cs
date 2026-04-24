@@ -8,6 +8,11 @@ namespace MFToolkit.Routing;
 public class NavigationEventArgs : EventArgs
 {
     /// <summary>
+    /// 导航动作类型
+    /// </summary>
+    public string Action { get; }
+
+    /// <summary>
     /// 来源路由（上一个路由）
     /// </summary>
     public RouteEntry? From { get; }
@@ -33,8 +38,9 @@ public class NavigationEventArgs : EventArgs
     public Dictionary<string, object?>? Parameters { get; }
 
     /// <inheritdoc/>
-    public NavigationEventArgs(RouteEntry? from, RouteEntry? to, NavigationStatus status, string? message = null, Dictionary<string, object?>? parameters = null)
+    public NavigationEventArgs(string action, RouteEntry? from, RouteEntry? to, NavigationStatus status, string? message = null, Dictionary<string, object?>? parameters = null)
     {
+        Action = action;
         From = from;
         To = to;
         Status = status;
@@ -45,18 +51,18 @@ public class NavigationEventArgs : EventArgs
     /// <summary>
     /// 创建导航开始事件参数
     /// </summary>
-    public static NavigationEventArgs Starting(RouteEntry? from, RouteEntry? to, Dictionary<string, object?>? parameters = null)
-        => new(from, to, NavigationStatus.Success, null, parameters);
+    public static NavigationEventArgs Starting(string action, RouteEntry? from, RouteEntry? to, Dictionary<string, object?>? parameters = null)
+        => new(action, from, to, NavigationStatus.Success, null, parameters);
 
     /// <summary>
     /// 创建导航成功事件参数
     /// </summary>
-    public static NavigationEventArgs Navigated(RouteEntry? from, RouteEntry? to)
-        => new(from, to, NavigationStatus.Success);
+    public static NavigationEventArgs Navigated(string action, RouteEntry? from, RouteEntry? to)
+        => new(action, from, to, NavigationStatus.Success);
 
     /// <summary>
     /// 创建导航失败事件参数
     /// </summary>
-    public static NavigationEventArgs Failed(RouteEntry? from, RouteEntry? to, NavigationStatus status, string? message)
-        => new(from, to, status, message);
+    public static NavigationEventArgs Failed(string action, RouteEntry? from, RouteEntry? to, NavigationStatus status, string? message)
+        => new(action, from, to, status, message);
 }

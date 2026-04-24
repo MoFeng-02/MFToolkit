@@ -3,19 +3,19 @@ using MFToolkit.Routing.Entities;
 namespace MFToolkit.Routing;
 
 /// <summary>
-/// 路由注册表，负责管理所有路由的注册和查找
+/// 路由注册表，负责管理所有路由的注册和查找（仅供内部使用）
 /// </summary>
 public class RouteRegistry
 {
     /// <summary>
     /// RouteKey → RouteEntity 映射
     /// </summary>
-    private readonly Dictionary<string, RouteEntity> _routeMap = new();
+    private readonly Dictionary<string, RouteEntity> _routeMap = [];
 
     /// <summary>
     /// Type → RouteEntity 映射
     /// </summary>
-    private readonly Dictionary<Type, RouteEntity> _typeMap = new();
+    private readonly Dictionary<Type, RouteEntity> _typeMap = [];
 
     /// <summary>
     /// 已注册的路由数量
@@ -25,7 +25,7 @@ public class RouteRegistry
     /// <summary>
     /// 注册单个路由
     /// </summary>
-    public void Register(RouteEntity entity)
+    internal void Register(RouteEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -45,7 +45,7 @@ public class RouteRegistry
     /// <summary>
     /// 批量注册路由
     /// </summary>
-    public void RegisterRange(IEnumerable<RouteEntity> entities)
+    internal void RegisterRange(IEnumerable<RouteEntity> entities)
     {
         foreach (var entity in entities)
         {
@@ -109,26 +109,26 @@ public class RouteRegistry
         return _routeMap.Values.Where(r => r.IsTop);
     }
 
-    /// <summary>
-    /// 清空所有注册
-    /// </summary>
-    public void Clear()
-    {
-        _routeMap.Clear();
-        _typeMap.Clear();
-    }
+    ///// <summary>
+    ///// 清空所有注册
+    ///// </summary>
+    ////public void Clear()
+    ////{
+    ////    _routeMap.Clear();
+    ////    _typeMap.Clear();
+    ////}
 
-    /// <summary>
-    /// 移除指定路由
-    /// </summary>
-    public bool Remove(string routeKey)
-    {
-        if (_routeMap.TryGetValue(routeKey, out var entity))
-        {
-            _routeMap.Remove(routeKey);
-            _typeMap.Remove(entity.RouteType);
-            return true;
-        }
-        return false;
-    }
+    ///// <summary>
+    ///// 移除指定路由
+    ///// </summary>
+    ////public bool Remove(string routeKey)
+    ////{
+    ////    if (_routeMap.TryGetValue(routeKey, out var entity))
+    ////    {
+    ////        _routeMap.Remove(routeKey);
+    ////        _typeMap.Remove(entity.RouteType);
+    ////        return true;
+    ////    }
+    ////    return false;
+    ////}
 }
