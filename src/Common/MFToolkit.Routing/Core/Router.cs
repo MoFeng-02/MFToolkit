@@ -191,10 +191,14 @@ public class Router : IRouter
         }
 
         // === 判断是否需要切换顶级路由 ===
-        // 如果目标路由是 IsTop，且与当前顶级路由不同，则切换栈而非追加
-        //if (route.IsTop && route.Id != _stackManager.CurrentTopRouteId)
         if (route.IsTop)
         {
+            var getTopStack = _stackManager.GetOrCreateStack(route.Id);
+            // 如果已经是这个 IsTop 页面（即 Current.Entity.Id == route.Id），直接返回不做任何操作
+            if (getTopStack.Count > 1 && CurrentTopRouteId == route.Id)
+            {
+                return NavigationResult.Success(route);
+            }
             // 切换到目标顶级路由的栈
             _stackManager.SwitchTopRoute(route.Id);
             var targetStack = _stackManager.CurrentStack;
