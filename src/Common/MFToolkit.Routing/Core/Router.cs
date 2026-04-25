@@ -193,9 +193,8 @@ public class Router : IRouter
         // === 判断是否需要切换顶级路由 ===
         if (route.IsTop)
         {
-            var getTopStack = _stackManager.GetOrCreateStack(route.Id);
-            // 如果已经是这个 IsTop 页面（即 Current.Entity.Id == route.Id），直接返回不做任何操作
-            if (getTopStack.Count > 1 && CurrentTopRouteId == route.Id)
+            // 如果已经是这个 IsTop 页面（即 CurrentTopRouteId == route.Id），直接返回不做任何操作
+            if (CurrentTopRouteId == route.Id)
             {
                 return NavigationResult.Success(route);
             }
