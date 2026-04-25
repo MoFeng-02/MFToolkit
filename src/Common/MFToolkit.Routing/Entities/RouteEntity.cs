@@ -1,4 +1,6 @@
-﻿namespace MFToolkit.Routing.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MFToolkit.Routing.Entities;
 
 /// <summary>
 /// 路由实体，表示一个路由的配置信息
@@ -64,4 +66,128 @@ public class RouteEntity
     /// 获取路由显示名称
     /// </summary>
     public string DisplayName => RouteName ?? RouteType.Name;
+
+    /// <summary>
+    /// 无参构造函数（用于反序列化或手动构建场景）
+    /// </summary>
+    public RouteEntity()
+    {
+    }
+
+    /// <summary>
+    /// 通过类型构造路由实体
+    /// </summary>
+    /// <param name="routeType">页面类型</param>
+    /// <param name="routePath">路由路径（可选）</param>
+    [method: SetsRequiredMembers]
+    public RouteEntity(Type routeType, string? routePath = null)
+    {
+        RouteType = routeType;
+        RoutePath = routePath;
+    }
+
+}
+
+/// <summary>
+/// 泛型路由实体，方便 fluent API 链式调用
+/// </summary>
+public class RouteEntity<TRoute> : RouteEntity
+{
+    /// <summary>
+    /// 无参构造
+    /// </summary>
+    [method: SetsRequiredMembers]
+    public RouteEntity()
+    {
+
+        RouteType = typeof(TRoute);
+    }
+
+    /// <summary>
+    /// 通过路由路径构造
+    /// </summary>
+    /// <param name="routePath">路由路径</param>
+    [method: SetsRequiredMembers]
+    public RouteEntity(string? routePath)
+    {
+        RouteType = typeof(TRoute);
+        RoutePath = routePath;
+    }
+
+    /// <summary>
+    /// 标记为顶级路由
+    /// </summary>
+    public RouteEntity<TRoute> SetTop(bool isTop = true)
+    {
+        IsTop = isTop;
+        return this;
+    }
+
+    /// <summary>
+    /// 设置视图模型类型
+    /// </summary>
+    /// <typeparam name="TViewModel">视图模型类型</typeparam>
+    /// <returns>返回新的 RouteEntity（泛型版本会自动转为基类）</returns>
+    public RouteEntity WithViewModel<TViewModel>()
+    {
+        ViewModelType = typeof(TViewModel);
+        return this;
+    }
+
+    /// <summary>
+    /// 设置路由路径
+    /// </summary>
+    /// <param name="routePath">路由路径</param>
+    /// <returns></returns>
+    public RouteEntity<TRoute> SetPath(string routePath)
+    {
+        RoutePath = routePath;
+        return this;
+    }
+
+    /// <summary>
+    /// 设置 KeepAlive
+    /// </summary>
+    public RouteEntity<TRoute> SetKeepAlive(bool keepAlive = true)
+    {
+        IsKeepalive = keepAlive;
+        return this;
+    }
+
+    /// <summary>
+    /// 设置排序权重
+    /// </summary>
+    public RouteEntity<TRoute> SetOrder(int sortOrder)
+    {
+        SortOrder = sortOrder;
+        return this;
+    }
+}
+
+/// <summary>
+/// 泛型路由实体，同时指定页面类型和视图模型类型
+/// </summary>
+public class RouteEntity<TRoute, TViewModel> : RouteEntity<TRoute>
+{
+    /// <summary>
+    /// 无参构造
+    /// </summary>
+    [method: SetsRequiredMembers]
+    public RouteEntity()
+    {
+        RouteType = typeof(TRoute);
+        ViewModelType = typeof(TViewModel);
+    }
+
+    /// <summary>
+    /// 通过路由路径构造
+    /// </summary>
+    /// <param name="routePath">路由路径</param>
+    [method: SetsRequiredMembers]
+    public RouteEntity(string? routePath)
+    {
+        RouteType = typeof(TRoute);
+        ViewModelType = typeof(TViewModel);
+        RoutePath = routePath;
+    }
 }

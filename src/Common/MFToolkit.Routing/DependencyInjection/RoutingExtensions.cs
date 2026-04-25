@@ -27,11 +27,7 @@ public static class RoutingExtensions
             services.AddSingleton(typeof(IRouteGuard), guardType);
         }
 
-        // 注册路由守卫集合
-        services.AddSingleton<IEnumerable<IRouteGuard>>(sp =>
-        {
-            return [.. sp.GetServices<IRouteGuard>()];
-        });
+        
 
         // 注册 Router（传入路由列表和服务提供者）
         services.AddSingleton<IRouter>(sp =>

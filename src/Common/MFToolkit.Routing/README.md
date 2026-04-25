@@ -25,6 +25,19 @@
 dotnet add package MFToolkit.Routing
 ```
 
+> **⚠️ 重要依赖说明**
+>
+> `MFToolkit.Routing` 自身仅依赖 `Microsoft.Extensions.DependencyInjection.Abstractions`（接口层），
+> 这意味着它可以与任何兼容的 DI 容器配合使用。
+>
+> 但在**最终启动项目**（如 App、Host 入口项目）中，你必须额外引用完整的 DI 实现包，否则无法构建 `ServiceCollection` 或调用 `BuildServiceProvider()`：
+>
+> ```bash
+> dotnet add package Microsoft.Extensions.DependencyInjection
+> ```
+>
+> 如果你使用的是 `Microsoft.Extensions.Hosting`（`Generic Host`），它已内置 DI 实现，无需单独引用。
+
 ### 2. 定义页面
 
 ```csharp
@@ -165,6 +178,33 @@ public class RouteEntity
 }
 ```
 
+提供多个构造函数方便不同场景使用：
+
+```csharp
+// 无参（用于反序列化或手动构建）
+var entity = new RouteEntity();
+
+// 通过 Type 构造
+var entity = new RouteEntity(typeof(HomePage));
+var entity = new RouteEntity(typeof(HomePage), "/home");
+
+// 通过泛型构造（推荐）
+var entity = new RouteEntity<HomePage>("/home");
+
+// 泛型 + ViewModel
+var entity = new RouteEntity<HomePage, HomeViewModel>("/home");
+
+// 支持 fluent 链式调用
+new RouteEntity<HomePage>("/home")
+    .SetTop()
+    .SetKeepAlive()
+    .SetOrder(1);
+
+// 泛型子类提供 SetPath / SetTop / SetKeepAlive / SetOrder 等链式方法
+```
+
+> **关于 `required` 修饰符**：所有构造函数均标记了 `[method: SetsRequiredMembers]`，告诉编译器这些构造函数会负责初始化 required 属性。因此即使用对象初始化器语法调用，也不会有警告。
+
 ### RouteEntry（路由条目）
 
 表示栈中的一个实际导航记录：
@@ -199,6 +239,33 @@ var parent = router.CurrentStack.Parent;
 // 获取完整祖先链（从根到父）
 var ancestors = router.CurrentStack.GetAncestors();
 ```
+
+### IsTop 与应用模式
+
+`IsTop = true` 决定了**应用的整体导航模式**：
+
+| IsTop 数量 | 应用类型 | 行为 |
+|-----------|---------|------|
+| 0 或 1 | **单页应用（SPA）** | 单一栈，所有导航 Push/Pop 在里面 |
+| ≥2 | **多页应用（多窗口）** | 每个 IsTop 有独立栈，`NavigateAsync` 到 IsTop = 切换栈 |
+
+**单页应用（SPA）示例：** 0 或 1 个 IsTop，只有一条栈
+
+```
+栈: [Home] → [Detail] → [Settings]  ← Push/Pop 都在这里
+```
+
+**多页应用示例：** 2+ 个 IsTop，每个有独立栈
+
+```
+顶级路由 A 的栈:  [A1] → [A2] → [A3]  ← 当前
+顶级路由 B 的栈:  [B1] → [B2]          ← 切换过来直接到 B2
+
+NavigateAsync("/b") → 切换到 B 栈，激活 B2
+NavigateAsync("/a") → 切换回 A 栈，激活 A3
+```
+
+> **注意**：顶级路由之间的切换会**保留原栈状态**，切回来时仍停留在上次的位置。
 
 ---
 
@@ -841,7 +908,7 @@ public class MyPage : INavigationAware
 
 ---
 
-*文档版本：v1.8*
+*文档版本：v1.11*
 *最后更新：2026-04-25*
 
 ## 变更记录
@@ -857,3 +924,6 @@ public class MyPage : INavigationAware
 | v1.0.6 | 2026-04-24 | RouterOptions.GuardType 改为 GuardTypes 列表，支持注册多个守卫 |
 | v1.0.7 | 2026-04-24 | NavigateAsync/ReplaceAsync 增加可选 action 参数，支持自定义导航动作类型 |
 | v1.0.8 | 2026-04-25 | GoBackAsync/GoBackToRootAsync/GoBackToAsync 统一补齐 action 参数，所有导航方法默认值均使用 NavigationActions 常量 |
+| v1.0.9 | 2026-04-25 | 文档补充启动项目需引用 Microsoft.Extensions.DependencyInjection 的说明 |
+| v1.0.10 | 2026-04-25 | RouteEntity 新增多个构造函数和泛型子类 RouteEntity&lt;TRoute&gt;、RouteEntity&lt;TRoute,TViewModel&gt;，支持 fluent 链式调用 |
+| v1.0.11 | 2026-04-25 | 修复 NavigateAsync 到 IsTop 路由时错误 Push 到当前栈的问题；新增 IsTop 与应用模式（SPA/多页）说明文档 |

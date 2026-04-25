@@ -175,11 +175,11 @@ public class Router : IRouter
         var from = CurrentRoute;
         var toParameters = MergeParameters(route, parameters);
 
-        // 2. 触发 NavigationStarting 事件
+        // 触发 NavigationStarting 事件
         var toEntry = new RouteEntry(route, toParameters);
         OnNavigationStarting(action, from, toEntry);
 
-        // 3. 守卫检查
+        // 守卫检查
         foreach (var guard in _guards)
         {
             if (!await guard.CanNavigateAsync(route, toParameters))
@@ -190,46 +190,92 @@ public class Router : IRouter
             }
         }
 
-        // 4. 处理当前页面 OnNavigatingFrom
-        if (from?.PageInstance is INavigationAware currentAware)
+        // === 判断是否需要切换顶级路由 ===
+        // 如果目标路由是 IsTop，且与当前顶级路由不同，则切换栈而非追加
+        //if (route.IsTop && route.Id != _stackManager.CurrentTopRouteId)
+        if (route.IsTop)
         {
-            currentAware.OnNavigatingFrom();
+            // 切换到目标顶级路由的栈
+            _stackManager.SwitchTopRoute(route.Id);
+            var targetStack = _stackManager.CurrentStack;
+
+            if (targetStack.Count > 0)
+            {
+                // 栈已有页面，激活最后一页（切换行为）
+                var lastEntry = targetStack.Current;
+                if (lastEntry != null)
+                {
+                    // 触发 OnNavigatingFrom（当前页）
+                    if (from?.PageInstance is INavigationAware currentAware)
+                    {
+                        currentAware.OnNavigatingFrom();
+                    }
+
+                    ActivateEntry(lastEntry);
+                    OnNavigated(NavigationActions.SwitchTop, from, lastEntry);
+                }
+            }
+            else
+            {
+                // 栈为空，Push 顶级路由页面（首次进入该顶级路由）
+                // 触发 OnNavigatingFrom（当前页）
+                if (from?.PageInstance is INavigationAware currentAware2)
+                {
+                    currentAware2.OnNavigatingFrom();
+                }
+
+                toEntry.PageInstance = route.RouteType != null && _serviceProvider != null
+                    ? _serviceProvider.GetRequiredService(route.RouteType)
+                    : null;
+
+                toEntry.ViewModelInstance = route.ViewModelType != null && _serviceProvider != null
+                    ? _serviceProvider.GetRequiredService(route.ViewModelType)
+                    : null;
+
+                if (toEntry.ViewModelInstance is IQueryAttributable vmAttr && toParameters != null)
+                {
+                    vmAttr.ApplyQueryAttributes(toParameters);
+                }
+
+                targetStack.Push(toEntry);
+                ActivateEntry(toEntry);
+                OnNavigated(NavigationActions.SwitchTop, from, toEntry);
+            }
+
+            return NavigationResult.Success(route);
         }
 
-        // 5. 从 DI 获取 Page 实例（如果已注册）
+        // === 普通 Push 逻辑 ===
+        // 处理当前页面 OnNavigatingFrom
+        if (from?.PageInstance is INavigationAware currentAware3)
+        {
+            currentAware3.OnNavigatingFrom();
+        }
+
+        // 从 DI 获取 Page 实例
         if (route.RouteType != null && _serviceProvider != null)
         {
             toEntry.PageInstance = _serviceProvider.GetRequiredService(route.RouteType);
         }
 
-        // 6. 创建 ViewModel（如果注册了）
+        // 创建 ViewModel
         if (route.ViewModelType != null && _serviceProvider != null)
         {
             toEntry.ViewModelInstance = _serviceProvider.GetRequiredService(route.ViewModelType);
 
-            // 调用 IQueryAttributable 参数注入
             if (toEntry.ViewModelInstance is IQueryAttributable attributable && toParameters != null)
             {
                 attributable.ApplyQueryAttributes(toParameters);
             }
         }
 
-        // 7. 入栈
+        // 入栈
         _stackManager.CurrentStack.Push(toEntry);
 
-        // 8. 触发目标页面 OnNavigated
-        if (toEntry.PageInstance is INavigationAware targetAware)
-        {
-            targetAware.OnNavigated(toParameters);
-        }
+        // 触发目标页面 OnNavigated
+        ActivateEntry(toEntry);
 
-        // 8.1 触发 Page 的 IQueryAttributable 参数注入（如果 Page 也实现了）
-        if (toEntry.PageInstance is IQueryAttributable pageAttributable && toParameters != null)
-        {
-            pageAttributable.ApplyQueryAttributes(toParameters);
-        }
-
-        // 9. 触发 Navigated 事件
+        // 触发 Navigated 事件
         OnNavigated(action, from, toEntry);
 
         return NavigationResult.Success(route);
@@ -785,5 +831,26 @@ public class Router : IRouter
             pageDisposable.Dispose();
         }
         entry.PageInstance = null;
+    }
+
+    /// <summary>
+    /// 激活一个路由条目（触发 OnNavigated 和 IQueryAttributable）
+    /// </summary>
+    private void ActivateEntry(RouteEntry entry)
+    {
+        if (entry.PageInstance is INavigationAware aware)
+        {
+            aware.OnNavigated(entry.Parameters);
+        }
+
+        if (entry.PageInstance is IQueryAttributable pageAttr && entry.Parameters != null)
+        {
+            pageAttr.ApplyQueryAttributes(entry.Parameters);
+        }
+
+        if (entry.ViewModelInstance is IQueryAttributable vmAttr && entry.Parameters != null)
+        {
+            vmAttr.ApplyQueryAttributes(entry.Parameters);
+        }
     }
 }
