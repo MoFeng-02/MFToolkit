@@ -268,6 +268,13 @@ await router.NavigateAsync("/settings", new Dictionary<string, object?>
     ["userId"] = 123,
     ["mode"] = "edit"
 });
+
+// 指定导航动作类型（UI 框架根据 action 决定如何显示页面）
+await router.NavigateAsync("/home", action: "Present");   // 以模态方式呈现
+await router.NavigateAsync("/home", action: "Push");      // 默认推入
+
+// 带参数 + 动作
+await router.NavigateAsync("/settings", new Dictionary<string, object?> { ["id"] = 1 }, action: "Modal");
 ```
 
 ### 路径参数导航
@@ -311,17 +318,22 @@ await router.NavigateAsync("/user/123/profile", new Dictionary<string, object?>
 
 ### 返回操作
 
-### 返回操作
-
 ```csharp
-// 返回上一页
+// 返回上一页（默认 action = NavigationActions.Pop）
 if (router.CanGoBack)
 {
     await router.GoBackAsync();
 }
 
-// 返回到栈顶（清空当前栈）
+// 自定义 action
+await router.GoBackAsync(action: "PopWithAnimation");
+
+// 返回到栈顶（清空当前栈，默认 action = NavigationActions.PopToRoot）
 await router.GoBackToRootAsync();
+
+// 返回到指定页面（默认 action = NavigationActions.PopToPage）
+await router.GoBackToAsync("/home");
+await router.GoBackToAsync<HomePage>();
 ```
 
 ### 切换顶级路由
@@ -380,18 +392,19 @@ public class AuthGuard : IRouteGuard
 ### 注册守卫
 
 ```csharp
-// 方式一：在 AddRouting 中指定
+// 方式一：泛型快捷注册（单个守卫）
 builder.Services.AddRouting<AuthGuard>();
 
-// 方式二：使用配置回调
+// 方式二：配置回调注册多个守卫
 builder.Services.AddRouting(options =>
 {
-    options.GuardType = typeof(AuthGuard);
+    options.GuardTypes.Add(typeof(AuthGuard));
+    options.GuardTypes.Add(typeof(RoleGuard));  // 按添加顺序执行
 });
 
-// 方式三：直接添加
+// 方式三：直接添加（框架层自行管理）
 builder.Services.AddSingleton<IRouteGuard, AuthGuard>();
-builder.Services.AddSingleton<IRouteGuard, RoleGuard>();  // 多个守卫按顺序执行
+builder.Services.AddSingleton<IRouteGuard, CustomGuard>();
 ```
 
 ### 守卫链
@@ -800,14 +813,14 @@ public class MyPage : INavigationAware
 
 | 方法/属性 | 说明 |
 |-----------|------|
-| `NavigateAsync(routeKey, parameters)` | 通过路由键导航 |
-| `NavigateAsync<T>(parameters)` | 通过类型导航（泛型） |
-| `GoBackAsync()` | 返回上一页 |
-| `GoBackToRootAsync()` | 返回栈顶 |
-| `GoBackToAsync(routeKey)` | 返回到指定路由 |
-| `GoBackToAsync<T>()` | 返回到指定类型页面 |
-| `ReplaceAsync(routeKey, parameters)` | 替换当前页面 |
-| `ReplaceAsync<T>(parameters)` | 替换当前页面（泛型） |
+| `NavigateAsync(routeKey, parameters, action)` | 通过路由键导航（默认 Push） |
+| `NavigateAsync<T>(parameters, action)` | 通过类型导航（泛型，默认 Push） |
+| `GoBackAsync(action)` | 返回上一页（默认 Pop） |
+| `GoBackToRootAsync(action)` | 返回栈顶（默认 PopToRoot） |
+| `GoBackToAsync(routeKey, action)` | 返回到指定路由（默认 PopToPage） |
+| `GoBackToAsync<T>(action)` | 返回到指定类型页面（默认 PopToPage） |
+| `ReplaceAsync(routeKey, parameters, action)` | 替换当前页面（默认 Replace） |
+| `ReplaceAsync<T>(parameters, action)` | 替换当前页面（泛型，默认 Replace） |
 | `SwitchTopRoute(topRouteId)` | 切换顶级路由 |
 | `CurrentRoute` | 当前路由条目 |
 | `CurrentStack` | 当前栈 |
@@ -828,8 +841,8 @@ public class MyPage : INavigationAware
 
 ---
 
-*文档版本：v1.5*
-*最后更新：2026-04-23*
+*文档版本：v1.8*
+*最后更新：2026-04-25*
 
 ## 变更记录
 
@@ -841,3 +854,6 @@ public class MyPage : INavigationAware
 | v1.0.3 | 2026-04-23 | 新增 ViewModelType/ViewModelInstance 支持，Router 创建 ViewModel |
 | v1.0.4 | 2026-04-23 | AddRoutes 自动注册 PageType/ViewModelType 到 DI 容器 |
 | v1.0.5 | 2026-04-23 | 新增 NavigationActions 枚举和 NavigationEventArgs.Action，提供导航动作类型给 UI 框架 |
+| v1.0.6 | 2026-04-24 | RouterOptions.GuardType 改为 GuardTypes 列表，支持注册多个守卫 |
+| v1.0.7 | 2026-04-24 | NavigateAsync/ReplaceAsync 增加可选 action 参数，支持自定义导航动作类型 |
+| v1.0.8 | 2026-04-25 | GoBackAsync/GoBackToRootAsync/GoBackToAsync 统一补齐 action 参数，所有导航方法默认值均使用 NavigationActions 常量 |

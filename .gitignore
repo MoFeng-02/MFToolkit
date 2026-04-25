@@ -455,3 +455,4 @@ $RECYCLE.BIN/
 
 ## MFToolkit Git
 .nuget
+/src/Common/MFToolkit.Routing/.workbuddy

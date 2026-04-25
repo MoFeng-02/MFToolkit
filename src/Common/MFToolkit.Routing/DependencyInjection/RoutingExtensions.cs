@@ -16,21 +16,20 @@ public static class RoutingExtensions
     /// <param name="services">服务集合</param>
     /// <param name="configure">配置回调</param>
     /// <returns>服务集合（支持链式调用）</returns>
-    public static IServiceCollection AddRouting(this IServiceCollection services, Action<RouterOptions> configure)
+    public static IServiceCollection AddRouting(this IServiceCollection services, Action<RouterOptions>? configure = null)
     {
         var options = new RouterOptions();
-        configure(options);
+        configure?.Invoke(options);
 
-        // 注册路由守卫（如果已注册）
-        if (options.GuardType != null)
+        // 注册路由守卫（如果有）
+        foreach (var guardType in options.GuardTypes)
         {
-            services.AddSingleton(typeof(IRouteGuard), options.GuardType);
+            services.AddSingleton(typeof(IRouteGuard), guardType);
         }
 
         // 注册路由守卫集合
         services.AddSingleton<IEnumerable<IRouteGuard>>(sp =>
         {
-            // 尝试从容器获取所有 IRouteGuard
             return [.. sp.GetServices<IRouteGuard>()];
         });
 
@@ -56,7 +55,7 @@ public static class RoutingExtensions
     {
         return services.AddRouting(options =>
         {
-            options.GuardType = typeof(TGuard);
+            options.GuardTypes.Add(typeof(TGuard));
         });
     }
 
@@ -149,7 +148,7 @@ internal class StartupRouteRegistration : IStartupRouteRegistration
 public class RouterOptions
 {
     /// <summary>
-    /// 路由守卫类型
+    /// 路由守卫类型集合（按注册顺序执行，任一返回 false 即阻止导航）
     /// </summary>
-    public Type? GuardType { get; set; }
+    public List<Type> GuardTypes { get; set; } = [];
 }

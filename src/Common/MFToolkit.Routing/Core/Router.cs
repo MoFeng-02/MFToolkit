@@ -87,7 +87,7 @@ public class Router : IRouter
     // === 导航 ===
 
     /// <inheritdoc />
-    public async Task<NavigationResult> NavigateAsync(string routeKey, Dictionary<string, object?>? parameters = null)
+    public async Task<NavigationResult> NavigateAsync(string routeKey, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Push)
     {
         await _navigationLock.WaitAsync();
         try
@@ -127,7 +127,7 @@ public class Router : IRouter
                 return NavigationResult.NotFound(routeKey);
             }
 
-            return await NavigateInternalAsync(route, resolvedParams);
+            return await NavigateInternalAsync(route, resolvedParams, action);
         }
         catch (Exception ex)
         {
@@ -140,7 +140,7 @@ public class Router : IRouter
     }
 
     /// <inheritdoc />
-    public async Task<NavigationResult> NavigateAsync(Type pageType, Dictionary<string, object?>? parameters = null)
+    public async Task<NavigationResult> NavigateAsync(Type pageType, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Push)
     {
         await _navigationLock.WaitAsync();
         try
@@ -152,7 +152,7 @@ public class Router : IRouter
                 return NavigationResult.NotFound(pageType.Name);
             }
 
-            return await NavigateInternalAsync(route, parameters);
+            return await NavigateInternalAsync(route, parameters, action);
         }
         catch (Exception ex)
         {
@@ -165,9 +165,9 @@ public class Router : IRouter
     }
 
     /// <inheritdoc />
-    public Task<NavigationResult> NavigateAsync<T>(Dictionary<string, object?>? parameters = null) where T : class
+    public Task<NavigationResult> NavigateAsync<T>(Dictionary<string, object?>? parameters = null, string action = NavigationActions.Push) where T : class
     {
-        return NavigateAsync(typeof(T), parameters);
+        return NavigateAsync(typeof(T), parameters, action);
     }
 
     private async Task<NavigationResult> NavigateInternalAsync(RouteEntity route, Dictionary<string, object?>? parameters, string action = NavigationActions.Push)
@@ -238,7 +238,7 @@ public class Router : IRouter
     // === 后退 ===
 
     /// <inheritdoc />
-    public async Task<NavigationResult> GoBackAsync()
+    public async Task<NavigationResult> GoBackAsync(string action = NavigationActions.Pop)
     {
         await _navigationLock.WaitAsync();
         try
@@ -255,7 +255,7 @@ public class Router : IRouter
             }
 
             // 触发 NavigationStarting 事件
-            OnNavigationStarting(NavigationActions.Pop, from, null);
+            OnNavigationStarting(action, from, null);
 
             // 1. 触发 OnNavigatingFrom
             if (from.PageInstance is INavigationAware currentAware)
@@ -321,7 +321,7 @@ public class Router : IRouter
             }
 
             // 5. 触发 Navigated 事件
-            OnNavigated(NavigationActions.Pop, popped, newTop);
+            OnNavigated(action, popped, newTop);
 
             return NavigationResult.Success(from.Entity);
         }
@@ -336,7 +336,7 @@ public class Router : IRouter
     }
 
     /// <inheritdoc />
-    public async Task<NavigationResult> GoBackToRootAsync()
+    public async Task<NavigationResult> GoBackToRootAsync(string action = NavigationActions.PopToRoot)
     {
         await _navigationLock.WaitAsync();
         try
@@ -403,7 +403,7 @@ public class Router : IRouter
                 }
             }
 
-            OnNavigated(NavigationActions.PopToRoot, from, newTop);
+            OnNavigated(action, from, newTop);
 
             return NavigationResult.Success(from.Entity);
         }
@@ -420,7 +420,7 @@ public class Router : IRouter
     // === 栈管理 ===
 
     /// <inheritdoc />
-    public async Task<NavigationResult> GoBackToAsync(string routeKey)
+    public async Task<NavigationResult> GoBackToAsync(string routeKey, string action = NavigationActions.PopToPage)
     {
         await _navigationLock.WaitAsync();
         try
@@ -455,7 +455,7 @@ public class Router : IRouter
             }
 
             // 触发 NavigationStarting 事件
-            OnNavigationStarting(NavigationActions.PopToPage, from, null);
+            OnNavigationStarting(action, from, null);
 
             // 逐个弹出直到目标页
             while (_stackManager.CurrentStack.Count > targetIndex + 1)
@@ -511,7 +511,7 @@ public class Router : IRouter
                 }
             }
 
-            OnNavigated(NavigationActions.PopToPage, from, newTop);
+            OnNavigated(action, from, newTop);
 
             return NavigationResult.Success(from.Entity);
         }
@@ -526,7 +526,7 @@ public class Router : IRouter
     }
 
     /// <inheritdoc />
-    public async Task<NavigationResult> GoBackToAsync(Type pageType)
+    public async Task<NavigationResult> GoBackToAsync(Type pageType, string action = NavigationActions.PopToPage)
     {
         var route = _registry.FindByType(pageType);
         if (route == null)
@@ -534,17 +534,17 @@ public class Router : IRouter
             return NavigationResult.NotFound(pageType.Name);
         }
 
-        return await GoBackToAsync(route.RouteKey);
+        return await GoBackToAsync(route.RouteKey, action);
     }
 
     /// <inheritdoc />
-    public Task<NavigationResult> GoBackToAsync<T>() where T : class
+    public Task<NavigationResult> GoBackToAsync<T>(string action = NavigationActions.PopToPage) where T : class
     {
-        return GoBackToAsync(typeof(T));
+        return GoBackToAsync(typeof(T), action);
     }
 
     /// <inheritdoc />
-    public async Task<NavigationResult> ReplaceAsync(string routeKey, Dictionary<string, object?>? parameters = null)
+    public async Task<NavigationResult> ReplaceAsync(string routeKey, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Replace)
     {
         await _navigationLock.WaitAsync();
         try
@@ -589,7 +589,7 @@ public class Router : IRouter
 
             // 触发 NavigationStarting 事件
             var toEntry = new RouteEntry(route, resolvedParams);
-            OnNavigationStarting(NavigationActions.Replace, from, toEntry);
+            OnNavigationStarting(action, from, toEntry);
 
             // 守卫检查
             foreach (var guard in _guards)
@@ -597,7 +597,7 @@ public class Router : IRouter
                 if (!await guard.CanNavigateAsync(route, resolvedParams))
                 {
                     await guard.OnNavigationBlockedAsync(route, resolvedParams);
-                    OnNavigationFailed(NavigationActions.Replace, from, toEntry, NavigationStatus.Blocked, "导航被守卫阻止");
+                    OnNavigationFailed(action, from, toEntry, NavigationStatus.Blocked, "导航被守卫阻止");
                     return NavigationResult.Blocked(route);
                 }
             }
@@ -658,7 +658,7 @@ public class Router : IRouter
                 pageAttributable.ApplyQueryAttributes(resolvedParams);
             }
 
-            OnNavigated(NavigationActions.Replace, from, toEntry);
+            OnNavigated(action, from, toEntry);
 
             return NavigationResult.Success(route);
         }
@@ -673,7 +673,7 @@ public class Router : IRouter
     }
 
     /// <inheritdoc />
-    public async Task<NavigationResult> ReplaceAsync(Type pageType, Dictionary<string, object?>? parameters = null)
+    public async Task<NavigationResult> ReplaceAsync(Type pageType, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Replace)
     {
         var route = _registry.FindByType(pageType);
         if (route == null)
@@ -681,13 +681,13 @@ public class Router : IRouter
             return NavigationResult.NotFound(pageType.Name);
         }
 
-        return await ReplaceAsync(route.RouteKey, parameters);
+        return await ReplaceAsync(route.RouteKey, parameters, action);
     }
 
     /// <inheritdoc />
-    public Task<NavigationResult> ReplaceAsync<T>(Dictionary<string, object?>? parameters = null) where T : class
+    public Task<NavigationResult> ReplaceAsync<T>(Dictionary<string, object?>? parameters = null, string action = NavigationActions.Replace) where T : class
     {
-        return ReplaceAsync(typeof(T), parameters);
+        return ReplaceAsync(typeof(T), parameters, action);
     }
 
     /// <inheritdoc />

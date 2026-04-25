@@ -31,33 +31,38 @@ public interface IRouter
     /// </summary>
     /// <param name="routeKey">路由键</param>
     /// <param name="parameters">导航参数</param>
-    Task<NavigationResult> NavigateAsync(string routeKey, Dictionary<string, object?>? parameters = null);
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.Push"/>）</param>
+    Task<NavigationResult> NavigateAsync(string routeKey, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Push);
 
     /// <summary>
     /// 导航到指定页面类型
     /// </summary>
     /// <param name="pageType">页面类型</param>
     /// <param name="parameters">导航参数</param>
-    Task<NavigationResult> NavigateAsync(Type pageType, Dictionary<string, object?>? parameters = null);
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.Push"/>）</param>
+    Task<NavigationResult> NavigateAsync(Type pageType, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Push);
 
     /// <summary>
     /// 导航到指定页面类型（泛型版本）
     /// </summary>
     /// <typeparam name="T">页面类型</typeparam>
     /// <param name="parameters">导航参数</param>
-    Task<NavigationResult> NavigateAsync<T>(Dictionary<string, object?>? parameters = null) where T : class;
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.Push"/>）</param>
+    Task<NavigationResult> NavigateAsync<T>(Dictionary<string, object?>? parameters = null, string action = NavigationActions.Push) where T : class;
 
     // === 后退 ===
 
     /// <summary>
     /// 返回上一页
     /// </summary>
-    Task<NavigationResult> GoBackAsync();
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.Pop"/>）</param>
+    Task<NavigationResult> GoBackAsync(string action = NavigationActions.Pop);
 
     /// <summary>
     /// 返回到栈顶（清空栈）
     /// </summary>
-    Task<NavigationResult> GoBackToRootAsync();
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.PopToRoot"/>）</param>
+    Task<NavigationResult> GoBackToRootAsync(string action = NavigationActions.PopToRoot);
 
     // === 当前状态 ===
 
@@ -101,33 +106,48 @@ public interface IRouter
     // === 扩展导航 ===
 
     /// <summary>
-    /// 返回到指定路由（不包括该路由本身）
+    /// 返回到指定路由
     /// </summary>
-    Task<NavigationResult> GoBackToAsync(string routeKey);
+    /// <param name="routeKey">目标路由键</param>
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.PopToPage"/>）</param>
+    Task<NavigationResult> GoBackToAsync(string routeKey, string action = NavigationActions.PopToPage);
 
     /// <summary>
-    /// 返回到指定页面类型（不包括该页面本身）
+    /// 返回到指定页面类型
     /// </summary>
-    Task<NavigationResult> GoBackToAsync(Type pageType);
+    /// <param name="pageType">目标页面类型</param>
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.PopToPage"/>）</param>
+    Task<NavigationResult> GoBackToAsync(Type pageType, string action = NavigationActions.PopToPage);
 
     /// <summary>
-    /// 返回到指定页面类型（不包括该页面本身，泛型版本）
+    /// 返回到指定页面类型（泛型版本）
     /// </summary>
-    Task<NavigationResult> GoBackToAsync<T>() where T : class;
+    /// <typeparam name="T">目标页面类型</typeparam>
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.PopToPage"/>）</param>
+    Task<NavigationResult> GoBackToAsync<T>(string action = NavigationActions.PopToPage) where T : class;
 
     /// <summary>
     /// 替换当前页面
     /// </summary>
-    Task<NavigationResult> ReplaceAsync(string routeKey, Dictionary<string, object?>? parameters = null);
+    /// <param name="routeKey">路由键</param>
+    /// <param name="parameters">导航参数</param>
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.Replace"/>）</param>
+    Task<NavigationResult> ReplaceAsync(string routeKey, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Replace);
 
     /// <summary>
     /// 替换当前页面
     /// </summary>
-    Task<NavigationResult> ReplaceAsync(Type pageType, Dictionary<string, object?>? parameters = null);
+    /// <param name="pageType">页面类型</param>
+    /// <param name="parameters">导航参数</param>
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.Replace"/>）</param>
+    Task<NavigationResult> ReplaceAsync(Type pageType, Dictionary<string, object?>? parameters = null, string action = NavigationActions.Replace);
 
     /// <summary>
     /// 替换当前页面（泛型版本）
     /// </summary>
-    Task<NavigationResult> ReplaceAsync<T>(Dictionary<string, object?>? parameters = null) where T : class;
+    /// <typeparam name="T">页面类型</typeparam>
+    /// <param name="parameters">导航参数</param>
+    /// <param name="action">导航动作类型（默认 <see cref="NavigationActions.Replace"/>）</param>
+    Task<NavigationResult> ReplaceAsync<T>(Dictionary<string, object?>? parameters = null, string action = NavigationActions.Replace) where T : class;
 
 }
