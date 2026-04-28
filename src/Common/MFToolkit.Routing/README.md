@@ -320,8 +320,19 @@ builder.Services.AddRouting(options =>
 {
     options.GuardTypes.Add(typeof(AuthGuard));
     options.GuardTypes.Add(typeof(RoleGuard));
+
+    // 顶级路由是否在栈中（影响 CanGoBack 判断）
+    // true（默认）：顶级路由算在栈里，GoBack 需要 Count > 1
+    // false：顶级路由不算在栈里，GoBack 需要 Count > 0
+    //          适用于顶级页面直接写在视图里的场景
+    options.TopRouteInStack = true;
 });
 ```
+
+| 属性 | 默认值 | 说明 |
+|------|--------|------|
+| `GuardTypes` | `[]` | 路由守卫类型列表 |
+| `TopRouteInStack` | `true` | 顶级路由是否在栈中 |
 
 ---
 
@@ -928,8 +939,8 @@ public class MyPage : INavigationAware
 
 ---
 
-*文档版本：v1.12*
-*最后更新：2026-04-25*
+*文档版本：v1.13*
+*最后更新：2026-04-28*
 
 ## 变更记录
 
@@ -948,3 +959,4 @@ public class MyPage : INavigationAware
 | v1.0.10 | 2026-04-25 | RouteEntity 新增多个构造函数和泛型子类 RouteEntity&lt;TRoute&gt;、RouteEntity&lt;TRoute,TViewModel&gt;，支持 fluent 链式调用 |
 | v1.0.11 | 2026-04-25 | 修复 NavigateAsync 到 IsTop 路由时错误 Push 到当前栈的问题；新增 IsTop 与应用模式（SPA/多页）说明文档 |
 | v1.0.12 | 2026-04-25 | 文档全面更新：目录补全，新增 RouteRegistry、RouterOptions、DI 扩展章节，API 参考补全所有方法签名和属性 |
+| v1.0.13 | 2026-04-28 | 新增 RouterOptions.TopRouteInStack 配置项，支持用户自定义顶级路由是否计入栈中，影响 CanGoBack 判断 |

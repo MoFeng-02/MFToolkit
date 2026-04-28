@@ -10,6 +10,7 @@ public static class ImageHelper
         return new Bitmap(AssetLoader.Open(resourceUri));
     }
 
+    
     public static async Task<Bitmap?> LoadFromWeb(Uri url)
     {
         using var httpClient = new HttpClient();

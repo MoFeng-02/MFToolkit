@@ -25,6 +25,7 @@
     <Project Path="src/Common/MFToolkit.Abstractions/MFToolkit.Abstractions.csproj" />
     <Project Path="src/Common/MFToolkit.AspNetCore/MFToolkit.AspNetCore.csproj" />
     <Project Path="src/Common/MFToolkit.AutoGenerator/MFToolkit.AutoGenerator.csproj" />
+    <Project Path="src/Common/MFToolkit.Routing/MFToolkit.Routing.csproj" />
     <Project Path="src/Common/MFToolkit/MFToolkit.csproj" />
   </Folder>
   <Folder Name="/src/MAUI/">

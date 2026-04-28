@@ -15,6 +15,8 @@ public class Router : IRouter
     private readonly IEnumerable<IRouteGuard> _guards;
     private readonly IServiceProvider? _serviceProvider;
     private readonly SemaphoreSlim _navigationLock = new(1, 1);
+    private readonly Dictionary<Guid, RouteEntry> _keepAliveCache = [];
+    private readonly bool _topRouteInStack;
 
     // === 事件 ===
 
@@ -39,7 +41,7 @@ public class Router : IRouter
     public IReadOnlyList<RouteEntry> CurrentStack => _stackManager.CurrentStack.History;
 
     /// <inheritdoc />
-    public bool CanGoBack => _stackManager.CurrentStack.CanGoBack;
+    public bool CanGoBack => _stackManager.CurrentStack.Count > (_topRouteInStack ? 1 : 0);
 
     /// <inheritdoc />
     public int StackDepth => _stackManager.CurrentStack.Count;
@@ -61,12 +63,14 @@ public class Router : IRouter
     /// <param name="guards">路由守卫集合</param>
     /// <param name="routes">已注册的路由集合</param>
     /// <param name="serviceProvider">服务提供者（用于创建 ViewModel）</param>
-    public Router(IEnumerable<IRouteGuard>? guards, IEnumerable<RouteEntity>? routes, IServiceProvider? serviceProvider)
+    /// <param name="topRouteInStack">顶级路由是否在栈中（影响 CanGoBack 计算）</param>
+    public Router(IEnumerable<IRouteGuard>? guards, IEnumerable<RouteEntity>? routes, IServiceProvider? serviceProvider, bool topRouteInStack = true)
     {
         _registry = new RouteRegistry();
         _stackManager = new RouteStackManager();
         _guards = guards ?? Enumerable.Empty<IRouteGuard>();
         _serviceProvider = serviceProvider;
+        _topRouteInStack = topRouteInStack;
 
         // 注册路由
         if (routes != null)
@@ -248,29 +252,39 @@ public class Router : IRouter
             return NavigationResult.Success(route);
         }
 
-        // === 普通 Push 逻辑 ===
         // 处理当前页面 OnNavigatingFrom
         if (from?.PageInstance is INavigationAware currentAware3)
         {
             currentAware3.OnNavigatingFrom();
         }
 
-        // 从 DI 获取 Page 实例
-        if (route.RouteType != null && _serviceProvider != null)
+        // === KeepAlive逻辑 ===
+        if (route.IsKeepalive && _keepAliveCache.TryGetValue(route.Id, out var keepalive))
         {
-            toEntry.PageInstance = _serviceProvider.GetRequiredService(route.RouteType);
+            // 已有缓存，直接复用（引用类型，无需再存）
+            toEntry.ViewModelInstance = keepalive.ViewModelInstance;
+            toEntry.PageInstance = keepalive.PageInstance;
         }
-
-        // 创建 ViewModel
-        if (route.ViewModelType != null && _serviceProvider != null)
+        else
         {
-            toEntry.ViewModelInstance = _serviceProvider.GetRequiredService(route.ViewModelType);
-
-            if (toEntry.ViewModelInstance is IQueryAttributable attributable && toParameters != null)
+            // 无缓存，创建
+            if (_serviceProvider != null)
             {
-                attributable.ApplyQueryAttributes(toParameters);
+                toEntry.PageInstance = _serviceProvider.GetRequiredService(route.RouteType);
+            }
+
+            if (route.ViewModelType != null && _serviceProvider != null)
+            {
+                toEntry.ViewModelInstance = _serviceProvider.GetRequiredService(route.ViewModelType);
+            }
+
+            // 只有 KeepAlive 才存入缓存
+            if (route.IsKeepalive)
+            {
+                _keepAliveCache[route.Id] = toEntry;
             }
         }
+
 
         // 入栈
         _stackManager.CurrentStack.Push(toEntry);
@@ -312,21 +326,17 @@ public class Router : IRouter
                 currentAware.OnNavigatingFrom();
             }
 
-            // 2. 处理 KeepAlive
+            // 2. 处理 KeepAlive：KeepAlive 页面实例留在缓存中，不销毁也不重新存入
             if (!from.Entity.IsKeepalive)
             {
-                // 触发 OnNavigatedFrom
                 if (from.PageInstance is INavigationAware fromAware)
                 {
                     fromAware.OnNavigatedFrom();
                 }
-
-                // 销毁实例
                 DisposePage(from);
             }
             else
             {
-                // KeepAlive 页面：只触发 OnNavigatedFrom，不销毁
                 if (from.PageInstance is INavigationAware fromAware)
                 {
                     fromAware.OnNavigatedFrom();
@@ -429,6 +439,8 @@ public class Router : IRouter
 
                 stack.Pop();
             }
+            // 清除保活缓存的
+            ClearKeepAlive();
 
             // 激活栈顶
             var newTop = CurrentRoute;
@@ -657,21 +669,13 @@ public class Router : IRouter
                 currentAware.OnNavigatingFrom();
             }
 
-            if (!from.Entity.IsKeepalive)
+            if (from.PageInstance is INavigationAware fromAware)
             {
-                if (from.PageInstance is INavigationAware fromAware)
-                {
-                    fromAware.OnNavigatedFrom();
-                }
-                DisposePage(from);
+                fromAware.OnNavigatedFrom();
             }
-            else
-            {
-                if (from.PageInstance is INavigationAware fromAware)
-                {
-                    fromAware.OnNavigatedFrom();
-                }
-            }
+
+            // Replace 是替换前进，被替换的页面不再需要，无论是否 KeepAlive 都 Dispose
+            DisposePage(from);
 
             // 出栈当前
             _stackManager.CurrentStack.Pop();
@@ -834,6 +838,15 @@ public class Router : IRouter
             pageDisposable.Dispose();
         }
         entry.PageInstance = null;
+    }
+
+    private void ClearKeepAlive()
+    {
+        foreach (var entry in _keepAliveCache.Values)
+        {
+            DisposePage(entry);
+        }
+        _keepAliveCache.Clear();
     }
 
     /// <summary>

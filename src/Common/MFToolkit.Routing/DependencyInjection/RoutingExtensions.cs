@@ -29,13 +29,13 @@ public static class RoutingExtensions
 
         
 
-        // 注册 Router（传入路由列表和服务提供者）
+        // 注册 Router（传入路由列表、服务提供者和配置）
         services.AddSingleton<IRouter>(sp =>
         {
             var guards = sp.GetService<IEnumerable<IRouteGuard>>();
             var routeRegistration = sp.GetService<IStartupRouteRegistration>();
             var routes = routeRegistration?.Routes;
-            return new Router(guards, routes, sp);
+            return new Router(guards, routes, sp, options.TopRouteInStack);
         });
 
         return services;
@@ -147,4 +147,11 @@ public class RouterOptions
     /// 路由守卫类型集合（按注册顺序执行，任一返回 false 即阻止导航）
     /// </summary>
     public List<Type> GuardTypes { get; set; } = [];
+
+    /// <summary>
+    /// 顶级路由是否在栈中。
+    /// true：顶级路由算在栈里，GoBack 需要栈中至少 2 个条目（当前默认）
+    /// false：顶级路由不算在栈里，GoBack 需要栈中至少 1 个条目
+    /// </summary>
+    public bool TopRouteInStack { get; set; } = true;
 }

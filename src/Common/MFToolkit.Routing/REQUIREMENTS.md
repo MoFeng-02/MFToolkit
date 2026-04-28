@@ -1,6 +1,6 @@
 # MFToolkit.Routing 开发需求规格
 
-> **状态**：需求已确立，待实现
+> **状态**：需求部分已实现，核心功能完成
 > **目标框架**：.NET 10.0
 
 ---
@@ -67,18 +67,24 @@ router.RegisterRoute(new RouteEntity { RouteType = "HomePage" });
 
 ## 三、核心能力清单
 
-| 能力 | 描述 | 优先级 |
-|------|------|--------|
-| 路由注册 | 纯手动注册，不支持自动扫描 | P0 |
-| 导航 | Navigate / Push 到目标路由 | P0 |
-| 后退 | GoBack / Pop，支持返回根路由 | P0 |
-| 路由栈 | 按顶级路由隔离的栈管理 | P0 |
-| 路由传参 | 支持字典参数和路径参数（`:id` 格式） | P0 |
-| 路由守卫 | 导航前权限验证（CanNavigate） | P0 |
-| 后置 Action | OnNavigated 回调链 | P1 |
-| 默认顶级路由 | 无顶级路由时自动兜底 | P0 |
-| KeepAlive 缓存 | 保持页面实例，复用 | P1 |
-| 生命周期钩子 | OnNavigatingFrom / OnNavigatedFrom 等 | P1 |
+| 能力 | 描述 | 优先级 | 状态 |
+|------|------|--------|------|
+| 路由注册 | 纯手动注册，不支持自动扫描 | P0 | ✅ |
+| 导航 | Navigate / Push 到目标路由 | P0 | ✅ |
+| 后退 | GoBack / Pop，支持返回根路由 | P0 | ✅ |
+| 路由栈 | 按顶级路由隔离的栈管理 | P0 | ✅ |
+| 路由传参 | 支持字典参数 | P0 | ✅ |
+| 路由守卫 | 导航前权限验证（CanNavigate） | P0 | ✅ |
+| 默认顶级路由 | 无顶级路由时自动兜底 | P0 | ✅ |
+| 生命周期钩子 | OnNavigatingFrom / OnNavigatedFrom 等 | P0 | ✅ |
+| KeepAlive 缓存 | 保持页面实例，复用（含 Bug 修复） | P1 | ✅ |
+| 多守卫支持 | RouterOptions.GuardTypes 支持多个守卫 | P1 | ✅ |
+| 导航动作标识 | NavigationActions 区分 Push/Pop/Replace 等 | P1 | ✅ |
+| GoBackToAsync | 返回到指定路由 | P1 | ✅ |
+| Replace 替换 | 替换当前路由 | P1 | ✅ |
+| StackDepth | 获取当前栈深度 | P1 | ✅ |
+| ViewModel DI | Router 内部创建 ViewModel 实例 | P1 | ✅ |
+| 后置 Action | OnNavigated 回调链 | P1 | 待定 |
 
 ---
 
@@ -167,6 +173,9 @@ public class NavigationEventArgs : EventArgs
     public RouteEntry? To { get; }
     public NavigationStatus Status { get; }
     public string? Message { get; }
+    
+    /// 导航动作类型（Push/Pop/Replace 等）
+    public string? Action { get; }
 }
 
 public interface IRouter
@@ -177,18 +186,24 @@ public interface IRouter
     event EventHandler<NavigationEventArgs>? NavigationFailed;
 
     // === 导航 ===
-    Task<NavigationResult> NavigateAsync(string routeKey, Dictionary<string, object?>? parameters = null);
-    Task<NavigationResult> NavigateAsync(Type pageType, Dictionary<string, object?>? parameters = null);
+    Task<NavigationResult> NavigateAsync(string routeKey, Dictionary<string, object?>? parameters = null, string? action = null);
+    Task<NavigationResult> NavigateAsync(Type pageType, Dictionary<string, object?>? parameters = null, string? action = null);
 
     // === 后退 ===
     Task<NavigationResult> GoBackAsync();
     Task<NavigationResult> GoBackToRootAsync();
+    Task<NavigationResult> GoBackToAsync(string routeKey);
+
+    // === 替换 ===
+    Task<NavigationResult> ReplaceAsync(string routeKey, Dictionary<string, object?>? parameters = null, string? action = null);
+    Task<NavigationResult> ReplaceAsync(Type pageType, Dictionary<string, object?>? parameters = null, string? action = null);
 
     // === 当前状态 ===
     Guid CurrentTopRouteId { get; }
     RouteEntry? CurrentRoute { get; }
     IReadOnlyList<RouteEntry> CurrentStack { get; }
     bool CanGoBack { get; }
+    int StackDepth { get; }  // 当前栈深度
 
     // === 栈管理 ===
     void SwitchTopRoute(Guid topRouteId);
@@ -210,7 +225,45 @@ public interface IRouter
 
 ---
 
-## 六、NavigationResult 导航结果
+## 六、NavigationActions 导航动作
+
+> 提供标准化的导航动作常量，供 UI 框架根据动作类型决定如何显示页面
+
+```csharp
+public static class NavigationActions
+{
+    /// 普通推入导航
+    public const string Push = "Push";
+    
+    /// 弹出当前页面
+    public const string Pop = "Pop";
+    
+    /// 返回到根路由
+    public const string PopToRoot = "PopToRoot";
+    
+    /// 返回到指定路由
+    public const string PopToPage = "PopToPage";
+    
+    /// 替换当前路由
+    public const string Replace = "Replace";
+    
+    /// 切换顶级路由
+    public const string SwitchTop = "SwitchTop";
+}
+```
+
+### 使用场景
+
+| Action | UI 框架行为示例 |
+|--------|----------------|
+| Push | 普通页面切换，支持返回手势 |
+| Pop | 页面返回，触发返回动画 |
+| Replace | 替换当前页面，无返回动画 |
+| SwitchTop | Tab 切换，可能需要特殊过渡效果 |
+
+---
+
+## 七、NavigationResult 导航结果
 
 ```csharp
 public class NavigationResult
@@ -237,7 +290,7 @@ public enum NavigationStatus
 
 ---
 
-## 七、路由栈设计
+## 八、路由栈设计
 
 ### 6.1 数据结构
 
@@ -282,7 +335,7 @@ public class RouteStackManager
 
 ---
 
-## 八、实例创建与生命周期
+## 九、实例创建与生命周期
 
 ### 8.1 生命周期推断规则
 
@@ -400,7 +453,7 @@ public void RegisterRoute(RouteEntity entity)
 
 ---
 
-## 九、默认顶级路由机制
+## 十、默认顶级路由机制
 
 ### 9.1 设计原则
 
@@ -430,7 +483,7 @@ private readonly Guid _defaultTopRouteId = Guid.NewGuid();
 
 ---
 
-## 十、路由守卫
+## 十一、路由守卫
 
 ### 10.1 接口定义
 
@@ -448,9 +501,30 @@ public interface IRouteGuard
 - 单路由守卫：挂载到 RouteEntity 上
 - 守卫链：按顺序执行，任一拒绝则阻止
 
+### 10.3 多守卫支持（RouterOptions）
+
+```csharp
+public class RouterOptions
+{
+    /// 守卫类型列表（支持多个守卫）
+    public List<Type> GuardTypes { get; set; } = new();
+}
+
+// DI 注册
+services.AddRouting(options =>
+{
+    options.GuardTypes.Add(typeof(AuthGuard));
+    options.GuardTypes.Add(typeof(PermissionGuard));
+});
+
+// 或泛型方式
+services.AddRouting<AuthGuard>();
+services.AddRouting<PermissionGuard>();
+```
+
 ---
 
-## 十一、路由生命周期钩子
+## 十二、路由生命周期钩子
 
 ### 11.1 钩子定义
 
@@ -475,7 +549,7 @@ public interface INavigationAware
 
 ---
 
-## 十二、生命周期接口设计决策
+## 十三、生命周期接口设计决策
 
 ### 12.1 两个接口的定位差异
 
@@ -525,7 +599,7 @@ if (instance is INavigationAware aware)
 
 ---
 
-## 十三、非 KeepAlive 路由返回处理
+## 十四、非 KeepAlive 路由返回处理
 
 ### 13.1 设计原则
 
@@ -579,23 +653,43 @@ if (instance is INavigationAware aware)
 
 ### 13.4 KeepAlive 缓存策略
 
-- KeepAlive 页面实例由独立缓存管理（`WeakReference` 或专用字典）
-- 退出 KeepAlive 页面时，实例进入缓存池
-- 再次进入时，从缓存池恢复（避免重复创建）
+> **KeepAlive 页面实例由独立缓存字典管理，确保实例不被 GC 回收**
+
+```csharp
+// Router 内部 KeepAlive 缓存
+private readonly Dictionary<string, object> _keepAliveCache = new();
+```
+
+#### 缓存规则
+
+| 场景 | 行为 |
+|------|------|
+| Navigate Push | 优先从缓存获取实例，无缓存则创建新实例 |
+| GoBack | KeepAlive 页面实例保存到缓存，不销毁 |
+| GoBackToRoot | 清除当前顶级路由的所有 KeepAlive 缓存（重置语义） |
+| GoBackTo | KeepAlive 页面实例保存到缓存 |
+| 再次 Navigate | 从缓存恢复实例，触发 OnNavigated |
+
+#### 缓存 Key 规则
+
+```csharp
+// 使用 RouteKey 作为缓存键
+string cacheKey = routeEntity.RouteKey;
+```
 
 ---
 
-## 十四、路由发现机制
+## 十五、路由发现机制
 
 > **已确认：纯手动注册，不支持自动扫描**
 
 - 用户显式调用 `RegisterRoute()` 注册路由
 - 支持批量注册 `RegisterRoutes(IEnumerable<RouteEntity>)`
-- DI 集成：`AddRoutingServices()` 批量注入
+- DI 集成：`AddRouting()` 批量注入
 
 ---
 
-## 十五、执行顺序与并发安全
+## 十六、执行顺序与并发安全
 
 ### 15.1 注册顺序
 
@@ -622,6 +716,7 @@ router.RegisterRoute(routeB);   // RouteKey = "home" → 覆盖 routeA
    └─ 拒绝 → NavigationFailed 事件 → 返回 Blocked
 3. OnNavigatingFrom (当前页)
 4. 创建/获取目标页面实例
+   └─ KeepAlive → 优先从缓存获取
 5. 注入参数（ApplyQueryAttributes）
 6. 入栈
 7. OnNavigated (目标页)
@@ -634,6 +729,7 @@ router.RegisterRoute(routeB);   // RouteKey = "home" → 覆盖 routeA
 1. NavigationStarting 事件
 2. OnNavigatingFrom (当前页)
 3. 判断 IsKeepalive
+   ├─ true  → 保存到 _keepAliveCache
    └─ false → OnDisposing → Dispose → PageInstance = null
 4. 出栈
 5. OnNavigatedFrom (旧页)
@@ -674,16 +770,18 @@ public class Router : IRouter
 
 ```csharp
 // 建议顺序
-services.AddRoutingServices();                        // 1. Router 先注册
+services.AddRouting(options =>           // 1. Router 先注册
+{
+    options.GuardTypes.Add(typeof(AuthGuard));
+});
 services.AddTransient<HomePage>();                   // 2. 页面后注册
 services.AddSingleton<IRouteGuard, AuthGuard>();    // 3. 守卫最后注册
 ```
 
 ---
 
-## 十六、待讨论事项
+## 十七、待讨论事项
 
-- [ ] 页面实例管理策略（每次新建 / 复用已有）
 - [ ] 嵌套路由的栈行为
 - [ ] Uri 解析（query string、路径参数）
 - [ ] 路由别名 / 重定向
@@ -692,23 +790,25 @@ services.AddSingleton<IRouteGuard, AuthGuard>();    // 3. 守卫最后注册
 
 ---
 
-## 十七、里程碑规划
+## 十八、里程碑规划
 
-| 阶段 | 内容 | 优先级 |
-|------|------|--------|
-| M1 | 基础导航 + 栈管理 + 传参 + AOT 安全 | P0 |
-| M2 | 路由守卫 | P0 |
-| M3 | 默认顶级路由兜底 | P0 |
-| M4 | 生命周期钩子 + KeepAlive 缓存 | P1 |
-| M5 | 非 KeepAlive 页面销毁机制 | P1 |
-| M6 | 导航事件通知 + 并发安全 | P1 |
-| M7 | Uri 解析增强 | P2 |
+| 阶段 | 内容 | 优先级 | 状态 |
+|------|------|--------|------|
+| M1 | 基础导航 + 栈管理 + 传参 + AOT 安全 | P0 | ✅ |
+| M2 | 路由守卫 + 多守卫支持 | P0 | ✅ |
+| M3 | 默认顶级路由兜底 | P0 | ✅ |
+| M4 | 生命周期钩子 + KeepAlive 缓存 | P1 | ✅ |
+| M5 | 非 KeepAlive 页面销毁机制 | P1 | ✅ |
+| M6 | 导航事件通知 + 并发安全 | P1 | ✅ |
+| M7 | NavigationActions 导航动作标识 | P1 | ✅ |
+| M8 | GoBackToAsync + ReplaceAsync | P1 | ✅ |
+| M9 | Uri 解析增强 | P2 | 待定 |
 
 ---
 
-*文档版本：v1.3*
-*最后更新：2026-04-23*
-*状态：需求已确立，可开始实现*
+*文档版本：v1.4*
+*最后更新：2026-04-28*
+*状态：核心功能已实现，部分高级特性待定*
 
 ## 变更记录
 
@@ -718,3 +818,4 @@ services.AddSingleton<IRouteGuard, AuthGuard>();    // 3. 守卫最后注册
 | v1.1 | 2026-04-23 | 新增第十章：生命周期接口设计决策（INavigationAware vs IQueryAttributable） |
 | v1.2 | 2026-04-23 | 删除 ParentId，改为栈历史动态获取父子关系 |
 | v1.3 | 2026-04-23 | 新增第八章：实例创建与生命周期（ViewModel 创建、生命周期推断规则、框架层职责） |
+| v1.4 | 2026-04-28 | 1. 新增 NavigationActions 导航动作枚举（第六章）<br>2. 更新 IRouter 接口（StackDepth、GoBackToAsync、ReplaceAsync、action 参数）<br>3. 更新 NavigationEventArgs（Action 属性）<br>4. 新增多守卫支持文档（RouterOptions.GuardTypes）<br>5. 更新 KeepAlive 缓存策略（Bug 修复细节）<br>6. 更新核心能力清单（添加状态列）<br>7. 更新里程碑规划状态 |
