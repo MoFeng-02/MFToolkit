@@ -95,6 +95,64 @@ public class RouteEntity
         RoutePath = routePath;
     }
 
+
+    /// <summary>
+    /// 标记为顶级路由
+    /// </summary>
+    public RouteEntity SetTop(bool isTop = true)
+    {
+        IsTop = isTop;
+        return this;
+    }
+
+    /// <summary>
+    /// 设置视图模型类型
+    /// </summary>
+    /// <typeparam name="TViewModel">视图模型类型</typeparam>
+    /// <returns>返回新的 RouteEntity（泛型版本会自动转为基类）</returns>
+    public RouteEntity WithViewModel<TViewModel>()
+    {
+        ViewModelType = typeof(TViewModel);
+        return this;
+    }
+
+    /// <summary>
+    /// 设置路由路径
+    /// </summary>
+    /// <param name="routePath">路由路径</param>
+    /// <returns></returns>
+    public RouteEntity SetPath(string routePath)
+    {
+        RoutePath = routePath;
+        return this;
+    }
+
+    /// <summary>
+    /// 设置 KeepAlive
+    /// </summary>
+    public RouteEntity SetKeepAlive(bool keepAlive = true)
+    {
+        IsKeepalive = keepAlive;
+        return this;
+    }
+
+    /// <summary>
+    /// 设置排序权重
+    /// </summary>
+    public RouteEntity SetOrder(int sortOrder)
+    {
+        SortOrder = sortOrder;
+        return this;
+    }
+
+    /// <summary>
+    /// 跳过自动 DI 注册（由用户自行注册到 DI 容器）
+    /// </summary>
+    public RouteEntity SetSkipAutoDI()
+    {
+        SkipAutoDI = true;
+        return this;
+    }
 }
 
 /// <summary>
@@ -121,64 +179,6 @@ public class RouteEntity<TRoute> : RouteEntity
     {
         RouteType = typeof(TRoute);
         RoutePath = routePath;
-    }
-
-    /// <summary>
-    /// 标记为顶级路由
-    /// </summary>
-    public RouteEntity<TRoute> SetTop(bool isTop = true)
-    {
-        IsTop = isTop;
-        return this;
-    }
-
-    /// <summary>
-    /// 设置视图模型类型
-    /// </summary>
-    /// <typeparam name="TViewModel">视图模型类型</typeparam>
-    /// <returns>返回新的 RouteEntity（泛型版本会自动转为基类）</returns>
-    public RouteEntity WithViewModel<TViewModel>()
-    {
-        ViewModelType = typeof(TViewModel);
-        return this;
-    }
-
-    /// <summary>
-    /// 设置路由路径
-    /// </summary>
-    /// <param name="routePath">路由路径</param>
-    /// <returns></returns>
-    public RouteEntity<TRoute> SetPath(string routePath)
-    {
-        RoutePath = routePath;
-        return this;
-    }
-
-    /// <summary>
-    /// 设置 KeepAlive
-    /// </summary>
-    public RouteEntity<TRoute> SetKeepAlive(bool keepAlive = true)
-    {
-        IsKeepalive = keepAlive;
-        return this;
-    }
-
-    /// <summary>
-    /// 设置排序权重
-    /// </summary>
-    public RouteEntity<TRoute> SetOrder(int sortOrder)
-    {
-        SortOrder = sortOrder;
-        return this;
-    }
-
-    /// <summary>
-    /// 跳过自动 DI 注册（由用户自行注册到 DI 容器）
-    /// </summary>
-    public RouteEntity<TRoute> SetSkipAutoDI()
-    {
-        base.SkipAutoDI = true;
-        return this;
     }
 }
 
