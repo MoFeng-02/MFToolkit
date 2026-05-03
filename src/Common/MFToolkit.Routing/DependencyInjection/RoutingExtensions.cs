@@ -68,6 +68,9 @@ public static class RoutingExtensions
         // 根据路由配置注册 PageType 和 ViewModelType
         foreach (var route in routeList)
         {
+            // 跳过自动 DI 的路由（由用户自行注册）
+            if (route.SkipAutoDI) continue;
+
             // 确定 PageType 的生命周期
             var lifetime = route.IsTop
                 ? ServiceLifetime.Singleton

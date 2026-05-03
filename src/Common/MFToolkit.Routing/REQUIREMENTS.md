@@ -84,6 +84,7 @@ router.RegisterRoute(new RouteEntity { RouteType = "HomePage" });
 | Replace 替换 | 替换当前路由 | P1 | ✅ |
 | StackDepth | 获取当前栈深度 | P1 | ✅ |
 | ViewModel DI | Router 内部创建 ViewModel 实例 | P1 | ✅ |
+| SkipAutoDI | 跳过自动 DI 注册，用户自行控制生命周期 | P1 | ✅ |
 | 后置 Action | OnNavigated 回调链 | P1 | 待定 |
 
 ---
@@ -127,6 +128,15 @@ public class RouteEntity
 
     /// 路由唯一键（用于字典索引）
     public string RouteKey => RoutePath ?? RouteType.Name;
+
+    /// <summary>
+    /// 跳过自动 DI 注册（true：不自动注册到 DI 容器，由用户自行注册）
+    /// </summary>
+    /// <remarks>
+    /// 默认 false，自动按 IsTop 推断生命周期注册到 DI。
+    /// 设置为 true 时需确保该类型已在 DI 容器中注册，否则导航时会抛出异常。
+    /// </remarks>
+    public bool SkipAutoDI { get; set; } = false;
 }
 ```
 
@@ -806,8 +816,8 @@ services.AddSingleton<IRouteGuard, AuthGuard>();    // 3. 守卫最后注册
 
 ---
 
-*文档版本：v1.4*
-*最后更新：2026-04-28*
+*文档版本：v1.5*
+*最后更新：2026-05-03*
 *状态：核心功能已实现，部分高级特性待定*
 
 ## 变更记录
@@ -819,3 +829,4 @@ services.AddSingleton<IRouteGuard, AuthGuard>();    // 3. 守卫最后注册
 | v1.2 | 2026-04-23 | 删除 ParentId，改为栈历史动态获取父子关系 |
 | v1.3 | 2026-04-23 | 新增第八章：实例创建与生命周期（ViewModel 创建、生命周期推断规则、框架层职责） |
 | v1.4 | 2026-04-28 | 1. 新增 NavigationActions 导航动作枚举（第六章）<br>2. 更新 IRouter 接口（StackDepth、GoBackToAsync、ReplaceAsync、action 参数）<br>3. 更新 NavigationEventArgs（Action 属性）<br>4. 新增多守卫支持文档（RouterOptions.GuardTypes）<br>5. 更新 KeepAlive 缓存策略（Bug 修复细节）<br>6. 更新核心能力清单（添加状态列）<br>7. 更新里程碑规划状态 |
+| v1.5 | 2026-05-03 | RouteEntity 新增 SkipAutoDI 属性，支持跳过自动 DI 注册，由用户自行控制 DI 生命周期 |

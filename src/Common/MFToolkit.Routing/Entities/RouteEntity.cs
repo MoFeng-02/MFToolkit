@@ -63,6 +63,15 @@ public class RouteEntity
     public string RouteKey => RoutePath ?? RouteType.Name;
 
     /// <summary>
+    /// 跳过自动 DI 注册（true：不自动注册到 DI 容器，由用户自行注册）
+    /// </summary>
+    /// <remarks>
+    /// 默认 false，自动按 IsTop 推断生命周期注册到 DI。
+    /// 设置为 true 时需确保该类型已在 DI 容器中注册，否则导航时会抛出异常。
+    /// </remarks>
+    public bool SkipAutoDI { get; set; } = false;
+
+    /// <summary>
     /// 获取路由显示名称
     /// </summary>
     public string DisplayName => RouteName ?? RouteType.Name;
@@ -160,6 +169,15 @@ public class RouteEntity<TRoute> : RouteEntity
     public RouteEntity<TRoute> SetOrder(int sortOrder)
     {
         SortOrder = sortOrder;
+        return this;
+    }
+
+    /// <summary>
+    /// 跳过自动 DI 注册（由用户自行注册到 DI 容器）
+    /// </summary>
+    public RouteEntity<TRoute> SetSkipAutoDI()
+    {
+        base.SkipAutoDI = true;
         return this;
     }
 }

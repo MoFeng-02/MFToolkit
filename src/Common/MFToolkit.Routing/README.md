@@ -206,6 +206,7 @@ public class RouteEntity
     public bool IsLazy { get; set; }          // 是否懒加载
     public int SortOrder { get; set; }        // 排序权重
     public string RouteKey => RoutePath ?? RouteType.Name;  // 唯一键
+    public bool SkipAutoDI { get; set; }      // 跳过自动 DI 注册
 }
 ```
 
@@ -229,9 +230,10 @@ var entity = new RouteEntity<HomePage, HomeViewModel>("/home");
 new RouteEntity<HomePage>("/home")
     .SetTop()
     .SetKeepAlive()
-    .SetOrder(1);
+    .SetOrder(1)
+    .SetSkipAutoDI();  // 跳过自动 DI（用户自行注册）
 
-// 泛型子类提供 SetPath / SetTop / SetKeepAlive / SetOrder 等链式方法
+// 泛型子类提供 SetPath / SetTop / SetKeepAlive / SetOrder / SetSkipAutoDI 等链式方法
 ```
 
 > **关于 `required` 修饰符**：所有构造函数均标记了 `[method: SetsRequiredMembers]`，告诉编译器这些构造函数会负责初始化 required 属性。因此即使用对象初始化器语法调用，也不会有警告。
@@ -360,7 +362,26 @@ var routes = new[]
 builder.Services.AddRoutes(routes);
 ```
 
-> **注意**：`AddRoutes` 会自动将 `RouteType` 和 `ViewModelType` 注册到 DI 容器，无需手动注册。
+> **注意**：`AddRoutes` 会自动将 `RouteType` 和 `ViewModelType` 注册到 DI 容器（根据 IsTop 推断生命周期）。如需自行控制 DI，可使用 `SkipAutoDI()` 跳过自动注册。
+
+### 跳过自动 DI（用户自行注册）
+
+某些场景下你可能想自己控制页面的 DI 生命周期（如 Scoped），此时可以使用 `SkipAutoDI()` 跳过自动注册：
+
+```csharp
+// 方式一：跳过自动 DI，用户自行注册
+builder.Services.AddRoutes(routes =>
+{
+    routes.Register(new RouteEntity<HomePage>("/home") { IsTop = true });
+    routes.Register(new RouteEntity<ComplexPage>("/complex").SkipAutoDI());  // 跳过自动注册
+});
+
+// 用户自行注册（可使用任意生命周期）
+builder.Services.AddScoped<ComplexPage>();
+builder.Services.AddScoped<ComplexViewModel>();
+```
+
+> **注意**：`SkipAutoDI` 仅跳过自动注册，Router 仍会通过 `GetRequiredService(route.RouteType)` 从 DI 容器获取实例，因此你需要确保该类型已在 DI 容器中注册。
 
 ---
 
@@ -939,8 +960,8 @@ public class MyPage : INavigationAware
 
 ---
 
-*文档版本：v1.13*
-*最后更新：2026-04-28*
+*文档版本：v1.14*
+*最后更新：2026-05-03*
 
 ## 变更记录
 
@@ -960,3 +981,4 @@ public class MyPage : INavigationAware
 | v1.0.11 | 2026-04-25 | 修复 NavigateAsync 到 IsTop 路由时错误 Push 到当前栈的问题；新增 IsTop 与应用模式（SPA/多页）说明文档 |
 | v1.0.12 | 2026-04-25 | 文档全面更新：目录补全，新增 RouteRegistry、RouterOptions、DI 扩展章节，API 参考补全所有方法签名和属性 |
 | v1.0.13 | 2026-04-28 | 新增 RouterOptions.TopRouteInStack 配置项，支持用户自定义顶级路由是否计入栈中，影响 CanGoBack 判断 |
+| v1.0.14 | 2026-05-03 | RouteEntity 新增 SkipAutoDI 属性，支持跳过自动 DI 注册，由用户自行控制 DI 生命周期 |

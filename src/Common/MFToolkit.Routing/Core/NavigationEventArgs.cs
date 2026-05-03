@@ -8,7 +8,7 @@ namespace MFToolkit.Routing;
 public class NavigationEventArgs : EventArgs
 {
     /// <summary>
-    /// 导航动作类型
+    /// 导航动作类型<see cref="MFToolkit.Routing.Core.NavigationActions"/>
     /// </summary>
     public string Action { get; }
 
