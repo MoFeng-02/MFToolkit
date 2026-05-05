@@ -9,5 +9,5 @@ public interface IQueryAttributable
     /// 路由传递参数
     /// </summary>
     /// <param name="parameters">查询参数字典</param>
-    void ApplyQueryAttributes(IDictionary<string, object?> parameters);
+    void ApplyQueryAttributes(IDictionary<string, object?>? parameters);
 }

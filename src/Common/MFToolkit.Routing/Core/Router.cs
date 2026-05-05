@@ -859,12 +859,12 @@ public class Router : IRouter
             aware.OnNavigated(entry.Parameters);
         }
 
-        if (entry.PageInstance is IQueryAttributable pageAttr && entry.Parameters != null)
-        {
-            pageAttr.ApplyQueryAttributes(entry.Parameters);
-        }
+        //if (entry.PageInstance is IQueryAttributable pageAttr && entry.Parameters != null)
+        //{
+        //    pageAttr.ApplyQueryAttributes(entry.Parameters);
+        //}
 
-        if (entry.ViewModelInstance is IQueryAttributable vmAttr && entry.Parameters != null)
+        if (entry.ViewModelInstance is IQueryAttributable vmAttr)
         {
             vmAttr.ApplyQueryAttributes(entry.Parameters);
         }
